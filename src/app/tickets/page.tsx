@@ -7,7 +7,6 @@ import { toast } from 'react-hot-toast'
 import { CalendarIcon, MapPinIcon, TicketIcon, UserGroupIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import { loadStripe } from '@stripe/stripe-js'
 
-// Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 interface Ticket {
@@ -40,13 +39,11 @@ function TicketsContent() {
 
   useEffect(() => {
     const fetchTickets = async () => {
-      if (!session) return; // Don't fetch if not logged in
-      
+      if (!session) return;
       try {
         const response = await fetch('/api/tickets')
         const data = await response.json()
         setTickets(data)
-        
         if (matchId) {
           const selected = data.find((t: Ticket) => t.matchId === matchId)
           if (selected) setSelectedTicket(selected)
@@ -58,41 +55,14 @@ function TicketsContent() {
         setLoading(false)
       }
     }
-
     fetchTickets()
   }, [matchId, session])
 
   useEffect(() => {
-    if (authStatus === 'unauthenticated' && !session) {
-      router.replace('/auth/signin');
+    if (authStatus === 'unauthenticated') {
+      router.push('/login');
     }
   }, [authStatus, session, router]);
-
-  if (authStatus === "loading" || loading) {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">Loading available matches...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return null;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-8 py-6 rounded-lg max-w-lg mx-auto text-center">
-          <h3 className="text-lg font-semibold mb-2">Error Loading Matches</h3>
-          <p>{error}</p>
-        </div>
-      </div>
-    )
-  }
 
   const handleTicketSelect = (ticket: Ticket) => {
     setSelectedTicket(ticket)
@@ -112,21 +82,16 @@ function TicketsContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
     if (!session) {
       toast.error('Please sign in to purchase tickets')
       return
     }
-
     if (!selectedTicket) {
       toast.error('Please select a match')
       return
     }
-
     try {
       setProcessing(true)
-
-      // Create a checkout session
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -138,27 +103,15 @@ function TicketsContent() {
           category: formData.category,
         }),
       })
-
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to create checkout session')
       }
-
       const { sessionId } = await response.json()
-
-      // Load Stripe
       const stripe = await stripePromise
       if (!stripe) throw new Error('Stripe failed to load')
-
-      // Redirect to Stripe Checkout
-      const { error } = await stripe.redirectToCheckout({
-        sessionId
-      })
-
-      if (error) {
-        throw new Error(error.message || 'Payment failed')
-      }
-
+      const { error } = await stripe.redirectToCheckout({ sessionId })
+      if (error) throw new Error(error.message || 'Payment failed')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to process payment')
       console.error('Error processing payment:', err)
@@ -175,59 +128,111 @@ function TicketsContent() {
     }))
   }
 
+  if (authStatus === "loading" || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+          <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
+          <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Syncing Tickets...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) return null;
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="glass-card hud-border p-10 max-w-lg text-center">
+          <h3 className="text-yellow-500 font-black uppercase tracking-tighter text-2xl mb-4">Access Denied</h3>
+          <p className="text-slate-400 mb-6">{error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">Retry Access</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900">Match Tickets</h1>
-        <p className="mt-2 text-gray-600">Select a match and purchase your tickets securely.</p>
+    <div className="min-h-screen bg-transparent pt-32 pb-20 relative overflow-hidden animate-scan">
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 select-none pointer-events-none opacity-20 whitespace-nowrap">
+        <span className="text-[20vw] ghost-text leading-none uppercase">TICKET HUB</span>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Ticket List */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100">
-              <h2 className="text-xl font-semibold text-gray-900">Available Matches</h2>
+      <div className="container-custom relative z-10">
+        <div className="mb-16 text-center animate-slide-up">
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+            <span className="text-[10px] uppercase tracking-[0.2em] text-yellow-500 font-bold">Secure Booking</span>
+          </div>
+          <h1 className="text-6xl font-black text-white tracking-tighter uppercase mb-4">
+            Match <span className="text-yellow-500">Tickets</span>
+          </h1>
+          <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
+            Reserve your place in the theatre of dreams. Official club ticketing portal.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-12 items-start">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
+              <h2 className="text-xl font-black text-white uppercase tracking-wider">Available Fixtures</h2>
+              <span className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">{tickets.length} Matches Found</span>
             </div>
-            <div className="divide-y divide-gray-100">
-              {tickets.map(ticket => (
+            
+            <div className="space-y-4">
+              {tickets.map((ticket, idx) => (
                 <button
                   key={ticket.id}
                   onClick={() => handleTicketSelect(ticket)}
-                  className={`w-full p-6 text-left transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 ${
-                    selectedTicket?.id === ticket.id ? 'bg-blue-50 hover:bg-blue-50' : ''
+                  className={`w-full group relative transition-all duration-500 animate-slide-up ${
+                    selectedTicket?.id === ticket.id ? 'z-20 scale-[1.02]' : 'hover:scale-[1.01]'
                   }`}
+                  style={{ animationDelay: `${idx * 100}ms` }}
                 >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">{ticket.match}</h3>
-                      <div className="mt-2 space-y-2">
-                        <div className="flex items-center text-gray-600">
-                          <CalendarIcon className="h-5 w-5 mr-2" />
-                          <span>{ticket.date} at {ticket.time}</span>
+                  <div className={`glass-card hud-border p-6 text-left transition-all duration-500 ${
+                    selectedTicket?.id === ticket.id 
+                      ? 'bg-yellow-500/10 border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.1)]' 
+                      : 'hover:bg-white/5'
+                  }`}>
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                      <div className="flex-1 w-full">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-[10px] font-black px-2 py-0.5 bg-white/10 text-white uppercase tracking-widest rounded-sm border border-white/10">Match Day</span>
+                          <span className="text-[10px] font-black px-2 py-0.5 bg-yellow-500 text-slate-900 uppercase tracking-widest rounded-sm">Confirmed</span>
                         </div>
-                        <div className="flex items-center text-gray-600">
-                          <MapPinIcon className="h-5 w-5 mr-2" />
-                          <span>{ticket.venue}</span>
-                        </div>
-                        {ticket.availableSeats !== null && (
-                          <div className="flex items-center text-gray-600">
-                            <UserGroupIcon className="h-5 w-5 mr-2" />
-                            <span>{ticket.availableSeats} seats available</span>
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4 group-hover:text-yellow-500 transition-colors">
+                          {ticket.match}
+                        </h3>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          <div className="flex items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            <CalendarIcon className="h-4 w-4 mr-2 text-yellow-500" />
+                            {ticket.date}
                           </div>
-                        )}
+                          <div className="flex items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            <MapPinIcon className="h-4 w-4 mr-2 text-yellow-500" />
+                            {ticket.venue}
+                          </div>
+                          <div className="flex items-center text-slate-400 text-xs font-bold uppercase tracking-wider col-span-2 md:col-span-1">
+                            <UserGroupIcon className="h-4 w-4 mr-2 text-yellow-500" />
+                            {ticket.availableSeats || 'N/A'} Seats Left
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-blue-600">
-                        From ${ticket.price}
-                      </div>
-                      <div className={`mt-2 inline-flex px-3 py-1 rounded-full text-sm font-medium ${
-                        ticket.status === "Available" 
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}>
-                        {ticket.status}
+
+                      <div className="flex flex-col items-center md:items-end justify-center w-full md:w-auto p-4 md:p-0 border-t md:border-t-0 md:border-l border-white/10">
+                        <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Pass From</div>
+                        <div className="text-3xl font-black text-white tracking-tighter mb-4">
+                          ${ticket.price}
+                        </div>
+                        <div className={`px-4 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg ${
+                          ticket.status === "Available" 
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                            : "bg-red-500/20 text-red-400 border border-red-500/30"
+                        }`}>
+                          {ticket.status}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -235,51 +240,55 @@ function TicketsContent() {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Purchase Form */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-100">
-                <h2 className="text-xl font-semibold text-gray-900">Purchase Tickets</h2>
+          <div className="lg:col-span-1 rounded-2xl relative">
+            <div className="sticky top-32 glass-card hud-border p-8 animate-slide-up bg-pitch-navy/60">
+              <div className="mb-8 border-b border-white/10 pb-4">
+                <h2 className="text-xl font-black text-white uppercase tracking-wider">Reservation</h2>
               </div>
-              <div className="p-6">
-                {!selectedTicket ? (
-                  <div className="text-center py-8">
-                    <TicketIcon className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">No match selected</h3>
-                    <p className="mt-2 text-gray-600">Select a match from the list to purchase tickets.</p>
+              
+              {!selectedTicket ? (
+                <div className="text-center py-12">
+                  <TicketIcon className="mx-auto h-16 w-16 text-white/10 mb-4 animate-pulse" />
+                  <h3 className="text-white font-black uppercase tracking-tight text-lg mb-2">Initialize Selection</h3>
+                  <p className="text-slate-500 text-sm">Select a fixture to begin the checkout process.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="bg-white/5 rounded-lg p-6 border border-white/10">
+                    <div className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mb-1">Selected Fixture</div>
+                    <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2 leading-tight">{selectedTicket.match}</h3>
+                    <div className="text-xs text-slate-400 font-medium">
+                      {selectedTicket.date} • {selectedTicket.time}
+                    </div>
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="font-medium text-gray-900">{selectedTicket.match}</h3>
-                      <div className="mt-2 text-sm text-gray-600">
-                        {selectedTicket.date} at {selectedTicket.time}
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-3">
+                        Tier Category
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {['standard', 'premium', 'vip'].map((cat) => (
+                          <button
+                            key={cat}
+                            type="button"
+                            onClick={() => setFormData(f => ({ ...f, category: cat }))}
+                            className={`py-2 text-[10px] font-black uppercase tracking-widest rounded-sm border transition-all ${
+                              formData.category === cat 
+                                ? 'bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.3)]' 
+                                : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                            }`}
+                          >
+                            {cat}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
                     <div>
-                      <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                        Ticket Category
-                      </label>
-                      <select
-                        id="category"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleChange}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg sm:text-sm"
-                      >
-                        <option value="standard">Standard</option>
-                        <option value="premium">Premium</option>
-                        <option value="vip">VIP</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
-                        Number of Tickets
+                      <label htmlFor="quantity" className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-3">
+                        Total Quantity
                       </label>
                       <input
                         type="number"
@@ -289,44 +298,43 @@ function TicketsContent() {
                         max={selectedTicket.availableSeats || 10}
                         value={formData.quantity}
                         onChange={handleChange}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg sm:text-sm"
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold"
                       />
                     </div>
+                  </div>
 
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="flex justify-between items-center text-sm text-gray-600 mb-2">
-                        <span>Price per ticket:</span>
-                        <span>${selectedTicket.price}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-                        <span>Category multiplier:</span>
-                        <span>×{formData.category === 'standard' ? '1' : formData.category === 'premium' ? '1.5' : '2'}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-lg font-bold text-gray-900">
-                        <span>Total Price:</span>
-                        <span>${calculatePrice()}</span>
-                      </div>
+                  <div className="pt-6 border-t border-white/10">
+                    <div className="flex justify-between items-center text-[10px] text-slate-500 font-black uppercase tracking-widest mb-4">
+                      <span>Telemetry Data</span>
+                      <span>{formData.quantity} Units</span>
+                    </div>
+                    <div className="flex justify-between items-center text-4xl font-black text-white tracking-tighter mb-8">
+                      <span className="text-sm font-bold text-yellow-500 uppercase tracking-widest">Total cost</span>
+                      <span>${calculatePrice()}</span>
                     </div>
 
                     <button
                       type="submit"
                       disabled={selectedTicket?.status === "Sold Out" || processing}
-                      className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-primary w-full disabled:opacity-30 flex items-center justify-center gap-3 h-14"
                     >
                       {processing ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Processing...
-                        </div>
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-900"></div>
+                          <span>Processing...</span>
+                        </>
                       ) : selectedTicket?.status === "Sold Out" ? (
-                        "Sold Out"
+                        "Status: Sold Out"
                       ) : (
-                        "Purchase Tickets"
+                        <>
+                          <LockClosedIcon className="h-4 w-4" />
+                          <span>Initiate Payment</span>
+                        </>
                       )}
                     </button>
-                  </form>
-                )}
-              </div>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </div>
@@ -338,14 +346,14 @@ function TicketsContent() {
 export default function TicketsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">Loading available matches...</p>
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+          <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
+          <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Syncing Tickets...</p>
         </div>
       </div>
     }>
       <TicketsContent />
     </Suspense>
   );
-} 
+}

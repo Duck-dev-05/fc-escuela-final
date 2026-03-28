@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
+import { FaUserPlus, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -28,93 +29,115 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Registration successful! You can now sign in.");
-        setTimeout(() => router.push("/login"), 1500);
+        setSuccess("Registry Entry Confirmed. Access granted.");
+        setTimeout(() => router.push("/login"), 2000);
       } else {
-        setError(data.error || "Registration failed");
+        setError(data.error || "Registry Failure Detected");
       }
     } catch (err) {
-      setError("Something went wrong");
+      setError("Transmission Failure: Terminal Error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-white">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-        <div className="flex flex-col items-center mb-6">
-          <Image src="/images/logo.jpg" alt="FC ESCUELA" width={64} height={64} className="rounded-lg mb-2" />
-          <h2 className="text-2xl font-bold mb-1 text-center text-gray-900">Create an Account</h2>
-          <p className="text-gray-500 text-sm">Join FC ESCUELA to buy tickets and more!</p>
+    <div className="min-h-screen flex items-center justify-center bg-transparent relative overflow-hidden animate-scan pt-32 pb-16">
+      {/* Ghost Typography */}
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 select-none pointer-events-none opacity-10 whitespace-nowrap">
+        <span className="text-[20vw] ghost-text leading-none uppercase">NEW OPERATOR</span>
+      </div>
+
+      <div className="max-w-md w-full glass-card hud-border p-10 animate-slide-up relative z-10 mx-4">
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full" />
+            <Image src="/images/logo.jpg" alt="FC ESCUELA" width={80} height={80} className="rounded-xl relative border border-white/10" />
+          </div>
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+            <span className="text-[10px] uppercase tracking-[0.2em] text-yellow-500 font-bold">New Registry</span>
+          </div>
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center">Protocol <span className="text-yellow-500">Beta</span></h2>
         </div>
+
         {success ? (
-          <div className="flex flex-col items-center justify-center py-8">
-            <CheckCircleIcon className="h-12 w-12 text-green-500 mb-2" />
-            <div className="text-green-700 font-semibold mb-2">{success}</div>
-            <button
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-              onClick={() => router.push('/auth/signin')}
-            >
-              Go to Sign In
-            </button>
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-green-500/20 blur-2xl rounded-full" />
+              <FaCheckCircle className="h-16 w-16 text-green-500 relative" />
+            </div>
+            <div className="text-green-500 font-black uppercase tracking-widest text-xs mb-4">{success}</div>
+            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Redirecting to Authentication Gate...</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="relative group">
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-0 bg-yellow-500 group-focus-within:h-8 transition-all duration-300" />
               <input
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 border-gray-300 transition placeholder-gray-400"
-                placeholder="Your name"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder-white/20"
+                placeholder="Operator Name"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+
+            <div className="relative group">
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-0 bg-yellow-500 group-focus-within:h-8 transition-all duration-300" />
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 border-gray-300 transition placeholder-gray-400"
-                placeholder="you@email.com"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder-white/20"
+                placeholder="Transmission Email"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
+
+            <div className="relative group">
+              <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-0 bg-yellow-500 group-focus-within:h-8 transition-all duration-300" />
               <input
                 type="password"
                 name="password"
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 border-gray-300 transition placeholder-gray-400"
-                placeholder="Password"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder-white/20"
+                placeholder="Security Key"
               />
             </div>
-            {error && <div className="text-red-600 text-sm text-center">{error}</div>}
+
+            {error && (
+              <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                <FaExclamationTriangle />
+                {error}
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center disabled:opacity-60"
+              className="btn-primary w-full flex items-center justify-center h-14"
             >
               {loading ? (
-                <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : null}
-              {loading ? "Registering..." : "Sign Up"}
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-900"></div>
+                  <span className="uppercase tracking-[0.2em]">Executing...</span>
+                </div>
+              ) : (
+                <span className="uppercase tracking-[0.2em]">Commit Registry</span>
+              )}
             </button>
           </form>
         )}
-        <div className="mt-6 text-center text-sm text-gray-600">
-          Already have an account? <a href="/auth/signin" className="text-blue-600 hover:underline font-medium">Sign in</a>
+
+        <div className="mt-10 text-center">
+          <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Existing Operator?</span>
+          <Link href="/login" className="ml-2 text-yellow-500 font-black uppercase tracking-widest text-[10px] hover:text-white transition-colors">Return to Base</Link>
         </div>
       </div>
     </div>

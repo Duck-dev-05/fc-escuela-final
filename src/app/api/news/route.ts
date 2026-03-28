@@ -1,28 +1,25 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { getCachedData, setCachedData, deleteCachedData } from '@/lib/redis';
+import { prisma } from '@/lib/prisma';
+import { getCache, setCache, invalidateCache, CACHE_TTL } from '@/lib/redis';
 
-const prisma = new PrismaClient();
-const CACHE_KEY = 'news:all';
+const NEWS_CACHE_KEY = 'all_news_articles';
 
 export async function GET() {
   try {
-    // Try to get cached data first
-    const cachedArticles = await getCachedData(CACHE_KEY);
-    if (cachedArticles) {
-      return NextResponse.json(cachedArticles);
-    }
+    // Try to get from cache
+    const cachedArticles = await getCache(NEWS_CACHE_KEY);
+    if (cachedArticles) return NextResponse.json(cachedArticles);
 
-    // If no cache, fetch from database
+    // Fetch from database
     const articles = await prisma.news.findMany({
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    // Cache the results for 1 hour
-    await setCachedData(CACHE_KEY, articles, 3600);
+    // Set cache
+    await setCache(NEWS_CACHE_KEY, articles, CACHE_TTL.NEWS);
 
     return NextResponse.json(articles);
   } catch (error) {
@@ -48,8 +45,8 @@ export async function POST(req: Request) {
       },
     });
 
-    // Invalidate the cache when new article is added
-    await deleteCachedData(CACHE_KEY);
+    // Invalidate the cache
+    await invalidateCache(NEWS_CACHE_KEY);
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {

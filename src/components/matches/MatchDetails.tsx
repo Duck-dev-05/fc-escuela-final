@@ -2,17 +2,11 @@
 
 import { Match } from '@/types/match'
 import Link from 'next/link'
-import {
-  CheckCircleIcon,
-  UserIcon,
-  UsersIcon,
-  CloudIcon,
-  TvIcon,
-  StarIcon,
-  ClipboardDocumentListIcon,
-  ExclamationTriangleIcon,
-  TrophyIcon,
-} from '@heroicons/react/24/outline'
+import { 
+  FaTrophy, FaCalendarAlt, FaClock, FaMapMarkerAlt, 
+  FaUsers, FaUser, FaShieldAlt, FaTv, FaCloud,
+  FaCheckCircle, FaExclamationTriangle, FaStar, FaChevronLeft, FaTicketAlt
+} from 'react-icons/fa'
 
 interface MatchDetailsProps {
   match: Match
@@ -28,238 +22,205 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 py-10 flex flex-col items-center">
-      <div className="max-w-2xl w-full animate-fade-in bg-gradient-to-br from-white via-blue-50 to-blue-100 rounded-3xl shadow-2xl border border-blue-100 p-10">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-5xl font-extrabold mb-3 text-blue-900 flex items-center justify-center gap-3 drop-shadow-lg">
-            <TrophyIcon className="w-10 h-10 text-yellow-500 inline" />
-            {match.competition}
-          </h1>
-          <p className="text-gray-500 text-lg">{formattedDate}</p>
-          <p className="text-gray-500 text-lg">{match.time}</p>
+    <div className="w-full max-w-5xl mx-auto space-y-8 pb-20 animate-slide-up">
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center mb-6">
+        <Link href="/matches" className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-white transition-colors group">
+           <div className="w-8 h-8 rounded-lg border border-white/5 flex items-center justify-center group-hover:border-yellow-500/50 transition-all">
+              <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" />
+           </div>
+           Return to Fixtures
+        </Link>
+        <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+           <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+           <span className="text-[9px] uppercase tracking-[0.2em] text-yellow-500 font-bold italic">Live Telemetry Active</span>
         </div>
-        <div className="border-b border-blue-100 mb-8"></div>
-        {/* Teams and Score */}
-        <div className="flex justify-between items-center mb-10">
-          <div className="text-center flex-1">
-            <h2 className="text-3xl font-bold mb-2 text-blue-800 drop-shadow">{match.homeTeam}</h2>
-          </div>
-          <div className="px-8 text-2xl font-bold text-gray-400">vs</div>
-          <div className="text-center flex-1">
-            <h2 className="text-3xl font-bold mb-2 text-blue-800 drop-shadow">{match.awayTeam}</h2>
-          </div>
-        </div>
-        {match.score && (
-          <div className="text-center mb-10">
-            <span className="inline-block bg-blue-200 text-blue-900 text-6xl font-extrabold px-12 py-4 rounded-2xl shadow-lg border-4 border-blue-300">
-              {match.score}
-            </span>
-          </div>
-        )}
-        {/* Venue */}
-        <div className="text-center mb-10">
-          <h3 className="text-2xl font-semibold mb-2 text-gray-700 flex items-center justify-center gap-2">
-            <ClipboardDocumentListIcon className="w-7 h-7 text-blue-400" />
-            Venue
-          </h3>
-          <p className="text-gray-600 text-lg">{match.venue}</p>
-        </div>
-        <div className="border-b border-blue-100 mb-10"></div>
+      </div>
 
-        {/* Scheduled Info Section */}
-        {(!match.status || match.status === 'Scheduled') && (
-          <div className="mb-8">
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center shadow-sm">
-              <p className="text-blue-800 text-lg font-semibold mb-2">This match is scheduled.</p>
-              <p className="text-blue-700 text-sm">Stay tuned for updates on lineups, tickets, and more! Check back closer to the match date for the latest information.</p>
-            </div>
+      {/* Main Broadcast Scoreboard */}
+      <div className="glass-card hud-border p-8 md:p-12 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4 border-l border-b border-white/5 text-[9px] text-slate-700 font-mono">
+           HUD_OS_v2.4
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-4 mb-10">
+             <FaTrophy className="text-yellow-500 text-xl" />
+             <h1 className="text-2xl font-black text-white uppercase tracking-widest">{match.competition}</h1>
           </div>
-        )}
 
-        {/* Line-up Section */}
-        {(match.homeLineup || match.awayLineup) && (
-          <div className="mb-12 animate-fade-in">
-            <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-2xl p-8 shadow-xl border border-blue-200 transition hover:shadow-2xl">
-              <div className="flex flex-col items-center mb-6">
-                <h3 className="text-3xl font-extrabold text-blue-700 flex items-center gap-3 tracking-wide animate-fade-in">
-                  <UsersIcon className="w-8 h-8 text-blue-500" />
-                  Team Lineups
-                </h3>
-                <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-blue-200 rounded-full mt-3 mb-3" />
-              </div>
-              <div className="w-full max-w-4xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-                  {/* Home Team Lineup */}
-                  <div className="md:pr-8">
-                    <h4 className="text-xl font-bold text-center text-blue-800 mb-4 border-b pb-2 tracking-wide uppercase">{match.homeTeam}</h4>
-                    <ul className="space-y-2">
-                      {match.homeLineup && match.homeLineup.length > 0 ? (
-                        match.homeLineup.map((player, idx) => {
-                          let icon = '';
-                          let badgeColor = 'bg-gray-200 text-gray-700';
-                          if (player.position === 'GK') { icon = '🧤'; badgeColor = 'bg-red-100 text-red-700'; }
-                          else if (["CB", "RB", "LB", "CDM"].includes(player.position)) { icon = '🛡️'; badgeColor = 'bg-blue-100 text-blue-700'; }
-                          else if (["RW", "LW", "AMF"].includes(player.position)) { icon = '⚡'; badgeColor = 'bg-yellow-100 text-yellow-700'; }
-                          else if (["CF"].includes(player.position)) { icon = '🎯'; badgeColor = 'bg-green-100 text-green-700'; }
-                          else { icon = '⚽'; badgeColor = 'bg-gray-100 text-gray-500'; }
-                          return (
-                            <li key={idx} className="flex items-center gap-3 bg-white rounded-lg px-4 py-2 hover:bg-blue-100 hover:shadow-lg transition transform hover:scale-[1.04] shadow-sm border border-blue-100">
-                              <span className="text-xl">{icon}</span>
-                              <span className="font-semibold text-gray-800">{player.name}</span>
-                              <span className={`ml-auto px-2 py-0.5 rounded-full font-mono text-xs font-bold ${badgeColor} hover:shadow-md transition`}>{player.position}</span>
-                            </li>
-                          );
-                        })
-                      ) : (
-                        <li className="text-gray-400 text-center">No lineup available</li>
-                      )}
-                    </ul>
-                  </div>
-                  {/* Vertical Divider */}
-                  <div className="hidden md:block border-l border-blue-200 h-full mx-2"></div>
-                  {/* Away Team Lineup */}
-                  <div className="md:pl-8">
-                    <h4 className="text-xl font-bold text-center text-blue-800 mb-4 border-b pb-2 tracking-wide uppercase">{match.awayTeam}</h4>
-                    <ul className="space-y-2">
-                      {match.awayLineup && match.awayLineup.length > 0 ? (
-                        match.awayLineup.map((player, idx) => {
-                          let icon = '';
-                          let badgeColor = 'bg-gray-200 text-gray-700';
-                          if (player.position === 'GK') { icon = '🧤'; badgeColor = 'bg-red-100 text-red-700'; }
-                          else if (["CB", "RB", "LB", "CDM"].includes(player.position)) { icon = '🛡️'; badgeColor = 'bg-blue-100 text-blue-700'; }
-                          else if (["RW", "LW", "AMF"].includes(player.position)) { icon = '⚡'; badgeColor = 'bg-yellow-100 text-yellow-700'; }
-                          else if (["CF"].includes(player.position)) { icon = '🎯'; badgeColor = 'bg-green-100 text-green-700'; }
-                          else { icon = '⚽'; badgeColor = 'bg-gray-100 text-gray-500'; }
-                          return (
-                            <li key={idx} className="flex items-center gap-3 bg-white rounded-lg px-4 py-2 hover:bg-blue-100 hover:shadow-lg transition transform hover:scale-[1.04] shadow-sm border border-blue-100">
-                              <span className="text-xl">{icon}</span>
-                              <span className="font-semibold text-gray-800">{player.name}</span>
-                              <span className={`ml-auto px-2 py-0.5 rounded-full font-mono text-xs font-bold ${badgeColor} hover:shadow-md transition`}>{player.position}</span>
-                            </li>
-                          );
-                        })
-                      ) : (
-                        <li className="text-gray-400 text-center">No lineup available</li>
-                      )}
-                    </ul>
-                  </div>
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 relative">
+             {/* Home Team */}
+             <div className="flex-1 text-center md:text-right">
+                <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">{match.homeTeam}</h2>
+                <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.4em]">Home Territory</p>
+             </div>
+
+             {/* Score / VS */}
+             <div className="shrink-0 flex flex-col items-center justify-center min-w-[200px]">
+                {match.score ? (
+                   <div className="text-7xl font-black text-white font-mono tracking-tighter bg-black/40 px-10 py-6 rounded-2xl hud-border border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
+                      {match.score}
+                   </div>
+                ) : (
+                   <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-1 w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                      <span className="text-2xl font-black text-slate-700 uppercase tracking-[0.5em] italic">VS</span>
+                      <div className="w-16 h-1 w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                   </div>
+                )}
+                <div className="mt-6 flex flex-col items-center gap-1">
+                   <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{match.time} HRS</span>
+                   <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">{formattedDate}</span>
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
+             </div>
 
-        {/* Match Details Section */}
-        {(match.referee ||
-          match.attendance ||
-          match.weather ||
-          match.description ||
-          match.manOfTheMatch ||
-          match.stadiumCapacity ||
-          match.tvBroadcast ||
-          match.status ||
-          match.goalScorers ||
-          match.cards ||
-          match.notes) && (
-          <div className="mb-12 animate-fade-in">
-            <div className="relative bg-white/95 rounded-2xl p-8 shadow-2xl border border-blue-200 transition hover:shadow-2xl overflow-hidden">
-              {/* Timeline accent */}
-              <div className="absolute left-0 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-200 via-blue-300 to-blue-100 rounded-full opacity-60 hidden sm:block"></div>
-              <div className="flex flex-col items-center mb-6">
-                <h3 className="text-3xl font-extrabold text-blue-700 flex items-center gap-3 tracking-wide animate-fade-in">
-                  <StarIcon className="w-8 h-8 text-yellow-400" />
-                  Match Details
+             {/* Away Team */}
+             <div className="flex-1 text-center md:text-left">
+                <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">{match.awayTeam}</h2>
+                <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.4em]">Incursion Unit</p>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Tactical Lineups HUD */}
+        <div className="lg:col-span-2 space-y-8">
+          <section className="glass-card hud-border p-8 bg-white/[0.02]">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+               <div className="flex items-center gap-3">
+                  <FaUsers className="text-yellow-500 text-lg" />
+                  <h3 className="text-sm font-black text-white uppercase tracking-widest">Tactical Deployment</h3>
+               </div>
+               <div className="flex gap-2">
+                  <div className="w-2 h-2 rounded bg-yellow-500/20" />
+                  <div className="w-2 h-2 rounded bg-yellow-500/50" />
+                  <div className="w-2 h-2 rounded bg-yellow-500" />
+               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative overflow-hidden">
+               {/* Team Center Line */}
+               <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-[1px] bg-white/5 -translate-x-1/2" />
+               
+               {/* Home Lineup */}
+               <div className="space-y-6">
+                  <h4 className="text-[10px] text-center font-black text-yellow-500 uppercase tracking-[0.4em] mb-8 bg-yellow-500/5 py-2 rounded border border-yellow-500/10">{match.homeTeam}</h4>
+                  <div className="space-y-3">
+                    {match.homeLineup?.length ? (
+                       match.homeLineup.map((p, i) => (
+                          <div key={i} className="flex items-center justify-between p-3 glass-card border-white/5 hover:bg-white/5 transition-all group">
+                             <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-mono text-slate-600 group-hover:text-yellow-500">{(i+1).toString().padStart(2, '0')}</span>
+                                <span className="text-xs text-white font-bold uppercase tracking-widest group-hover:translate-x-1 transition-transform">{p.name}</span>
+                             </div>
+                             <span className="text-[9px] font-black text-slate-500 px-2 py-0.5 border border-white/10 rounded">{p.position}</span>
+                          </div>
+                       ))
+                    ) : (
+                       <p className="text-center text-[10px] text-slate-600 uppercase font-black tracking-widest py-10">Lineup Pending...</p>
+                    )}
+                  </div>
+               </div>
+
+               {/* Away Lineup */}
+               <div className="space-y-6">
+                  <h4 className="text-[10px] text-center font-black text-slate-400 uppercase tracking-[0.4em] mb-8 bg-white/5 py-2 rounded border border-white/5">{match.awayTeam}</h4>
+                  <div className="space-y-3">
+                    {match.awayLineup?.length ? (
+                       match.awayLineup.map((p, i) => (
+                          <div key={i} className="flex items-center justify-between p-3 glass-card border-white/5 hover:bg-white/5 transition-all group">
+                             <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-mono text-slate-600">{(i+1).toString().padStart(2, '0')}</span>
+                                <span className="text-xs text-white font-bold uppercase tracking-widest group-hover:translate-x-1 transition-transform">{p.name}</span>
+                             </div>
+                             <span className="text-[9px] font-black text-slate-500 px-2 py-0.5 border border-white/10 rounded">{p.position}</span>
+                          </div>
+                       ))
+                    ) : (
+                       <p className="text-center text-[10px] text-slate-600 uppercase font-black tracking-widest py-10">Lineup Pending...</p>
+                    )}
+                  </div>
+               </div>
+            </div>
+          </section>
+
+          {/* Goal Scorers / Events HUD */}
+          {match.goalScorers && (
+             <section className="glass-card hud-border p-8 bg-white/[0.02]">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+                   <FaCheckCircle className="text-green-500 text-xs" />
+                   Performance Events
                 </h3>
-                <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-blue-200 rounded-full mt-3 mb-3" />
-              </div>
-              <div className="space-y-5 text-gray-800 text-center text-lg">
-                {match.status && (
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckCircleIcon className="w-6 h-6 text-green-600" />
-                    <span className="font-semibold">Status:</span>
-                    <span className="text-green-700 font-bold">{match.status}</span>
-                  </div>
-                )}
-                {match.manOfTheMatch && (
-                  <div className="flex items-center justify-center gap-2">
-                    <UserIcon className="w-6 h-6 text-blue-700" />
-                    <span className="font-semibold">Man of the Match:</span>
-                    <span className="text-blue-800 font-bold">{match.manOfTheMatch}</span>
-                  </div>
-                )}
-                {match.goalScorers && (
-                  <div>
-                    <span className="font-semibold">Goal Scorers:</span> <span className="text-gray-700">{match.goalScorers}</span>
-                  </div>
-                )}
-                {match.cards && (
-                  <div className="flex items-center justify-center gap-2">
-                    <ExclamationTriangleIcon className="w-6 h-6 text-yellow-600" />
-                    <span className="font-semibold">Cards:</span> <span className="text-yellow-800">{match.cards}</span>
-                  </div>
-                )}
-                {match.referee && (
-                  <div className="flex items-center justify-center gap-2">
-                    <UserIcon className="w-6 h-6 text-gray-500" />
-                    <span className="font-semibold">Referee:</span> <span className="text-gray-700">{match.referee}</span>
-                  </div>
-                )}
-                {match.attendance && (
-                  <div className="flex items-center justify-center gap-2">
-                    <UsersIcon className="w-6 h-6 text-blue-500" />
-                    <span className="font-semibold">Attendance:</span> <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-mono">{match.attendance.toLocaleString()}</span>
-                  </div>
-                )}
-                {match.stadiumCapacity && (
-                  <div className="flex items-center justify-center gap-2">
-                    <UsersIcon className="w-6 h-6 text-gray-400" />
-                    <span className="font-semibold">Stadium Capacity:</span> <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full font-mono">{match.stadiumCapacity.toLocaleString()}</span>
-                  </div>
-                )}
-                {match.weather && (
-                  <div className="flex items-center justify-center gap-2">
-                    <CloudIcon className="w-6 h-6 text-blue-400" />
-                    <span className="font-semibold">Weather:</span> <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-mono">{match.weather}</span>
-                  </div>
-                )}
-                {match.tvBroadcast && (
-                  <div className="flex items-center justify-center gap-2">
-                    <TvIcon className="w-6 h-6 text-purple-500" />
-                    <span className="font-semibold">TV Broadcast:</span> <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-mono">{match.tvBroadcast}</span>
-                  </div>
-                )}
-                {match.description && (
-                  <div>
-                    <span className="font-semibold">Description:</span> <span className="text-gray-700">{match.description}</span>
-                  </div>
-                )}
-                {match.notes && (
-                  <div>
-                    <span className="font-semibold">Notes:</span> <span className="text-gray-700">{match.notes}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+                <div className="p-4 bg-green-500/5 border border-green-500/10 rounded-xl">
+                   <p className="text-xs text-white font-bold tracking-widest uppercase leading-loose">{match.goalScorers}</p>
+                </div>
+             </section>
+          )}
+        </div>
 
-        {/* Buttons */}
-        <div className="flex justify-center space-x-6 mt-12">
-          <Link
-            href="/matches"
-            className="bg-gray-600 text-white py-3 px-8 rounded-lg hover:bg-gray-700 transition-colors shadow text-lg font-semibold"
-          >
-            Back to Matches
-          </Link>
-          <Link
-            href={`/tickets?match=${match.id}`}
-            className="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors shadow text-lg font-semibold"
-          >
-            Buy Tickets
-          </Link>
+        {/* Sidebar HUD Metrics */}
+        <div className="space-y-8">
+           <section className="glass-card hud-border p-6 bg-white/[0.02]">
+              <h3 className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em] mb-6">Environment & Logistics</h3>
+              <div className="space-y-4">
+                 {[
+                   { label: 'Primary Venue', value: match.venue, icon: FaMapMarkerAlt },
+                   { label: 'Stadium Cap', value: match.stadiumCapacity?.toLocaleString(), icon: FaUsers },
+                   { label: 'Live Attendance', value: match.attendance?.toLocaleString(), icon: FaUsers, accent: true },
+                   { label: 'Atmosphere', value: match.weather, icon: FaCloud },
+                   { label: 'Broadcast Unit', value: match.tvBroadcast, icon: FaTv },
+                   { label: 'Lead Official', value: match.referee, icon: FaUser },
+                 ].map((metric, i) => (
+                    <div key={i} className="flex items-center gap-4 py-3 border-b border-white/5 last:border-0">
+                       <div className="w-8 h-8 glass-card border-white/5 flex items-center justify-center shrink-0">
+                          <metric.icon className="text-slate-500 text-xs" />
+                       </div>
+                       <div className="flex-1 overflow-hidden">
+                          <p className="text-[8px] text-slate-600 font-bold uppercase tracking-widest">{metric.label}</p>
+                          <p className={`text-xs font-black uppercase tracking-widest truncate ${metric.accent ? 'text-yellow-500' : 'text-slate-300'}`}>
+                             {metric.value || 'N/A'}
+                          </p>
+                       </div>
+                    </div>
+                 ))}
+              </div>
+           </section>
+
+           <section className="glass-card hud-border p-6 bg-yellow-500/5">
+              <h3 className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                 <FaStar className="text-[10px]" />
+                 Vanguard Report
+              </h3>
+              <div className="space-y-4">
+                 <div>
+                    <p className="text-[8px] text-slate-500 font-black uppercase tracking-widest mb-1.5">Man of the Match</p>
+                    <div className="p-3 glass-card border-yellow-500/20 bg-yellow-500/5 text-xs text-white font-black uppercase tracking-[0.2em]">
+                       {match.manOfTheMatch || 'Decision Pending'}
+                    </div>
+                 </div>
+                 {match.cards && (
+                    <div>
+                       <p className="text-[8px] text-slate-500 font-black uppercase tracking-widest mb-1.5">Disciplinary Incidents</p>
+                       <div className="p-3 glass-card border-red-500/20 bg-red-500/5 text-xs text-red-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                          <FaExclamationTriangle className="text-[10px]" />
+                          {match.cards}
+                       </div>
+                    </div>
+                 )}
+              </div>
+           </section>
+
+           <div className="flex flex-col gap-4">
+              <Link href={`/ticketing?match=${match.id}`} className="btn-primary w-full h-14 flex items-center justify-center gap-3">
+                 <FaTicketAlt className="text-sm" />
+                 Allocate Access Pass
+              </Link>
+           </div>
         </div>
       </div>
     </div>
   )
-} 
+}

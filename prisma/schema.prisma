@@ -10,11 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  user
-  admin
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -64,22 +59,16 @@ model User {
   occupation    String?
   favoriteTeam  String?
   profileInitialized Boolean @default(false)
-<<<<<<< HEAD
-  roles          UserRole[] @default([user])
-=======
-  role           UserRole? @default(user)
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+  roles          String @default("user")
   accounts      Account[]
   sessions      Session[]
   tickets       Ticket[]
   memberships   Membership[]
   resetToken        String?
   resetTokenExpiry  DateTime?
-<<<<<<< HEAD
   lastLogin       DateTime?
+  walletBalance   Float     @default(0)
   galleryImages   GalleryImage[]
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
 }
 
 model Match {
@@ -102,6 +91,8 @@ model Match {
   goalScorers     String?
   cards           String?
   notes           String?
+  homePower       Int?     @default(80)
+  awayPower       Int?     @default(75)
   homeLineup      String?
   awayLineup      String?
   createdAt       DateTime @default(now())
@@ -141,6 +132,7 @@ model TeamMember {
   bio     String
   order   Int      // For sorting
   captain Boolean  @default(false)
+  power   Int      @default(85)
 }
 
 model Membership {

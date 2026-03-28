@@ -21,7 +21,7 @@ async function main() {
         email: 'fcadmin@fcescuela.com',
         name: 'FC Admin',
         password: adminPassword,
-        roles: ['user', 'admin'],
+        roles: 'admin',
       },
     })
 
@@ -31,19 +31,31 @@ async function main() {
         email: 'fc-website@fcescuela.com',
         name: 'FC Website User',
         password: websiteUserPassword,
-        roles: ['user', 'admin'],
+        roles: 'admin',
       },
     })
 
     console.log('Admin+User:', adminBothRoles.email)
     console.log('Website Admin+User:', websiteBothRoles.email)
 
+    // Create Head Coach account
+    const coachPassword = await hash('coach123', 10)
+    const coachUser = await prisma.user.create({
+      data: {
+        email: 'coach@fcescuela.com',
+        name: 'Head Coach Carlos',
+        password: coachPassword,
+        roles: 'coach',
+      },
+    })
+    console.log('Head Coach:', coachUser.email)
+
     // Create sample matches
     const matches = [
       {
         homeTeam: 'Escuela FC',
         awayTeam: 'Real Madrid Academy',
-        date: new Date('2024-05-15'),
+        date: new Date('2026-04-15'),
         time: '19:30',
         venue: 'Escuela Stadium',
         competition: 'Youth Champions League',
@@ -52,7 +64,7 @@ async function main() {
       {
         homeTeam: 'Barcelona Youth',
         awayTeam: 'Escuela FC',
-        date: new Date('2024-05-22'),
+        date: new Date('2026-04-22'),
         time: '20:00',
         venue: 'La Masia',
         competition: 'Youth Champions League',
@@ -61,7 +73,7 @@ async function main() {
       {
         homeTeam: 'Escuela FC',
         awayTeam: 'Ajax Academy',
-        date: new Date('2024-06-05'),
+        date: new Date('2026-05-05'),
         time: '18:45',
         venue: 'Escuela Stadium',
         competition: 'International Youth Cup',
@@ -70,7 +82,7 @@ async function main() {
       {
         homeTeam: 'Manchester United U21',
         awayTeam: 'Escuela FC',
-        date: new Date('2024-06-12'),
+        date: new Date('2026-05-12'),
         time: '19:00',
         venue: 'Carrington Training Complex',
         competition: 'International Youth Cup',
@@ -109,7 +121,7 @@ async function main() {
     });
 
     // Create a past (expired) membership for adminBothRoles user
-    await (prisma as any).membership.create({
+    await prisma.membership.create({
       data: {
         userId: adminBothRoles.id,
         planId: 'premium',

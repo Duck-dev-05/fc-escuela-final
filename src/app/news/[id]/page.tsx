@@ -1,8 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
+import { 
+  FaCalendarAlt, FaUser, FaTag, FaChevronLeft, 
+  FaHistory, FaInfoCircle, FaTrophy, FaMapMarkerAlt, 
+  FaClock, FaChartLine 
+} from 'react-icons/fa';
 import Link from "next/link";
+import Image from "next/image";
 
 interface MatchDetails {
   homeTeam: string;
@@ -30,21 +35,33 @@ interface NewsArticle {
 export default function NewsDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [article, setArticle] = useState<NewsArticle | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [related, setRelated] = useState<NewsArticle[]>([]);
+   const [article, setArticle] = useState<NewsArticle | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const [related, setRelated] = useState<NewsArticle[]>([]);
+   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+
+   useEffect(() => {
+     const handleMouseMove = (e: MouseEvent) => {
+       setMousePos({
+         x: (e.clientX / window.innerWidth) * 100,
+         y: (e.clientY / window.innerHeight) * 100,
+       });
+     };
+     window.addEventListener('mousemove', handleMouseMove);
+     return () => window.removeEventListener('mousemove', handleMouseMove);
+   }, []);
 
   useEffect(() => {
     if (!id) return;
     const fetchArticle = async () => {
       try {
         const res = await fetch(`/api/news/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch news article");
+        if (!res.ok) throw new Error("Registry access denied.");
         const data = await res.json();
         setArticle(data);
       } catch (err) {
-        setError("Could not load news article.");
+        setError("Telemetry Retrieval Failure.");
       } finally {
         setLoading(false);
       }
@@ -53,7 +70,6 @@ export default function NewsDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    // Fetch related news (other articles, up to 3, excluding current)
     const fetchRelated = async () => {
       try {
         const res = await fetch(`/api/news`);
@@ -67,117 +83,225 @@ export default function NewsDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
+           <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Downloading Editorial Intel...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !article) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-bold mb-2 text-gray-700">News Article Not Found</h2>
-        <p className="text-gray-500 mb-6">The news article you are looking for does not exist or could not be loaded.</p>
-        <button onClick={() => router.push("/news")} className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors">Back to News</button>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden animate-scan">
+        <div className="max-w-md w-full glass-card hud-border p-10 text-center animate-slide-up relative z-10">
+          <FaInfoCircle className="mx-auto h-12 w-12 text-yellow-500/50 mb-6" />
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Protocol Error</h2>
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-8">Target unit not found in active registry</p>
+          <button
+            onClick={() => router.push('/news')}
+            className="btn-primary w-full"
+          >
+            Return to Feed
+          </button>
+        </div>
       </div>
     );
   }
 
   const createdDate = new Date(article.createdAt).toLocaleDateString();
-  const updatedDate = new Date(article.updatedAt).toLocaleDateString();
   const showUpdated = article.updatedAt && article.updatedAt !== article.createdAt;
   const intro = article.intro || article.content.split('\n')[0];
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      {/* Hero Image */}
-      {article.imageUrl && (
-        <img
-          src={article.imageUrl}
-          alt={article.title}
-          className="w-full h-80 object-cover rounded-2xl shadow mb-8"
-        />
-      )}
+    <div className="min-h-screen py-20 px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
+       {/* Neural_Orb & Cinematic Background */}
+       <div className="absolute inset-0 pointer-events-none">
+          <div 
+             className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.03] blur-[120px] transition-all duration-1000 ease-out z-0"
+             style={{ 
+                left: `${mousePos.x}%`, 
+                top: `${mousePos.y}%`, 
+                transform: 'translate(-50%, -50%)' 
+             }} 
+          />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] brightness-50 z-10" />
+          <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-yellow-500/[0.03] to-transparent z-10" />
+          
+          {/* Ghost Typography */}
+          <div className="absolute top-20 left-10 select-none pointer-events-none opacity-[0.03] whitespace-nowrap z-0">
+             <span className="text-[20vw] font-black ghost-text leading-none uppercase italic tracking-tighter">EDITORIAL_INTEL</span>
+          </div>
+       </div>
 
-      {/* Headline and Metadata */}
-      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <span>
-            <CalendarIcon className="inline h-4 w-4 mr-1" />
-            {createdDate}
-          </span>
-          <span>
-            <UserIcon className="inline h-4 w-4 mr-1" />
-            {article.author}
-          </span>
-          <span className="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
-            {article.category}
-          </span>
-          {showUpdated && (
-            <span className="inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-medium ml-2">
-              Updated: {updatedDate}
-            </span>
-          )}
+       <div className="max-w-[1400px] mx-auto relative z-20">
+          {/* Back Link HUD */}
+          <Link href="/news" className="inline-flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 hover:text-yellow-500 transition-all group mb-20">
+             <div className="w-12 h-12 rounded-lg border border-white/5 bg-slate-950/40 flex items-center justify-center group-hover:border-yellow-500/50 group-hover:bg-yellow-500/5 transition-all">
+                <FaChevronLeft className="group-hover:-translate-x-2 transition-transform" />
+             </div>
+             <span className="group-hover:translate-x-2 transition-transform italic">Return to Registry</span>
+          </Link>
+
+          {/* Maximum Impact Header */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-28 gap-16 animate-slide-up">
+              <div className="flex flex-col gap-10">
+                 <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 text-[9px] text-yellow-500 font-black uppercase tracking-[0.6em]">
+                       <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                       Intelligence_Access: Sector_04
+                    </div>
+                    <div className="w-px h-3 bg-white/10" />
+                    <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">ENCRYPTION: AES_256</span>
+                 </div>
+                 
+                 <div className="relative group/header">
+                    <div className="absolute -top-6 -left-6 w-8 h-8 border-t-2 border-l-2 border-yellow-500/20 group-hover/header:border-yellow-500 transition-colors" />
+                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.85] italic group-hover:scale-[1.02] transition-transform duration-700">
+                       News <br />
+                       <span className="text-7xl md:text-9xl not-italic text-slate-800 tracking-[-0.05em] group-hover:text-white transition-colors">Intel</span>
+                    </h1>
+                 </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-10 w-full lg:w-auto">
+                 <div className="flex items-center gap-12 text-[10px] font-black text-slate-700 tracking-[0.4em] uppercase border-b border-white/5 pb-4 w-full justify-end">
+                    <span>UNIT_REPORT</span>
+                    <span>//</span>
+                    <span className="text-yellow-500/50 flex items-center gap-3 font-mono">
+                       ID_{article.id.substring(0,8).toUpperCase()}
+                    </span>
+                 </div>
+                 <div className="px-6 py-2 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-sm skew-x-[-15deg] shadow-[0_0_30px_rgba(234,179,8,0.3)]">
+                    <span className="block skew-x-[15deg]">{article.category}</span>
+                 </div>
+              </div>
+          </div>
+        {/* Hero Banner HUD */}
+        <div className="relative aspect-[21/9] w-full overflow-hidden glass-card hud-border mb-20 group border-white/5">
+           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 opacity-80" />
+           <img
+             src={article.imageUrl}
+             alt={article.title}
+             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[30s] linear opacity-60 group-hover:opacity-100"
+           />
+           {/* HUD Ornamentation */}
+           <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-yellow-500/20 group-hover:border-yellow-500 transition-colors z-20" />
+           <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-yellow-500/20 group-hover:border-yellow-500 transition-colors z-20" />
+           
+           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-yellow-500/[0.02] to-transparent h-1/2 w-full animate-scan pointer-events-none" />
         </div>
-        <span className="text-xs text-gray-400">Post ID: {article.id}</span>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+           {/* Main Content Hub */}
+           <div className="lg:col-span-8 space-y-12 animate-slide-up">
+              <div className="space-y-10">
+                 <div className="flex flex-wrap items-center gap-10 text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] border-l-2 border-yellow-500/30 pl-6">
+                    <span className="flex items-center gap-3">
+                       <FaCalendarAlt className="text-yellow-500 text-xs" />
+                       {createdDate}
+                    </span>
+                    <span className="flex items-center gap-3">
+                       <FaUser className="text-yellow-500 text-xs" />
+                       AUTH: {article.author.toUpperCase()}
+                    </span>
+                 </div>
+                 <h1 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-[0.85] italic">
+                    {article.title}
+                 </h1>
+                 <p className="text-xl text-yellow-500/70 font-bold uppercase tracking-[0.2em] italic max-w-2xl leading-relaxed">
+                    "{intro}"
+                 </p>
+              </div>
+
+              <div className="glass-card hud-border p-10 md:p-16 relative overflow-hidden bg-slate-950/20 border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
+                 <div className="absolute top-0 right-0 p-8 opacity-5"><FaChartLine className="text-yellow-500 text-6xl" /></div>
+                 <div className="absolute inset-0 bg-grid-white/[0.01] bg-[size:20px_20px] pointer-events-none" />
+                 
+                 <div 
+                   className="prose prose-invert prose-yellow max-w-none text-slate-400 font-bold uppercase tracking-wider leading-loose text-sm italic"
+                   dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }}
+                 />
+              </div>
+
+              {/* Match Details Enrichment */}
+              {article.matchDetails && (
+                 <div className="glass-card hud-border p-10 bg-yellow-500/5 group relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 border-l border-b border-yellow-500/20 text-[9px] text-yellow-500/50 font-mono italic">
+                       SUPPLEMENTAL_TELEMETRY
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-10 items-center">
+                       <div className="w-20 h-20 glass-card border-yellow-500/30 flex items-center justify-center bg-yellow-500/10 shrink-0">
+                          <FaTrophy className="text-yellow-500 text-3xl" />
+                       </div>
+                       <div className="flex-1 space-y-4">
+                          <h3 className="text-xl font-black text-white uppercase tracking-widest">{article.matchDetails.competition} Summary</h3>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                             <div className="flex items-center gap-3">
+                                <FaMapMarkerAlt className="text-yellow-500/50 text-[10px]" />
+                                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{article.matchDetails.venue}</span>
+                             </div>
+                             <div className="flex items-center gap-3">
+                                <FaClock className="text-yellow-500/50 text-[10px]" />
+                                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{article.matchDetails.date} // {article.matchDetails.time}</span>
+                             </div>
+                          </div>
+                          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed pt-2 border-t border-white/5">
+                             {article.matchDetails.summary || 'Overview protocol not initialized.'}
+                          </p>
+                       </div>
+                    </div>
+                 </div>
+              )}
+           </div>
+
+           {/* Sidebar: Related & Metadata */}
+           <div className="lg:col-span-4 space-y-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <section className="glass-card hud-border p-8 bg-white/[0.02]">
+                 <h3 className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.4em] mb-8">Related Transmissions</h3>
+                 <div className="space-y-6">
+                    {related.map(r => (
+                       <Link key={r.id} href={`/news/${r.id}`} className="flex gap-4 group">
+                          <div className="relative w-20 h-20 rounded-lg overflow-hidden glass-card border-white/5 shrink-0">
+                             <img src={r.imageUrl} alt={r.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                          </div>
+                          <div className="space-y-1 py-1">
+                             <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">
+                                {new Date(r.createdAt).toLocaleDateString()}
+                             </span>
+                             <h4 className="text-[11px] font-black text-white uppercase tracking-tight line-clamp-2 leading-tight group-hover:text-yellow-500 transition-colors">
+                                {r.title}
+                             </h4>
+                          </div>
+                       </Link>
+                    ))}
+                 </div>
+              </section>
+
+              <section className="glass-card hud-border p-8 bg-white/[0.02]">
+                 <div className="flex items-center gap-4 mb-6">
+                    <FaTag className="text-yellow-500/50 text-xs" />
+                    <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Metadata Tags</h3>
+                 </div>
+                 <div className="flex flex-wrap gap-2">
+                    {['Club Info', 'Tactical', 'First Team', 'Registry'].map(tag => (
+                       <span key={tag} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-500 uppercase tracking-widest hover:border-yellow-500/30 hover:text-yellow-500/50 cursor-default transition-all">
+                          {tag}
+                       </span>
+                    ))}
+                 </div>
+              </section>
+
+              <div className="p-8 glass-card hud-border border-yellow-500/10 bg-yellow-500/5 text-center">
+                 <FaInfoCircle className="mx-auto text-yellow-500/30 text-2xl mb-4" />
+                 <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest leading-relaxed">
+                    Access to high-fidelity media is restricted to authenticated Vanguard members.
+                 </p>
+              </div>
+           </div>
+        </div>
       </div>
-
-      {/* Headline */}
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-4">{article.title}</h1>
-
-      {/* Intro Paragraph */}
-      <p className="text-lg text-gray-700 mb-6 font-medium">
-        {intro}
-      </p>
-
-      {/* Main Content */}
-      <div
-        className="prose prose-lg max-w-none text-gray-800 mb-10"
-        dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }}
-      />
-
-      {/* Match Details Box (if relevant) */}
-      {article.matchDetails && (
-        <>
-          <div className="mb-10 p-6 bg-gray-50 border border-gray-200 rounded-xl shadow-sm">
-            <h3 className="text-lg font-bold mb-4 text-blue-900">Match Details</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 text-sm">
-              <div><span className="font-semibold">Teams:</span> {article.matchDetails.homeTeam} vs {article.matchDetails.awayTeam}</div>
-              <div><span className="font-semibold">Competition:</span> {article.matchDetails.competition}</div>
-              <div><span className="font-semibold">Date:</span> {article.matchDetails.date}</div>
-              <div><span className="font-semibold">Time:</span> {article.matchDetails.time}</div>
-              <div><span className="font-semibold">Venue:</span> {article.matchDetails.venue}</div>
-            </div>
-          </div>
-          {/* Match Overview Section */}
-          <div className="mb-10 p-6 bg-white border border-blue-100 rounded-xl shadow-sm">
-            <h3 className="text-lg font-bold mb-4 text-blue-900">Overview</h3>
-            <div className="text-gray-800 text-base">
-              {article.matchDetails.summary ? article.matchDetails.summary : 'No overview available for this match.'}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Related News */}
-      {related.length > 0 && (
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Related News</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {related.map(r => (
-              <Link key={r.id} href={`/news/${r.id}`} className="flex gap-4 items-center bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
-                {r.imageUrl && (
-                  <img src={r.imageUrl} alt={r.title} className="w-20 h-20 object-cover rounded-md" />
-                )}
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{new Date(r.createdAt).toLocaleDateString()}</div>
-                  <div className="font-semibold text-gray-900 line-clamp-2">{r.title}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
-} 
+}

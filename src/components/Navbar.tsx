@@ -1,16 +1,22 @@
 'use client'
+// HUD_PROTOCOL_32_STABLE_SYNC_ACTIVE
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSession, signIn, signOut } from 'next-auth/react'
-import { ArrowRightOnRectangleIcon, UserCircleIcon, Cog6ToothIcon, ShoppingBagIcon, LifebuoyIcon } from '@heroicons/react/24/outline'
+import { useSession, signOut } from 'next-auth/react'
+import {
+  ArrowRightOnRectangleIcon, UserCircleIcon, Cog6ToothIcon,
+  ShoppingBagIcon, LifebuoyIcon, MagnifyingGlassIcon,
+  XMarkIcon, Bars3Icon, ShieldCheckIcon, BanknotesIcon,
+  UsersIcon, HeartIcon, PencilSquareIcon, LockClosedIcon
+} from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'About Us', href: '/about' },
+  { name: 'About', href: '/about' },
   { name: 'Matches', href: '/matches' },
-  { name: 'Tickets', href: '/tickets' },
+  { name: 'Tickets', href: '/ticketing' },
   { name: 'News', href: '/news' },
   { name: 'Team', href: '/team' },
   { name: 'Gallery', href: '/gallery' },
@@ -53,14 +59,11 @@ export default function Navbar() {
     }
   }, [debouncedSearch]);
 
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const [lang, setLang] = useState('en');
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (search.trim()) {
       router.push(`/search?query=${encodeURIComponent(search)}`);
-      setSearch(""); // Optionally clear the search bar
+      setSearch("");
       setShowDropdown(false);
     }
   };
@@ -76,401 +79,296 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showAccountMenu]);
 
-  // Recommended links for empty search
-  const recommendedLinks = [
-    { name: 'About Us', href: '/about' },
-    { name: 'Matches', href: '/matches' },
-    { name: 'Tickets', href: '/tickets' },
-    { name: 'News', href: '/news' },
-    { name: 'Team', href: '/team' },
-    { name: 'Gallery', href: '/gallery' },
-  ];
-
   return (
-    <nav className="bg-gradient-to-b from-white to-blue-50/60 shadow-md sticky top-0 z-50">
-      <div className="container-custom">
-        <div className="flex justify-between items-center h-20 px-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center whitespace-nowrap flex-row">
-            <span className="text-2xl font-bold text-blue-700 tracking-wide">FC ESCUELA</span>
+    <nav className="fixed top-0 left-0 right-0 z-[100] transition-all duration-700">
+      {/* Dynamic Layered Glassmorphism Background */}
+      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-xl" />
+      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-white/[0.05]" />
+
+      {/* Cinematic HUD Scanline (Bottom) */}
+      <div className="absolute bottom-0 left-0 w-full h-[1px] overflow-hidden">
+        <div className="absolute top-0 left-0 w-48 h-full bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent animate-scan-horizontal opacity-30" />
+      </div>
+
+      <div className="container-custom relative z-10">
+        <div className="flex justify-between items-center h-24 px-4">
+
+          {/* Brand Hub: Radar Sweep Protocol */}
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="relative">
+              {/* Radar Sweep Animation (Hover) */}
+              <div className="absolute inset-[-6px] border border-yellow-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 scale-125 group-hover:scale-100 animate-spin-slow pointer-events-none" />
+
+              <div className="relative p-1 glass-card hud-border rounded-xl group-hover:border-yellow-500 transition-colors duration-500 bg-slate-950/30">
+                <Image src="/images/logo.jpg" alt="FC Escuela" width={40} height={40} className="rounded-lg relative z-10" />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xl md:text-2xl font-black text-white uppercase tracking-tighter leading-none">
+                FC <span className="text-yellow-500">ESCUELA</span>
+              </span>
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10 relative flex-1 justify-center">
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {navigation.map((item) => (
+          {/* Desktop Navigation HUB: Surgical Compression */}
+          <div className="hidden xl:flex items-center space-x-1 flex-1 justify-center px-6">
+            {(session?.user as any)?.roles === 'coach' ? (
+              <Link
+                href="/coaching"
+                className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] transition-all relative group ${pathname === '/coaching' ? 'text-yellow-500' : 'text-slate-500 hover:text-white'
+                  }`}
+              >
+                <span className="relative z-10 transition-transform group-hover:scale-105 inline-block">Coaching Dashboard</span>
+                <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 h-0.5 bg-yellow-500 transition-all duration-500 ${pathname === '/coaching' ? 'w-6 opacity-100 shadow-[0_0_10px_rgba(234,179,8,0.5)]' : 'w-0 opacity-0 group-hover:w-4 group-hover:opacity-40'
+                  }`} />
+              </Link>
+            ) : (
+              navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                    pathname === item.href
-                      ? 'border-blue-500 text-gray-900'
-                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                  }`}
+                  className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] transition-all relative group ${pathname === item.href ? 'text-yellow-500' : 'text-slate-500 hover:text-white'
+                    }`}
                 >
-                  {item.name}
+                  <span className="relative z-10 transition-transform group-hover:scale-105 inline-block">{item.name}</span>
+                  <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 h-0.5 bg-yellow-500 transition-all duration-500 ${pathname === item.href ? 'w-6 opacity-100 shadow-[0_0_10px_rgba(234,179,8,0.5)]' : 'w-0 opacity-0 group-hover:w-4 group-hover:opacity-40'
+                    }`} />
                 </Link>
-              ))}
-            </div>
-            {/* Search Bar */}
-            <form
-              onSubmit={handleSearch}
-              className="relative flex items-center ml-6 w-80 max-w-xs bg-white rounded-full shadow border border-blue-100 focus-within:ring-2 focus-within:ring-blue-400 transition-all"
-              role="search"
-              aria-label="Site search"
-              autoComplete="off"
-            >
-              <span className="absolute left-3 text-blue-400 pointer-events-none">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-              <input
-                type="text"
-                placeholder="Search..."
-                aria-label="Search"
-                className="flex-1 bg-transparent outline-none pl-10 pr-8 py-2 text-gray-700 text-base rounded-full focus:ring-0"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onFocus={() => { if (searchResults) setShowDropdown(true); }}
-                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-              />
-              {search && (
-                <button
-                  type="button"
-                  aria-label="Clear search"
-                  className="absolute right-3 text-gray-400 hover:text-red-500 focus:outline-none"
-                  onClick={() => { setSearch(""); setShowDropdown(false); }}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              )}
-              {/* Instant search dropdown */}
-              {showDropdown && (
-                <div className="absolute left-0 top-12 w-full bg-white border border-blue-100 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                  <ul className="p-2">
-                    {/* Show recommended links if search is empty */}
-                    {!search && (
-                      <li className="mb-2">
-                        <div className="text-xs font-bold text-gray-700 mb-1">Recommended</div>
-                        {recommendedLinks.map((item) => (
-                          <Link key={item.href} href={item.href} className="block px-3 py-2 hover:bg-blue-50 rounded text-blue-700 font-semibold" onClick={() => setShowDropdown(false)}>
-                            {item.name}
-                          </Link>
-                        ))}
-                      </li>
-                    )}
-                    {/* Only show search results if search is not empty */}
-                    {search && searchResults && (
-                      <>
-                        {/* Pages */}
-                        {searchResults.pages && searchResults.pages.length > 0 && (
-                          <li className="mb-2">
-                            <div className="text-xs font-bold text-blue-700 mb-1">Pages</div>
-                            {searchResults.pages.map((item: any) => (
-                              <Link key={item.href} href={item.href} className="block px-3 py-2 hover:bg-blue-50 rounded text-blue-700 font-semibold" onClick={() => setShowDropdown(false)}>
-                                {item.name}
-                              </Link>
-                            ))}
-                          </li>
-                        )}
-                        {/* News */}
-                        {searchResults.news && searchResults.news.length > 0 && (
-                          <li className="mb-2">
-                            <div className="text-xs font-bold text-green-700 mb-1">News</div>
-                            {searchResults.news.map((item: any) => (
-                              <Link key={item.id} href={`/news/${item.id}`} className="block px-3 py-2 hover:bg-green-50 rounded text-green-700 font-semibold" onClick={() => setShowDropdown(false)}>
-                                {item.title}
-                              </Link>
-                            ))}
-                          </li>
-                        )}
-                        {/* Team Members */}
-                        {searchResults.team && searchResults.team.length > 0 && (
-                          <li className="mb-2">
-                            <div className="text-xs font-bold text-purple-700 mb-1">Team Members</div>
-                            {searchResults.team.map((item: any) => (
-                              <Link key={item.id} href={`/team#${item.name.toLowerCase().replace(/ /g, '-')}`} className="block px-3 py-2 hover:bg-purple-50 rounded text-purple-700 font-semibold" onClick={() => setShowDropdown(false)}>
-                                {item.name}
-                              </Link>
-                            ))}
-                          </li>
-                        )}
-                        {/* Matches */}
-                        {searchResults.matches && searchResults.matches.length > 0 && (
-                          <li className="mb-2">
-                            <div className="text-xs font-bold text-orange-700 mb-1">Matches</div>
-                            {searchResults.matches.map((item: any) => (
-                              <Link key={item.id} href={`/matches/${item.id}`} className="block px-3 py-2 hover:bg-orange-50 rounded text-orange-700 font-semibold" onClick={() => setShowDropdown(false)}>
-                                {item.homeTeam} vs {item.awayTeam}
-                              </Link>
-                            ))}
-                          </li>
-                        )}
-                        {/* No results */}
-                        {(!searchResults.pages?.length && !searchResults.news?.length && !searchResults.team?.length && !searchResults.matches?.length) && (
-                          <li className="text-gray-500 px-3 py-2">No results found.</li>
-                        )}
-                      </>
-                    )}
-                  </ul>
+              ))
+            )}
+          </div>
+
+          {/* Interaction Cluster: Tactical Duo Auth */}
+          <div className="hidden lg:flex items-center gap-6">
+            {/* Research Terminal (Search) */}
+            {(session?.user as any)?.roles !== 'coach' && (
+              <form onSubmit={handleSearch} className="relative group">
+                <div className="glass-card border-white/5 bg-white/[0.01] flex items-center h-12 px-5 w-44 focus-within:w-64 focus-within:border-yellow-500/40 transition-all duration-500 rounded-lg relative overflow-hidden">
+                  <MagnifyingGlassIcon className="h-4 w-4 text-slate-700 group-hover:text-yellow-500 transition-colors z-10" />
+                  <input
+                    type="text" placeholder="QUERY..."
+                    className="bg-transparent border-none focus:ring-0 text-[10px] font-black uppercase tracking-[0.2em] text-white placeholder:text-slate-800 w-full pl-4 z-10"
+                    value={search} onChange={e => setSearch(e.target.value)}
+                    onFocus={() => { if (searchResults) setShowDropdown(true); }}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                  />
                 </div>
-              )}
-            </form>
-            {/* Auth section */}
-            <div className="hidden sm:ml-6 sm:flex sm:items-center">
-              <div className="relative">
-                {session ? (
-                  <div className="relative" ref={menuRef}>
-                    <button
-                      onClick={() => setShowAccountMenu((v) => !v)}
-                      className="inline-flex items-center justify-center px-3 py-2 border border-transparent rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      title="Account"
-                      aria-label="Account menu"
-                      aria-haspopup="true"
-                      aria-expanded={showAccountMenu}
-                    >
+              </form>
+            )}
+
+            {/* Instant Search Results */}
+            {showDropdown && (
+              <div className="absolute top-14 right-0 w-80 glass-card hud-border p-5 bg-slate-950/99 shadow-[0_0_60px_rgba(0,0,0,0.6)] animate-slide-up">
+                <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                  {searchResults?.pages?.map((item: any) => (
+                    <Link key={item.href} href={item.href} className="block p-3 hover:bg-white/[0.03] rounded-lg transition-all border border-transparent hover:border-white/5">
+                      <div className="text-[10px] font-black text-white uppercase tracking-tight group-hover:text-yellow-500">PAGE // {item.name}</div>
+                    </Link>
+                  ))}
+                  {searchResults?.news?.map((item: any) => (
+                    <Link key={item.id} href={`/news/${item.id}`} className="block p-3 hover:bg-white/[0.03] rounded-lg transition-all border border-transparent hover:border-white/5">
+                      <div className="text-[10px] font-black text-white/80 uppercase tracking-tight truncate group-hover:text-yellow-500">INTEL // {item.title}</div>
+                    </Link>
+                  ))}
+                  {searchResults?.team?.map((item: any) => (
+                    <Link key={item.id} href={`/team#${item.name.toLowerCase().replace(/ /g, '-')}`} className="block p-3 hover:bg-white/[0.03] rounded-lg transition-all border border-transparent hover:border-white/5">
+                      <div className="text-[10px] font-black text-white uppercase tracking-tight group-hover:text-yellow-500">UNIT // {item.name}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="h-6 w-[1px] bg-white/10" />
+
+            {/* User Access Node */}
+            <div className="relative" ref={menuRef}>
+              {session ? (
+                <button
+                  onClick={() => setShowAccountMenu(!showAccountMenu)}
+                  className="flex items-center gap-4 glass-card border-white/10 hover:border-yellow-500/40 hover:bg-white/5 px-4 py-2 transition-all duration-500 group rounded-lg"
+                >
+                  <div className="relative w-9 h-9 rounded-lg border border-white/10 overflow-hidden group-hover:border-yellow-500 transition-all duration-500 p-0.5">
+                    <div className="w-full h-full relative rounded-md overflow-hidden">
                       {session.user?.image ? (
-                        <img
+                        <Image
                           src={session.user.image}
-                          alt={session.user.name || 'User'}
-                          className="h-10 w-10 rounded-full object-cover border-2 border-white shadow"
+                          alt="User"
+                          fill
+                          sizes="36px"
+                          className="object-cover"
                         />
                       ) : (
-                        <UserCircleIcon className="h-7 w-7" />
-                      )}
-                      <svg className={`h-5 w-5 ml-2 text-white transition-transform ${showAccountMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                    </button>
-                    {showAccountMenu && (
-                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50 border border-blue-100 animate-fade-in" role="menu" aria-label="Account submenu">
-                        <div className="px-4 py-2 border-b border-blue-50 mb-2">
-                          <div className="font-semibold text-blue-700 truncate">{session.user?.name || 'User'}</div>
-                          <div className="text-xs text-gray-500 truncate">{session.user?.email}</div>
+                        <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                          <UserCircleIcon className="h-6 w-6 text-slate-600" />
                         </div>
-                        <Link
-                          href="/profile"
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer"
-                          role="menuitem"
-                          tabIndex={0}
-                          onClick={() => setShowAccountMenu(false)}
-                        >
-                          <UserCircleIcon className="h-5 w-5" />
-                          Profile
-                        </Link>
-                        <Link
-                          href="/orders"
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer"
-                          role="menuitem"
-                          tabIndex={0}
-                          onClick={() => setShowAccountMenu(false)}
-                        >
-                          <ShoppingBagIcon className="h-5 w-5" />
-                          My Orders
-                        </Link>
-                        <Link
-                          href="/settings"
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer"
-                          role="menuitem"
-                          tabIndex={0}
-                          onClick={() => setShowAccountMenu(false)}
-                        >
-                          <Cog6ToothIcon className="h-5 w-5" />
-                          Settings
-                        </Link>
-                        <Link
-                          href="/support"
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer"
-                          role="menuitem"
-                          tabIndex={0}
-                          onClick={() => setShowAccountMenu(false)}
-                        >
-                          <LifebuoyIcon className="h-5 w-5" />
-                          Support
-                        </Link>
-<<<<<<< HEAD
-                        {(session?.user?.roles || []).includes('admin') && (
-                          <a
-                            href="http://localhost:3001/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 text-blue-700 font-semibold hover:bg-blue-50 hover:text-blue-900 transition-colors cursor-pointer"
-                            role="menuitem"
-                            tabIndex={0}
-                            onClick={() => setShowAccountMenu(false)}
-                          >
-                            <svg className="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7" /><path strokeLinecap="round" strokeLinejoin="round" d="M16 3v4M8 3v4M4 11h16" /></svg>
-                            Admin Dashboard
-                          </a>
-                        )}
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
-                        <div className="my-2 border-t border-blue-100" />
-                        <button
-                          onClick={() => { setShowAccountMenu(false); signOut(); }}
-                          className="w-full flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                          role="menuitem"
-                        >
-                          <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                          Sign Out
-                        </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                ) : (
-<<<<<<< HEAD
-                  <Link
-                    href="/auth/signin"
-=======
-                  <button
-                    onClick={() => router.push('/auth/signin')}
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
-                    className="inline-flex items-center px-8 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
-                  >
-                    Login
-                  </button>
-                )}
-              </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-[10px] font-black text-white uppercase tracking-tight leading-none">{session.user?.name?.split(' ')[0]}</span>
+                  </div>
+                </button>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link href="/login" className="px-4 py-3 hover:bg-white/[0.02] transition-colors rounded-lg group">
+                    <span className="uppercase tracking-[0.2em] text-[10px] font-black text-slate-500 group-hover:text-white transition-colors">Login</span>
+                  </Link>
+                  <Link href="/register" className="btn-primary py-3 px-6 rounded-lg group relative overflow-hidden">
+                    <span className="relative z-10 uppercase tracking-[0.2em] text-[10px] font-black">Register</span>
+                    <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                  </Link>
+                </div>
+              )}
+
+              {/* Account HUD Dropdown */}
+              {showAccountMenu && session && (
+                <div className="absolute right-0 mt-6 w-72 glass-card hud-border p-5 bg-slate-950/90 backdrop-blur-2xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] animate-slide-up z-50 overflow-hidden">
+                  {/* Sub-HUD Background Elements */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 blur-[50px] rounded-full pointer-events-none" />
+
+                  <div className="relative pb-5 mb-5 border-b border-white/5 flex items-center gap-3.5">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-yellow-500/15 blur-lg rounded-full animate-pulse" />
+                      <div className="w-12 h-12 glass-card hud-border border-yellow-500/30 flex items-center justify-center bg-slate-950 relative overflow-hidden group">
+                        {session.user?.image ? (
+                          <img src={session.user.image} alt="User Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-base font-black text-yellow-500 uppercase font-mono">
+                            {session.user?.name?.substring(0, 1) || 'O'}
+                          </span>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-yellow-500/10 to-transparent" />
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-green-500 border-2 border-slate-950 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[11px] font-black text-white uppercase tracking-tighter truncate leading-none mb-1 text-left">
+                        {session.user?.name || 'Operator'}
+                      </h4>
+                      <p className="text-[8px] text-slate-500 font-bold uppercase tracking-[0.15em] truncate font-mono text-left">
+                        {session.user?.email}
+                      </p>
+                      <div className="mt-1.5 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                        <span className="text-[6px] text-green-500 font-black uppercase tracking-widest font-mono">Status Active</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1 relative text-left">
+                    <div className="text-[7px] text-slate-700 font-mono font-black uppercase tracking-[0.2em] mb-1.5 px-3">Account Menu</div>
+                    {[
+                        ...((session?.user as any)?.roles === 'coach' || (session?.user as any)?.roles === 'admin' ? [
+                        { name: 'Command Center', href: '/coaching', icon: ShieldCheckIcon },
+                        { name: 'Squad Registry', href: '/coaching/squad', icon: UsersIcon },
+                        { name: 'Medical Hub', href: '/coaching/medical', icon: HeartIcon },
+                        { name: 'Tactical Board', href: '/coaching/tactics', icon: PencilSquareIcon },
+                        { name: 'Security Vault', href: '/coaching/vault', icon: LockClosedIcon },
+                      ] : []),
+                      { name: 'Profile Hub', href: '/profile', icon: UserCircleIcon },
+                      ...((session?.user as any)?.roles !== 'coach' && (session?.user as any)?.roles !== 'admin' ? [{ name: 'Registry', href: '/orders', icon: ShoppingBagIcon }] : []),
+                      ...((session?.user as any)?.roles !== 'coach' && (session?.user as any)?.roles !== 'admin' ? [{ name: 'My Wallet', href: '/wallet', icon: BanknotesIcon }] : []),
+                      ...((session?.user as any)?.roles !== 'coach' && (session?.user as any)?.roles !== 'admin' ? [{ name: 'Security', href: '/settings', icon: Cog6ToothIcon }] : []),
+                      { name: 'Support', href: '/support', icon: LifebuoyIcon },
+                    ].map(item => (
+                      <Link key={item.name} href={item.href} className="flex items-center gap-3.5 px-3.5 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-white hover:bg-white/[0.04] rounded-lg transition-all group relative border border-transparent hover:border-white/5">
+                        <item.icon className="h-4 w-4 text-slate-500 group-hover:text-yellow-500 transition-colors" />
+                        <span className="flex-1">{item.name}</span>
+                        <ArrowRightOnRectangleIcon className="h-3 w-3 opacity-0 group-hover:opacity-40 -translate-x-1 group-hover:translate-x-0 transition-all rotate-180" />
+                      </Link>
+                    ))}
+
+                    {session?.user?.roles === 'admin' && (
+                      <a href="http://localhost:3001/" target="_blank" className="flex items-center gap-3.5 px-3.5 py-3 text-[9px] font-black text-yellow-500 uppercase tracking-widest hover:bg-yellow-500 hover:text-slate-950 rounded-lg transition-all mt-3 border border-yellow-500/30 group">
+                        <ShieldCheckIcon className="h-4 w-4" />
+                        <span>Admin Console</span>
+                      </a>
+                    )}
+
+                    <div className="mt-6 pt-5 border-t border-white/5">
+                      <button onClick={() => signOut()} className="w-full flex items-center gap-3.5 px-3.5 py-3.5 text-[9px] font-black text-red-500/80 uppercase tracking-[0.15em] hover:bg-red-500/10 hover:text-red-500 transition-all rounded-lg group border border-transparent hover:border-red-500/20 text-left">
+                        <ArrowRightOnRectangleIcon className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                        <span>Logout Account</span>
+                        <div className="ml-auto w-1 h-1 rounded-full bg-red-500/80 animate-pulse shadow-[0_0_6px_rgba(239,68,68,1)]" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* HUD Technical Labels */}
+                  <div className="mt-5 flex justify-between items-center px-3.5 opacity-15">
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              {isMenuOpen ? (
-                <path d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
+          {/* Mobile Menu Trigger */}
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden p-3 glass-card hud-border text-white group">
+            {isMenuOpen ? <XMarkIcon className="h-7 w-7 text-yellow-500" /> : <Bars3Icon className="h-7 w-7 group-hover:text-yellow-500 transition-colors" />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Interface */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigation.map((item) => (
+          <div className="lg:hidden absolute top-24 left-0 w-full bg-slate-950/99 backdrop-blur-3xl border-b border-white/5 py-12 px-8 animate-slide-up shadow-2xl">
+            <div className="space-y-6 mb-12">
+              {(session?.user as any)?.roles === 'coach' ? (
                 <Link
-                  key={item.name}
-                  href={item.href}
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                  href="/coaching"
+                  className={`block text-4xl font-black uppercase tracking-tighter ${pathname === '/coaching' ? 'text-yellow-500' : 'text-white/60'}`}
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.name}
+                  Dashboard
                 </Link>
-              ))}
-              {/* Add mobile auth section */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                {session ? (
-                  <>
-                    <button
-                      className="w-full flex items-center px-3 py-2 focus:outline-none"
-                      onClick={() => setShowMobileProfileMenu((v) => !v)}
-                      aria-expanded={showMobileProfileMenu}
-                      aria-controls="mobile-profile-menu"
-                    >
-                      {session.user?.image ? (
-                        <img
-                          src={session.user.image}
-                          alt={session.user.name || 'User'}
-                          className="h-8 w-8 rounded-full object-cover border-2 border-white shadow"
-                        />
-                      ) : (
-                        <UserCircleIcon className="h-8 w-8 text-gray-400" />
-                      )}
-                      <div className="ml-3 text-left flex-1">
-                        <div className="text-sm font-medium text-gray-700">{session.user?.name || 'User'}</div>
-                        <div className="text-xs text-gray-500">{session.user?.email}</div>
-                      </div>
-                      <svg className={`h-5 w-5 ml-2 transition-transform ${showMobileProfileMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                    </button>
-                    {showMobileProfileMenu && (
-                      <div id="mobile-profile-menu" className="mt-2 space-y-1 bg-white rounded-md shadow border border-blue-50">
-                        <Link
-                          href="/profile"
-                          className="block px-3 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                          <div className="flex items-center">
-                            <UserCircleIcon className="h-5 w-5 mr-2" />
-                            Profile
-                          </div>
-                        </Link>
-                        <Link
-                          href="/orders"
-                          className="block px-3 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                          <div className="flex items-center">
-                            <ShoppingBagIcon className="h-5 w-5 mr-2" />
-                            My Orders
-                          </div>
-                        </Link>
-                        <Link
-                          href="/settings"
-                          className="block px-3 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                          <div className="flex items-center">
-                            <Cog6ToothIcon className="h-5 w-5 mr-2" />
-                            Settings
-                          </div>
-                        </Link>
-                        <Link
-                          href="/support"
-                          className="block px-3 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                          <div className="flex items-center">
-                            <LifebuoyIcon className="h-5 w-5 mr-2" />
-                            Support
-                          </div>
-                        </Link>
-<<<<<<< HEAD
-                        {(session?.user?.roles || []).includes('admin') && (
-                          <a
-                            href="http://localhost:3001/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block px-3 py-2 text-blue-700 font-semibold hover:text-blue-900"
-                          >
-                            <div className="flex items-center">
-                              <svg className="h-5 w-5 mr-2 text-blue-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7" /><path strokeLinecap="round" strokeLinejoin="round" d="M16 3v4M8 3v4M4 11h16" /></svg>
-                              Admin Dashboard
-                            </div>
-                          </a>
-                        )}
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
-                        <button
-                          onClick={() => { setIsMenuOpen(false); signOut(); }}
-                          className="w-full text-left px-3 py-2 text-gray-700 hover:text-blue-600"
-                        >
-                          <div className="flex items-center">
-                            <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" />
-                            Sign Out
-                          </div>
-                        </button>
-                      </div>
-                    )}
-                  </>
-                ) : (
+              ) : (
+                navigation.map(item => (
                   <Link
-                    href="/auth/signin"
-                    className="block w-full px-3 py-2 text-center rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
+                    key={item.name}
+                    href={item.href}
+                    className={`block text-4xl font-black uppercase tracking-tighter ${pathname === item.href ? 'text-yellow-500' : 'text-white/60'}`}
+                    onClick={() => setIsMenuOpen(false)}
                   >
-                    Login
+                    {item.name}
                   </Link>
-                )}
-              </div>
+                ))
+              )}
             </div>
+
+            {session ? (
+              <div className="pt-10 border-t border-white/10 space-y-6">
+                <Link href="/profile" className="flex items-center gap-6 py-4" onClick={() => setIsMenuOpen(false)}>
+                  <div className="w-16 h-16 rounded-xl border border-yellow-500/30 overflow-hidden relative p-1 bg-yellow-500/5">
+                    {session.user?.image ? (
+                      <Image
+                        src={session.user.image}
+                        alt="User"
+                        fill
+                        sizes="64px"
+                        className="object-cover rounded-lg"
+                      />
+                    ) : <UserCircleIcon className="w-full h-full text-slate-800" />}
+                  </div>
+                  <div>
+                    <p className="text-2xl font-black text-white uppercase tracking-tighter leading-none">{session.user?.name}</p>
+                  </div>
+                </Link>
+                <button onClick={() => signOut()} className="w-full py-5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] text-red-500 border border-red-500/20 bg-red-500/5">Logout Account</button>
+              </div>
+            ) : (
+              <div className="pt-10 border-t border-white/10 space-y-4">
+                <Link href="/register" className="btn-primary w-full py-6 flex items-center justify-center text-xl font-black uppercase tracking-widest" onClick={() => setIsMenuOpen(false)}>
+                  Register
+                </Link>
+                <Link href="/login" className="w-full py-5 flex items-center justify-center text-[10px] font-black uppercase tracking-[0.3em] text-white border border-white/10 rounded-xl bg-white/[0.01]" onClick={() => setIsMenuOpen(false)}>
+                  Login
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>
     </nav>
   )
-} 
+}

@@ -2,14 +2,29 @@
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { LockClosedIcon, UserCircleIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { 
+  FaLock, FaUserCircle, FaCheckCircle, FaExclamationCircle, 
+  FaShieldAlt, FaTrashAlt, FaTerminal, FaBroadcastTower, FaCog
+} from 'react-icons/fa';
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+   const [profile, setProfile] = useState<any>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState("");
+   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+
+   useEffect(() => {
+     const handleMouseMove = (e: MouseEvent) => {
+       setMousePos({
+         x: (e.clientX / window.innerWidth) * 100,
+         y: (e.clientY / window.innerHeight) * 100,
+       });
+     };
+     window.addEventListener('mousemove', handleMouseMove);
+     return () => window.removeEventListener('mousemove', handleMouseMove);
+   }, []);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -31,155 +46,208 @@ export default function SettingsPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <LockClosedIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h2 className="mt-4 text-xl font-bold text-gray-900">Login Required</h2>
-          <p className="mt-2 text-gray-600">Please sign in to view your settings.</p>
-          <button
-            onClick={() => router.push('/auth/signin')}
-            className="mt-6 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Sign In
-          </button>
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center text-red-600 font-semibold">{error}</div>
-      </div>
-    );
-  }
+  if (status === 'unauthenticated') router.push('/login');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-10">
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
-          <div className="flex flex-col items-center md:items-start">
-            <div className="bg-blue-100 rounded-full p-2 mb-4">
-              {profile?.image ? (
-                <img src={profile.image} alt="Avatar" className="h-24 w-24 rounded-full object-cover" />
-              ) : (
-                <UserCircleIcon className="h-24 w-24 text-blue-400" />
-              )}
-            </div>
-            <div className="text-2xl font-bold text-blue-700 mb-1">{profile?.name || '-'}</div>
-            <div className="text-gray-500 mb-2">{profile?.email || '-'}</div>
-            <div className="flex items-center gap-2">
-              {profile?.emailVerified ? (
-                <span className="flex items-center text-green-600"><CheckCircleIcon className="h-5 w-5 mr-1" /> Email Verified</span>
-              ) : (
-                <span className="flex items-center text-red-500"><XCircleIcon className="h-5 w-5 mr-1" /> Email Not Verified</span>
-              )}
-            </div>
+    <div className="min-h-screen py-20 px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
+       {/* Neural_Orb & Cinematic Background */}
+       <div className="absolute inset-0 pointer-events-none">
+          <div 
+             className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.03] blur-[120px] transition-all duration-1000 ease-out z-0"
+             style={{ 
+                left: `${mousePos.x}%`, 
+                top: `${mousePos.y}%`, 
+                transform: 'translate(-50%, -50%)' 
+             }} 
+          />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] brightness-50 z-10" />
+          <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-yellow-500/[0.03] to-transparent z-10" />
+          
+          {/* Ghost Typography */}
+          <div className="absolute top-20 left-10 select-none pointer-events-none opacity-[0.03] whitespace-nowrap z-0">
+             <span className="text-[20vw] font-black ghost-text leading-none uppercase italic tracking-tighter">SECURITY_PROTOCOL</span>
           </div>
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 w-full">
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Username</div>
-              <div className="text-gray-800 font-medium">{profile?.username || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Phone</div>
-              <div className="text-gray-800 font-medium">{profile?.phone || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Date of Birth</div>
-              <div className="text-gray-800 font-medium">{profile?.dob || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Address</div>
-              <div className="text-gray-800 font-medium">{profile?.address || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Gender</div>
-              <div className="text-gray-800 font-medium">{profile?.gender || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Nationality</div>
-              <div className="text-gray-800 font-medium">{profile?.nationality || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Language</div>
-              <div className="text-gray-800 font-medium">{profile?.language || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Bio</div>
-              <div className="text-gray-800 font-medium">{profile?.bio || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Website</div>
-              <div className="text-gray-800 font-medium">{profile?.website || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Occupation</div>
-              <div className="text-gray-800 font-medium">{profile?.occupation || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Favorite Team</div>
-              <div className="text-gray-800 font-medium">{profile?.favoriteTeam || '-'}</div>
-            </div>
-          </div>
-        </div>
-        <div className="border-t pt-8 mt-8">
-          <h2 className="text-xl font-bold text-blue-700 mb-4">Membership</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Membership Type</div>
-              <div className="text-gray-800 font-medium">{profile?.membershipType || '-'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase font-semibold mb-1">Member Since</div>
-              <div className="text-gray-800 font-medium">{profile?.memberSince ? new Date(profile.memberSince).toLocaleDateString() : '-'}</div>
-            </div>
-          </div>
-        </div>
+       </div>
 
-        {/* Delete Account Section */}
-        <div className="border-t pt-8 mt-8">
-          <h2 className="text-xl font-bold text-red-600 mb-4">Danger Zone</h2>
-          <div className="bg-red-50 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-red-700 mb-2">Delete Account</h3>
-            <p className="text-red-600 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
-            <button
-              onClick={async () => {
-                if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-                  try {
-                    const response = await fetch('/api/users/delete', {
-                      method: 'DELETE',
-                    });
-                    
-                    if (response.ok) {
-                      // Sign out and redirect to home page
-                      await signOut({ redirect: false });
-                      router.push('/');
-                    } else {
-                      const data = await response.json();
-                      alert(data.error || 'Failed to delete account');
-                    }
-                  } catch (error) {
-                    alert('An error occurred while deleting your account');
-                  }
-                }
-              }}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              Delete Account
-            </button>
+       <div className="max-w-[1400px] mx-auto relative z-20 pt-20">
+          {/* Maximum Impact Header */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-28 gap-16 animate-slide-up">
+              <div className="flex flex-col gap-10">
+                 <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 text-[9px] text-yellow-500 font-black uppercase tracking-[0.6em]">
+                       <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                       Security_Access: Level_Alpha
+                    </div>
+                    <div className="w-px h-3 bg-white/10" />
+                    <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">REGISTRY: {session?.user?.id?.substring(0,8).toUpperCase() || 'UNA-000'}</span>
+                 </div>
+                 
+                 <div className="relative group/header">
+                    <div className="absolute -top-6 -left-6 w-8 h-8 border-t-2 border-l-2 border-yellow-500/20 group-hover/header:border-yellow-500 transition-colors" />
+                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.85] italic group-hover:scale-[1.02] transition-transform duration-700">
+                       Security <br />
+                       <span className="text-7xl md:text-9xl not-italic text-slate-800 tracking-[-0.05em] group-hover:text-white transition-colors">Protocol</span>
+                    </h1>
+                 </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-10 w-full lg:w-auto">
+                 <div className="flex items-center gap-12 text-[10px] font-black text-slate-700 tracking-[0.4em] uppercase border-b border-white/5 pb-4 w-full justify-end">
+                    <span>UNIT_PROTECTION</span>
+                    <span>//</span>
+                    <span className="text-yellow-500/50 flex items-center gap-3 font-mono">
+                       {new Date().toISOString().split('T')[0]} // {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                 </div>
+                 <div className="px-6 py-2 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-sm skew-x-[-15deg] shadow-[0_0_30px_rgba(234,179,8,0.3)]">
+                    <span className="block skew-x-[15deg]">SHIELD_STATUS: ACTIVE</span>
+                 </div>
+              </div>
           </div>
+
+        <div className="grid grid-cols-1 gap-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          {/* Profile Overview HUD */}
+          <section className="glass-card hud-border p-8 relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-4 border-l border-b border-white/5 text-[9px] text-slate-700 font-mono">
+                SYS_METRIC_01
+             </div>
+             <div className="flex flex-col md:flex-row gap-10 items-center">
+                <div className="relative group">
+                   <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full" />
+                   {profile?.image ? (
+                     <img src={profile.image} alt="Avatar" className="h-28 w-28 rounded-2xl object-cover relative border-2 border-white/10" />
+                   ) : (
+                     <div className="h-28 w-28 rounded-2xl bg-white/5 flex items-center justify-center relative border-2 border-white/10">
+                        <FaUserCircle className="h-16 w-16 text-slate-700" />
+                     </div>
+                   )}
+                </div>
+                
+                <div className="flex-1 text-center md:text-left space-y-4">
+                   <div>
+                      <h3 className="text-2xl font-black text-white uppercase tracking-widest">{profile?.name || 'Operator'}</h3>
+                      <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{profile?.email}</p>
+                   </div>
+                   <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                      <div className="flex items-center gap-2 px-3 py-1.5 glass-card border-white/5 text-[9px] font-black uppercase tracking-widest">
+                         {profile?.emailVerified ? (
+                           <> <FaCheckCircle className="text-green-500" /> <span className="text-green-500">Verified</span> </>
+                         ) : (
+                           <> <FaExclamationCircle className="text-red-500" /> <span className="text-red-500">Unverified</span> </>
+                         )}
+                      </div>
+                      <div className="flex items-center gap-2 px-3 py-1.5 glass-card border-white/5 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                         <FaBroadcastTower /> Origin: {profile?.nationality || 'Internal'}
+                      </div>
+                   </div>
+                </div>
+                
+                <button 
+                  onClick={() => router.push('/profile/edit')}
+                  className="btn-primary py-3 px-8 text-[10px]"
+                >
+                  Edit Registry
+                </button>
+             </div>
+          </section>
+
+          {/* Settings Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             {/* Account Details HUD */}
+             <div className="glass-card hud-border p-8 bg-white/[0.02]">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+                   <FaTerminal className="text-yellow-500 text-xs" />
+                   Registry Metadata
+                </h3>
+                <div className="space-y-4">
+                   {[
+                     { label: 'Transmission Code', value: profile?.username },
+                     { label: 'Bio Metric Status', value: profile?.bio ? 'Configured' : 'Empty' },
+                     { label: 'Liaison Unit', value: profile?.favoriteTeam },
+                     { label: 'Protocol Class', value: profile?.membershipType || 'Standard' }
+                   ].map((item, i) => (
+                      <div key={i} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                         <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">{item.label}</span>
+                         <span className="text-xs text-white font-bold">{item.value || '-'}</span>
+                      </div>
+                   ))}
+                </div>
+             </div>
+
+             {/* Security Overview HUD */}
+             <div className="glass-card hud-border p-8 bg-white/[0.02]">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+                   <FaShieldAlt className="text-yellow-500 text-xs" />
+                   Security Status
+                </h3>
+                <div className="space-y-4">
+                   <div className="p-4 bg-green-500/5 border border-green-500/20 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <span className="text-[10px] text-green-500 font-black uppercase animate-pulse">Active</span>
+                    </div>
+                   </div>
+                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                      Registry protection is active. All terminal sessions are encrypted via TLS 1.3 protocol.
+                   </p>
+                   <button 
+                     onClick={() => router.push('/auth/change-password')}
+                     className="w-full py-3 glass-card hud-border bg-white/5 text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500 hover:text-slate-950 transition-all mt-4"
+                   >
+                     Update Access Key
+                   </button>
+                </div>
+             </div>
+          </div>
+
+          {/* Danger Zone HUD */}
+          <section className="glass-card border-red-500/50 bg-red-500/5 p-8 relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-4 border-l border-b border-red-500/20 text-[9px] text-red-500/50 font-mono italic">
+                CAUTION: DESTRUCTIVE_PROTOCOL
+             </div>
+             <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center border border-red-500/50">
+                   <FaTrashAlt className="text-red-500 text-2xl group-hover:scale-125 transition-transform" />
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                   <h3 className="text-xl font-black text-white uppercase tracking-widest mb-2">Protocol Termination</h3>
+                   <p className="text-xs text-slate-400 font-bold uppercase tracking-widest max-w-lg">
+                      Initialize account deletion. All registry data, including tickets and memberships, will be permanently purged. This action cannot be reversed.
+                   </p>
+                </div>
+                <button 
+                  onClick={async () => {
+                    if (window.confirm('CRITICAL: Permanent registry deletion requested. Continue?')) {
+                      try {
+                        const response = await fetch('/api/users/delete', { method: 'DELETE' });
+                        if (response.ok) {
+                          await signOut({ redirect: false });
+                          router.push('/');
+                        } else {
+                          const data = await response.json();
+                          alert(data.error || 'Termination Failed');
+                        }
+                      } catch (error) {
+                        alert('System Error during termination sequence.');
+                      }
+                    }
+                  }}
+                  className="px-10 py-4 bg-red-500 text-white font-black uppercase tracking-widest text-[10px] rounded-lg hover:bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.3)] transition-all"
+                >
+                  Confirm Termination
+                </button>
+             </div>
+          </section>
         </div>
       </div>
     </div>
   );
-} 
+}

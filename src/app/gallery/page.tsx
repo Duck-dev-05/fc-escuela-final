@@ -2,9 +2,11 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { LockClosedIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { 
+  FaLock, FaPhotoVideo, FaUpload, FaChevronLeft, 
+  FaChevronRight, FaTimes, FaExpand, FaClock, FaBroadcastTower 
+} from 'react-icons/fa';
 
-// Dynamically generated gallery images from /images directory
 const galleryImages = [
   "/images/Team.jpg",
   "/images/476090611_607359335376923_6698951151074247924_n.jpg",
@@ -120,9 +122,9 @@ const eventsImages = [
 ];
 
 const tabs = [
-  { label: "All Images", images: galleryImages },
-  { label: "After Match", images: afterMatchImages },
-  { label: "Events", images: eventsImages },
+  { label: "All Units", images: galleryImages },
+  { label: "Deployment", images: afterMatchImages },
+  { label: "Operations", images: eventsImages },
 ];
 
 export default function GalleryPage() {
@@ -130,18 +132,15 @@ export default function GalleryPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImg, setModalImg] = useState<string | null>(null);
-  const [modalDesc, setModalDesc] = useState<string>("");
   const [modalIdx, setModalIdx] = useState<number>(0);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadCount, setUploadCount] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("general");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
 
   const images = tabs[activeTab].images;
 
-  // Fetch upload count when user is authenticated
   useEffect(() => {
     if (session?.user?.id) {
       fetch(`/api/gallery/count?userId=${session.user.id}`)
@@ -154,55 +153,14 @@ export default function GalleryPage() {
   const handleImageClick = (src: string, idx: number) => {
     setModalImg(src);
     setModalIdx(idx);
-    if (activeTab === 0 && idx === 0 && src === "/images/Team.jpg") {
-      setModalDesc("Our Team");
-    } else {
-      setModalDesc("Gallery Photo");
-    }
     setModalOpen(true);
   };
-
-  // Keyboard and focus trap
-  useEffect(() => {
-    if (!modalOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setModalOpen(false);
-      if (e.key === "ArrowLeft" && modalIdx > 0) showPrev();
-      if (e.key === "ArrowRight" && modalIdx < images.length - 1) showNext();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    // Focus trap
-    const focusable = modalRef.current?.querySelectorAll<HTMLElement>("button, [tabindex]:not([tabindex='-1'])");
-    const first = focusable?.[0];
-    const last = focusable?.[focusable.length - 1];
-    const trap = (e: KeyboardEvent) => {
-      if (e.key !== "Tab" || !focusable) return;
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          last?.focus();
-          e.preventDefault();
-        }
-      } else {
-        if (document.activeElement === last) {
-          first?.focus();
-          e.preventDefault();
-        }
-      }
-    };
-    document.addEventListener("keydown", trap);
-    first?.focus();
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("keydown", trap);
-    };
-  }, [modalOpen, modalIdx, images.length]);
 
   const showPrev = () => {
     if (modalIdx > 0) {
       const prevIdx = modalIdx - 1;
       setModalImg(images[prevIdx]);
       setModalIdx(prevIdx);
-      setModalDesc(activeTab === 0 && prevIdx === 0 && images[prevIdx] === "/images/Team.jpg" ? "Our Team" : "Gallery Photo");
     }
   };
   const showNext = () => {
@@ -210,39 +168,30 @@ export default function GalleryPage() {
       const nextIdx = modalIdx + 1;
       setModalImg(images[nextIdx]);
       setModalIdx(nextIdx);
-      setModalDesc(activeTab === 0 && nextIdx === 0 && images[nextIdx] === "/images/Team.jpg" ? "Our Team" : "Gallery Photo");
     }
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setUploading(true);
     setUploadError(null);
-
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("category", selectedCategory);
-
       const response = await fetch("/api/gallery/upload", {
         method: "POST",
         body: formData,
       });
-
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to upload image");
+        throw new Error(data.error || "Upload protocol failure.");
       }
-
-      // Update upload count
       setUploadCount(prev => prev + 1);
-      
-      // Refresh the page to show the new image
       window.location.reload();
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "Failed to upload image");
+      setUploadError(error instanceof Error ? error.message : "Sychronization Rejected.");
     } finally {
       setUploading(false);
     }
@@ -250,159 +199,177 @@ export default function GalleryPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
+           <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Media Vault...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Gallery</h1>
-            {session && (
-              <p className="text-sm text-gray-600 mt-1">
-                You have uploaded {uploadCount} images
-              </p>
-            )}
-          </div>
-          {session && (
-            <div className="flex items-center gap-4">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="general">General</option>
-                <option value="after-match">After Match</option>
-                <option value="events">Events</option>
-              </select>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept="image/*"
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-              >
-                <PhotoIcon className="h-5 w-5 mr-2" />
-                {uploading ? "Uploading..." : "Upload Image"}
-              </button>
-            </div>
-          )}
+    <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden animate-scan">
+      {/* Ghost Typography Background */}
+      <div className="absolute top-10 right-10 select-none pointer-events-none opacity-5 text-right">
+        <span className="text-[15vw] ghost-text leading-none uppercase">VAULT</span>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16 animate-slide-up">
+           <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
+                 <FaPhotoVideo className="text-yellow-500 text-2xl" />
+              </div>
+              <div>
+                 <h1 className="text-4xl font-black text-white uppercase tracking-tighter">Media <span className="text-yellow-500">Vault</span></h1>
+                 <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">High-Fidelity Visual Archives</p>
+              </div>
+           </div>
+
+           {session ? (
+              <div className="flex items-center gap-4 p-2 glass-card border-white/5 rounded-xl">
+                 <div className="px-4 py-2 border-r border-white/10 hidden sm:block">
+                    <p className="text-[8px] text-slate-500 font-black uppercase tracking-widest leading-none mb-1">Upload Quota</p>
+                    <p className="text-xs text-white font-bold">{uploadCount} Assets Synced</p>
+                 </div>
+                 <select
+                   value={selectedCategory}
+                   onChange={(e) => setSelectedCategory(e.target.value)}
+                   className="bg-transparent text-[10px] font-black uppercase tracking-widest text-slate-400 border-none focus:ring-0 cursor-pointer"
+                 >
+                   <option value="general" className="bg-slate-900">General</option>
+                   <option value="after-match" className="bg-slate-900">Deployment</option>
+                   <option value="events" className="bg-slate-900">Operations</option>
+                 </select>
+                 <button
+                   onClick={() => fileInputRef.current?.click()}
+                   disabled={uploading}
+                   className="btn-primary py-3 px-6 text-[10px] flex items-center gap-3"
+                 >
+                    <FaUpload />
+                    {uploading ? "Syching..." : "Inject Asset"}
+                 </button>
+                 <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
+              </div>
+           ) : (
+              <div className="glass-card border-yellow-500/20 bg-yellow-500/5 px-6 py-4 flex items-center gap-4 animate-pulse">
+                 <FaLock className="text-yellow-500 text-sm" />
+                 <span className="text-[10px] text-yellow-500 font-black uppercase tracking-widest">Sign in to initialize asset injection</span>
+              </div>
+           )}
         </div>
 
         {uploadError && (
-          <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md">
-            {uploadError}
+          <div className="mb-10 p-6 glass-card border-red-500/50 bg-red-500/10 flex items-center gap-4 animate-slide-up">
+            <FaTimes className="text-red-500" />
+            <span className="text-xs font-black uppercase tracking-widest text-white">{uploadError}</span>
           </div>
         )}
 
-        {!session && (
-          <div className="mb-8 p-4 bg-yellow-50 text-yellow-700 rounded-md flex items-center">
-            <LockClosedIcon className="h-5 w-5 mr-2" />
-            <span>Sign in to upload images to the gallery</span>
-          </div>
-        )}
-
-        <div className="flex justify-center mb-8">
-          {tabs.map((tab, idx) => (
-            <button
-              key={tab.label}
-              onClick={() => setActiveTab(idx)}
-              className={`px-6 py-2 mx-2 rounded-full font-semibold transition-all duration-200 shadow-sm border-2 ${
-                activeTab === idx
-                  ? "bg-blue-600 text-white border-blue-600 scale-105"
-                  : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Tab Navigation */}
+        <div className="flex justify-center mb-12 animate-slide-up">
+           <div className="flex p-1 glass-card border-white/5 rounded-xl">
+              {tabs.map((tab, idx) => (
+                <button
+                  key={tab.label}
+                  onClick={() => setActiveTab(idx)}
+                  className={`px-8 py-3 text-[10px] font-black uppercase tracking-[0.3em] rounded-lg transition-all ${
+                    activeTab === idx
+                      ? "bg-yellow-500 text-slate-950 shadow-[0_0_20px_rgba(234,179,8,0.3)]"
+                      : "text-slate-500 hover:text-white"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+           </div>
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        {/* Masonry-style Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-slide-up">
           {images.map((src, idx) => (
             <div
               key={idx}
-              className={`rounded-2xl overflow-hidden shadow-lg bg-white hover:shadow-2xl transition-all group cursor-pointer ${activeTab === 0 && idx === 0 && src === "/images/Team.jpg" ? "ring-4 ring-blue-500 ring-offset-2 shadow-2xl" : ""}`}
+              className="glass-card hud-border p-2 group cursor-pointer aspect-square relative overflow-hidden"
               onClick={() => handleImageClick(src, idx)}
             >
-              <div className="relative w-full h-64">
+              <div className="absolute top-0 left-0 w-full h-full bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
+              <div className="relative w-full h-full overflow-hidden rounded-lg">
                 <Image
                   src={src}
-                  alt={`Gallery image ${idx + 1}`}
+                  alt={`Static Asset ${idx + 1}`}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-100"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  priority={idx < 4}
+                  priority={idx < 8}
                 />
+                {/* HUD Overlay */}
+                <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 text-white z-20">
+                   <div className="flex items-center gap-2 mb-1">
+                      <FaExpand className="text-[10px] text-yellow-500" />
+                      <span className="text-[9px] font-black uppercase tracking-widest">Enlarge Protocol</span>
+                   </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Cinematic Lightbox Modal */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in-modal" onClick={() => setModalOpen(false)}>
-            <div ref={modalRef} className="relative flex flex-col items-center animate-scale-in max-w-4xl w-full" onClick={e => e.stopPropagation()} tabIndex={-1}>
-              {/* Close button floating outside */}
-              <button className="absolute -top-8 right-0 text-5xl text-blue-700 hover:text-red-500 font-extrabold bg-white/90 rounded-full w-16 h-16 flex items-center justify-center shadow-2xl border-2 border-blue-200 transition-all focus:outline-none z-20" onClick={() => setModalOpen(false)} aria-label="Close">&times;</button>
-              <div className="bg-white/80 rounded-3xl shadow-2xl border border-blue-200 p-8 max-w-4xl w-full flex flex-col items-center">
-                {/* Left arrow */}
-                <button
-                  className={`absolute left-0 top-1/2 -translate-y-1/2 text-5xl bg-white/90 rounded-full w-16 h-16 flex items-center justify-center shadow-xl border-2 border-blue-200 text-blue-700 hover:text-blue-900 transition-all focus:outline-none z-10 ${modalIdx === 0 ? 'opacity-30 pointer-events-none' : ''}`}
-                  onClick={showPrev}
-                  tabIndex={0}
-                  aria-label="Previous image"
-                >
-                  &#8592;
-                </button>
-                {/* Right arrow */}
-                <button
-                  className={`absolute right-0 top-1/2 -translate-y-1/2 text-5xl bg-white/90 rounded-full w-16 h-16 flex items-center justify-center shadow-xl border-2 border-blue-200 text-blue-700 hover:text-blue-900 transition-all focus:outline-none z-10 ${modalIdx === images.length - 1 ? 'opacity-30 pointer-events-none' : ''}`}
-                  onClick={showNext}
-                  tabIndex={0}
-                  aria-label="Next image"
-                >
-                  &#8594;
-                </button>
-                <div className="w-full flex flex-col items-center" onClick={e => e.stopPropagation()}>
-                  <div className="relative w-full h-[65vh] max-h-[75vh] max-w-4xl mx-auto flex items-center justify-center transition-all duration-300">
-                    <Image
-                      src={modalImg!}
-                      alt={modalDesc}
-                      fill
-                      className="object-contain rounded-2xl"
-                      sizes="100vw"
-                    />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-xl animate-fade-in" onClick={() => setModalOpen(false)}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-yellow-500 animate-scan" />
+            
+            <button className="absolute top-10 right-10 text-slate-500 hover:text-white p-4 transition-all z-[110]" onClick={() => setModalOpen(false)}>
+               <FaTimes className="text-3xl" />
+            </button>
+
+            <div className="relative w-full h-full flex items-center justify-center p-4 md:p-20" onClick={e => e.stopPropagation()}>
+               {/* Nav Controls */}
+               <button 
+                 className={`absolute left-10 top-1/2 -translate-y-1/2 w-16 h-16 glass-card border-white/5 flex items-center justify-center text-white hover:border-yellow-500/50 transition-all ${modalIdx === 0 ? 'opacity-10 pointer-events-none' : 'opacity-100'}`}
+                 onClick={showPrev}
+               >
+                 <FaChevronLeft className="text-2xl" />
+               </button>
+               <button 
+                 className={`absolute right-10 top-1/2 -translate-y-1/2 w-16 h-16 glass-card border-white/5 flex items-center justify-center text-white hover:border-yellow-500/50 transition-all ${modalIdx === images.length - 1 ? 'opacity-10 pointer-events-none' : 'opacity-100'}`}
+                 onClick={showNext}
+               >
+                 <FaChevronRight className="text-2xl" />
+               </button>
+
+               <div className="relative w-full h-full flex flex-col items-center justify-center">
+                  <div className="relative w-full h-[70vh] glass-card hud-border p-2">
+                     <Image
+                       src={modalImg!}
+                       alt="Archive Asset"
+                       fill
+                       className="object-contain"
+                       sizes="100vw"
+                     />
                   </div>
-                  <div className="mt-8 text-3xl text-center text-blue-900 font-extrabold tracking-wide drop-shadow-sm px-4">{modalDesc}</div>
-                </div>
-              </div>
-              <style jsx global>{`
-                @keyframes fade-in-modal {
-                  from { opacity: 0; }
-                  to { opacity: 1; }
-                }
-                .animate-fade-in-modal {
-                  animation: fade-in-modal 0.3s cubic-bezier(0.4,0,0.2,1) both;
-                }
-                @keyframes scale-in {
-                  from { opacity: 0; transform: scale(0.92); }
-                  to { opacity: 1; transform: scale(1); }
-                }
-                .animate-scale-in {
-                  animation: scale-in 0.25s cubic-bezier(0.4,0,0.2,1) both;
-                }
-              `}</style>
+                  <div className="mt-10 flex flex-col items-center gap-4">
+                     <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2">
+                           <FaClock className="text-yellow-500 text-[10px]" />
+                           <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Asset Index: {modalIdx + 1}/{images.length}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                           <FaBroadcastTower className="text-yellow-500 text-[10px]" />
+                           <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Source: Internal Vault</span>
+                        </div>
+                     </div>
+                     <h3 className="text-xl font-black text-white uppercase tracking-[0.5em] group-hover:text-yellow-500 transition-colors">
+                        Archive // {modalImg?.split('/').pop()?.split('.')[0]}
+                     </h3>
+                  </div>
+               </div>
             </div>
           </div>
         )}
       </div>
     </div>
   );
-} 
+}

@@ -63,9 +63,35 @@ export async function GET(req: NextRequest) {
       },
     }));
 
-    // TODO: Add membership orders if needed
+    // Fetch memberships for the user
+    const memberships = await prisma.membership.findMany({
+      where: { userId: session.user.id },
+      orderBy: { startDate: 'desc' },
+    });
 
-    return NextResponse.json({ orders });
+    const now = new Date();
+
+    // Map memberships to Order format with expiry detection
+    const membershipOrders: any[] = memberships.map(m => {
+      const isExpired = m.endDate && new Date(m.endDate) < now;
+      return {
+        type: 'membership',
+        id: m.id,
+        date: m.startDate,
+        details: {
+          planId: m.planId,
+          status: isExpired ? 'expired' : m.status,
+          endDate: m.endDate,
+        },
+      };
+    });
+
+    // Combine and sort by date desc
+    const allOrders = [...orders, ...membershipOrders].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    return NextResponse.json({ orders: allOrders });
   } catch (error) {
     console.error('Failed to fetch orders:', error);
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });

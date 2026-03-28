@@ -4,8 +4,6 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
 import { compare } from 'bcrypt'
 import GoogleProvider from 'next-auth/providers/google'
-import FacebookProvider from 'next-auth/providers/facebook'
-import type { FacebookProfile } from 'next-auth/providers/facebook'
 import type { GoogleProfile } from 'next-auth/providers/google'
 
 declare module 'next-auth' {
@@ -15,11 +13,10 @@ declare module 'next-auth' {
     name?: string | null;
     image?: string | null;
     username?: string | null;
-<<<<<<< HEAD
-    roles?: string[] | null;
-=======
-    role?: string | null;
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+    roles?: string | null;
+    walletBalance?: number | null;
+    isMember?: boolean | null;
+    membershipType?: string | null;
   }
 
   interface Session {
@@ -29,11 +26,10 @@ declare module 'next-auth' {
       name?: string | null;
       image?: string | null;
       username?: string | null;
-<<<<<<< HEAD
-      roles?: string[] | null;
-=======
-      role?: string | null;
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+      roles?: string | null;
+      walletBalance?: number | null;
+      isMember?: boolean | null;
+      membershipType?: string | null;
     }
   }
 }
@@ -88,11 +84,10 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           image: user.image,
           username: user.username,
-<<<<<<< HEAD
-          roles: (user as any).roles || ['user'],
-=======
-          role: user.role,
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+          isMember: user.isMember,
+          membershipType: user.membershipType,
+          walletBalance: user.walletBalance || 0,
+          roles: user.roles || 'user',
         }
       }
     }),
@@ -109,46 +104,21 @@ export const authOptions: NextAuthOptions = {
         }
       }
     }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID!,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: 'email,public_profile'
-        }
-      },
-      profile(profile: FacebookProfile) {
-        return {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture?.data?.url || `https://graph.facebook.com/${profile.id}/picture?type=large`,
-          username: profile.email?.split('@')[0] || profile.id,
-<<<<<<< HEAD
-          birthday: profile.birthday // This may be undefined, handle accordingly elsewhere
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
-        }
-      }
-    }),
   ],
   callbacks: {
     async session({ session, token }) {
-<<<<<<< HEAD
       console.log('session callback', { session, token });
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+
       if (token) {
         session.user.id = token.id as string
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.image = token.picture as string
         session.user.username = token.username as string
-<<<<<<< HEAD
-        session.user.roles = token.roles as string[]
-=======
-        session.user.role = token.role as string
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+        session.user.roles = token.roles as string
+        session.user.walletBalance = token.walletBalance as number
+        session.user.isMember = token.isMember as boolean
+        session.user.membershipType = token.membershipType as string
       }
       return session
     },
@@ -160,27 +130,17 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name
         token.picture = user.image
         token.username = user.username
-<<<<<<< HEAD
         token.roles = user.roles
-=======
-        token.role = user.role
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+        token.walletBalance = user.walletBalance
+        token.isMember = user.isMember
+        token.membershipType = user.membershipType
       }
       return token
     },
     async signIn({ user, account, profile }) {
-<<<<<<< HEAD
       console.log('signIn callback', { user, account, profile });
-      // Update lastLogin for all providers
-      if (user?.email) {
-        await prisma.user.update({
-          where: { email: user.email },
-          data: { lastLogin: new Date() },
-        });
-      }
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
-      if (account?.provider === 'google' || account?.provider === 'facebook') {
+
+      if (account?.provider === 'google') {
         try {
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email! },
@@ -220,7 +180,6 @@ export const authOptions: NextAuthOptions = {
                 image:
                   user.image ||
                   (account?.provider === 'google' && (profile as import('next-auth/providers/google').GoogleProfile).picture) ||
-                  (account?.provider === 'facebook' && (profile as import('next-auth/providers/facebook').FacebookProfile).picture?.data?.url) ||
                   existingUser.image,
                 emailVerified: new Date(),
               }
@@ -244,11 +203,7 @@ export const authOptions: NextAuthOptions = {
                 name: user.name,
                 image: user.image,
                 username: uniqueUsername,
-<<<<<<< HEAD
-                roles: ['user'],
-=======
-                role: 'user',
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+                roles: 'user',
                 emailVerified: new Date(),
                 profileInitialized: true,
                 favoriteTeam: 'FC Escuela',
@@ -265,11 +220,7 @@ export const authOptions: NextAuthOptions = {
                     expires_at: account.expires_at,
                   }
                 }
-<<<<<<< HEAD
-              } as any
-=======
               }
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
             })
           }
           return true
@@ -278,33 +229,27 @@ export const authOptions: NextAuthOptions = {
           return false
         }
       }
-<<<<<<< HEAD
-      // Age check for Facebook
-      if (account?.provider === 'facebook') {
-        const birthday = (profile as { birthday?: string })?.birthday; // Format: MM/DD/YYYY
-        if (birthday) {
-          const [month, day, year] = birthday.split('/').map(Number);
-          const birthDate = new Date(year, month - 1, day);
-          const today = new Date();
-          let age = today.getFullYear() - birthDate.getFullYear();
-          const m = today.getMonth() - birthDate.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-          }
-          if (age < 18) {
-            return false; // Deny login if under 18
-          }
-        } else {
-          return false; // Deny login if birthday missing
-        }
-      }
-=======
->>>>>>> dc88bcb52c9f7dacba2cf72bf175ed0ac14d1845
+
+
       return true
     }
   },
+  events: {
+    async signIn({ user }) {
+      if (user?.email) {
+        try {
+          await prisma.user.update({
+            where: { email: user.email },
+            data: { lastLogin: new Date() },
+          });
+        } catch (err) {
+          console.error('Error updating lastLogin:', err);
+        }
+      }
+    },
+  },
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/login',
     error: '/auth/error',
     signOut: '/auth/signout',
   },

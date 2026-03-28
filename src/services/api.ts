@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -47,23 +47,23 @@ export interface User {
 // Match API calls (no caching)
 export const matchApi = {
   getAll: async () => {
-    const response = await api.get<Match[]>('/match');
+    const response = await api.get<Match[]>('/matches');
     return response;
   },
   getById: async (id: number) => {
-    const response = await api.get<Match>(`/match/${id}`);
+    const response = await api.get<Match>(`/matches/${id}`);
     return response;
   },
   create: async (match: Omit<Match, 'id'>) => {
-    const response = await api.post<Match>('/match', match);
+    const response = await api.post<Match>('/matches', match);
     return response;
   },
   update: async (id: number, match: Match) => {
-    const response = await api.put(`/match/${id}`, match);
+    const response = await api.put(`/matches/${id}`, match);
     return response;
   },
   delete: async (id: number) => {
-    const response = await api.delete(`/match/${id}`);
+    const response = await api.delete(`/matches/${id}`);
     return response;
   },
 };
@@ -71,23 +71,23 @@ export const matchApi = {
 // Ticket API calls (no caching)
 export const ticketApi = {
   getAll: async () => {
-    const response = await api.get<Ticket[]>('/ticket');
+    const response = await api.get<Ticket[]>('/tickets');
     return response;
   },
   getById: async (id: number) => {
-    const response = await api.get<Ticket>(`/ticket/${id}`);
+    const response = await api.get<Ticket>(`/tickets/${id}`);
     return response;
   },
   create: async (ticket: Omit<Ticket, 'id'>) => {
-    const response = await api.post<Ticket>('/ticket', ticket);
+    const response = await api.post<Ticket>('/tickets', ticket);
     return response;
   },
   update: async (id: number, ticket: Ticket) => {
-    const response = await api.put(`/ticket/${id}`, ticket);
+    const response = await api.put(`/tickets/${id}`, ticket);
     return response;
   },
   delete: async (id: number) => {
-    const response = await api.delete(`/ticket/${id}`);
+    const response = await api.delete(`/tickets/${id}`);
     return response;
   },
 };
@@ -95,15 +95,15 @@ export const ticketApi = {
 // User API calls (no caching)
 export const userApi = {
   login: async (email: string, password: string) => {
-    const response = await api.post<{ token: string; user: User }>('/user/login', { email, password });
+    const response = await api.post<{ token: string; user: User }>('/users/login', { email, password });
     return response;
   },
   register: async (userData: { username: string; email: string; password: string }) => {
-    const response = await api.post<User>('/user/register', userData);
+    const response = await api.post<User>('/users/register', userData);
     return response;
   },
   getProfile: async () => {
-    const response = await api.get<User>('/user/profile');
+    const response = await api.get<User>('/users/profile');
     return response;
   },
 };

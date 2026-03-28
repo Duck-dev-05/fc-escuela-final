@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { FaUserEdit, FaCamera, FaSave, FaTimes, FaLock, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 
 interface Profile {
   name: string;
@@ -21,32 +22,15 @@ interface Profile {
   [key: string]: string | undefined;
 }
 
-// List of countries A-Z
 const countries = [
   "Afghanistan", "Albania", "Algeria", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan",
-  "Bangladesh", "Belarus", "Belgium", "Bolivia", "Bosnia and Herzegovina", "Brazil", "Bulgaria",
-  "Cambodia", "Cameroon", "Canada", "Chile", "China", "Colombia", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czechia (Czech Republic)",
-  "Denmark", "Dominican Republic",
-  "Ecuador", "Egypt", "El Salvador", "Estonia", "Ethiopia",
-  "Finland", "France",
-  "Georgia", "Germany", "Ghana", "Greece", "Guatemala",
-  "Haiti", "Honduras", "Hungary",
-  "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy",
-  "Jamaica", "Japan", "Jordan",
-  "Kazakhstan", "Kenya", "Kuwait",
-  "Laos", "Latvia", "Lebanon", "Libya", "Lithuania", "Luxembourg",
-  "Madagascar", "Malaysia", "Mexico", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar (formerly Burma)",
-  "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway",
-  "Oman",
-  "Pakistan", "Panama", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
-  "Qatar",
-  "Romania", "Russia", "Rwanda",
-  "Saudi Arabia", "Senegal", "Serbia", "Singapore", "Slovakia", "Slovenia", "Somalia", "South Africa", "South Korea", "Spain", "Sri Lanka", "Sudan", "Sweden", "Switzerland", "Syria",
-  "Tajikistan", "Tanzania", "Thailand", "Tunisia", "Turkey", "Turkmenistan",
-  "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan",
-  "Venezuela", "Vietnam",
-  "Yemen",
-  "Zambia", "Zimbabwe"
+  "Bangladesh", "Belarus", "Belgium", "Bolivia", "Bosnia", "Brazil", "Bulgaria",
+  "Cambodia", "Cameroon", "Canada", "Chile", "China", "Colombia", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czechia",
+  "Denmark", "Dominican Republic", "Ecuador", "Egypt", "Finland", "France", "Germany", "Greece",
+  "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Japan", "Jordan",
+  "Kuwait", "Malaysia", "Mexico", "Netherlands", "New Zealand", "Norway", "Pakistan", "Peru", "Philippines",
+  "Poland", "Portugal", "Qatar", "Russia", "Saudi Arabia", "Singapore", "South Africa", "South Korea", "Spain",
+  "Sweden", "Switzerland", "Thailand", "Turkey", "UAE", "UK", "USA", "Vietnam"
 ];
 
 export default function EditProfilePage() {
@@ -60,7 +44,6 @@ export default function EditProfilePage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // Determine if user is social login (Google, Facebook, etc.)
   const isSocialLogin = Boolean(session?.user?.email && session?.user?.name && session?.user?.image);
 
   useEffect(() => {
@@ -104,7 +87,6 @@ export default function EditProfilePage() {
     setError("");
     setSuccess(false);
     try {
-      // Always send real social data for locked fields
       const submitProfile = { ...profile };
       if (isSocialLogin) {
         submitProfile.name = session?.user?.name || '';
@@ -112,7 +94,6 @@ export default function EditProfilePage() {
         submitProfile.username = session?.user?.email?.split("@")[0] || '';
       }
 
-      // If there's a new image, upload it first
       if (imageFile) {
         const formData = new FormData();
         formData.append('image', imageFile);
@@ -130,25 +111,29 @@ export default function EditProfilePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submitProfile),
       });
-      if (!res.ok) {
-        throw new Error("Failed to update profile");
-      }
-      // Refresh session so Navbar shows new image
+      if (!res.ok) throw new Error("Failed to update profile");
+      
       await update();
       setSaving(false);
       setSuccess(true);
-      setTimeout(() => router.push("/profile"), 1200);
+      setTimeout(() => router.push("/profile"), 1500);
     } catch (err) {
       setSaving(false);
-      setError("Failed to update profile. Please try again.");
+      setError("Synchronization Failure: Write request rejected.");
     }
   }
 
   if (loading || !profile) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
+           <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Profile Core...</p>
+        </div>
+      </div>
+    );
   }
 
-  // For social login, always use session data for locked fields
   const lockedFields = isSocialLogin ? {
     name: session?.user?.name || '',
     email: session?.user?.email || '',
@@ -156,178 +141,167 @@ export default function EditProfilePage() {
   } : {};
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-12 px-4 flex flex-col items-center">
-      {/* Toast notification */}
-      {success && (
-        <div className="fixed top-6 right-6 z-50">
-          <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in">
-            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-            <span className="font-semibold">Profile updated successfully!</span>
+    <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden animate-scan">
+      {/* Ghost Typography */}
+      <div className="absolute top-10 right-10 select-none pointer-events-none opacity-5">
+        <span className="text-[15vw] ghost-text leading-none uppercase text-right">MODIFY</span>
+      </div>
+
+      {/* Notifications */}
+      <div className="fixed top-24 right-6 z-50 space-y-4">
+        {success && (
+          <div className="glass-card border-green-500/50 bg-green-500/10 px-6 py-4 flex items-center gap-3 animate-slide-up">
+            <FaCheckCircle className="text-green-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-white">Registry Updated</span>
           </div>
-        </div>
-      )}
-      {error && (
-        <div className="fixed top-6 right-6 z-50">
-          <div className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in">
-            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-            <span className="font-semibold">{error}</span>
+        )}
+        {error && (
+          <div className="glass-card border-red-500/50 bg-red-500/10 px-6 py-4 flex items-center gap-3 animate-slide-up">
+            <FaExclamationTriangle className="text-red-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-white">{error}</span>
           </div>
+        )}
+      </div>
+
+      <div className="max-w-3xl mx-auto glass-card hud-border p-10 animate-slide-up relative z-10">
+        <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/5">
+           <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
+                 <FaUserEdit className="text-yellow-500 text-xl" />
+              </div>
+              <div>
+                 <h1 className="text-2xl font-black text-white uppercase tracking-widest">Protocol Delta</h1>
+                 <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest leading-none mt-1">Registry Modification Interface</p>
+              </div>
+           </div>
         </div>
-      )}
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-blue-700 mb-6 text-center">Edit Profile</h1>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Profile Image Upload */}
-          <div className="flex flex-col items-center mb-6">
-            <div className="relative">
-              {imagePreview || profile?.image ? (
-                <img
-                  src={imagePreview || profile?.image}
-                  alt="Profile"
-                  className="h-32 w-32 rounded-full object-cover border-4 border-blue-200 shadow"
-                />
-              ) : (
-                <div className="h-32 w-32 rounded-full bg-gray-200 flex items-center justify-center">
-                  <svg className="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-              )}
-              <label
-                htmlFor="image-upload"
-                className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
-                title="Change profile picture"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </label>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
+
+        <form onSubmit={handleSubmit} className="space-y-12">
+          {/* Image Upload Area */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative w-32 h-32 rounded-2xl overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all">
+                {imagePreview || profile?.image ? (
+                  <img src={imagePreview || profile?.image} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                    <FaUserEdit className="text-4xl text-slate-700" />
+                  </div>
+                )}
+                <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  <FaCamera className="text-2xl mb-1" />
+                  <span className="text-[8px] font-black uppercase tracking-widest">Upload Key</span>
+                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                </label>
+              </div>
             </div>
-            <p className="text-sm text-gray-500 mt-2">Click the camera icon to change your profile picture</p>
+            <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Visual Identifier Synthesis</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
-              <div className="relative">
-                <input
-                  name="name"
-                  value={lockedFields.name || profile.name}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 pr-10"
-                  readOnly={isSocialLogin}
-                />
-                {isSocialLogin && (
-                  <span className="absolute right-2 top-2 text-blue-400" title="This field is managed by your social account.">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.104.896-2 2-2s2 .896 2 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2c0-1.104.896-2 2-2z" /></svg>
-                  </span>
-                )}
+          {/* Form Fields Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            {[
+              { label: 'Operator Name', name: 'name', type: 'text', locked: isSocialLogin },
+              { label: 'Transmission Code', name: 'username', type: 'text', locked: isSocialLogin },
+              { label: 'Primary Terminal', name: 'email', type: 'email', locked: isSocialLogin },
+              { label: 'Communications', name: 'phone', type: 'text' },
+              { label: 'Origin Chronology', name: 'dob', type: 'date' },
+              { label: 'Language Class', name: 'language', type: 'text' },
+              { label: 'Primary Occupation', name: 'occupation', type: 'text' },
+              { label: 'Liaison Unit', name: 'favoriteTeam', type: 'text' },
+            ].map((field) => (
+              <div key={field.name} className="relative group">
+                <div className="flex justify-between items-center mb-1.5 px-1">
+                  <label className="text-[9px] text-slate-500 font-black uppercase tracking-widest">{field.label}</label>
+                  {field.locked && <FaLock className="text-[9px] text-yellow-500" title="System Locked" />}
+                </div>
+                <div className="relative">
+                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-0 bg-yellow-500 group-focus-within:h-8 transition-all" />
+                  <input
+                    name={field.name}
+                    type={field.type}
+                    value={field.locked ? lockedFields[field.name as keyof typeof lockedFields] : profile[field.name]}
+                    onChange={handleChange}
+                    readOnly={field.locked}
+                    className={`w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all ${field.locked ? 'opacity-50 cursor-not-allowed' : ''} placeholder-white/10`}
+                    placeholder={`Assign ${field.label}...`}
+                  />
+                </div>
               </div>
+            ))}
+            
+            <div className="relative group">
+               <label className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1.5 px-1">Geo-Location Nationality</label>
+               <select 
+                 name="nationality" 
+                 value={profile.nationality || ""} 
+                 onChange={handleChange}
+                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all appearance-none"
+               >
+                 <option value="" className="bg-slate-900">Select Geo-Origin</option>
+                 {countries.map(c => <option key={c} value={c} className="bg-slate-900">{c}</option>)}
+               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Username</label>
-              <div className="relative">
-                <input
-                  name="username"
-                  value={lockedFields.username || profile.username}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 pr-10"
-                  readOnly={isSocialLogin}
-                />
-                {isSocialLogin && (
-                  <span className="absolute right-2 top-2 text-blue-400" title="This field is managed by your social account.">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.104.896-2 2-2s2 .896 2 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2c0-1.104.896-2 2-2z" /></svg>
-                  </span>
-                )}
-              </div>
+
+            <div className="relative group">
+               <label className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1.5 px-1">Gender Classification</label>
+               <select 
+                 name="gender" 
+                 value={profile.gender || ""} 
+                 onChange={handleChange}
+                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all appearance-none"
+               >
+                 <option value="" className="bg-slate-900">Classification</option>
+                 <option value="Male" className="bg-slate-900">Male</option>
+                 <option value="Female" className="bg-slate-900">Female</option>
+                 <option value="Other" className="bg-slate-900">Other</option>
+               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <div className="relative">
-                <input
-                  name="email"
-                  value={lockedFields.email || profile.email}
-                  onChange={handleChange}
-                  type="email"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 pr-10"
-                  readOnly={isSocialLogin}
-                />
-                {isSocialLogin && (
-                  <span className="absolute right-2 top-2 text-blue-400" title="This field is managed by your social account.">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.104.896-2 2-2s2 .896 2 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2c0-1.104.896-2 2-2z" /></svg>
-                  </span>
-                )}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Phone</label>
-              <input name="phone" value={profile.phone} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-              <input name="dob" value={profile.dob} onChange={handleChange} type="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Gender</label>
-              <select name="gender" value={profile.gender} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nationality</label>
-              <select
-                name="nationality"
-                value={profile.nationality || ""}
+
+            <div className="md:col-span-2 relative group">
+              <label className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1.5 px-1">Operational Bio / Notes</label>
+              <textarea
+                name="bio"
+                value={profile.bio}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select a country</option>
-                {countries.map((country) => (
-                  <option key={country} value={country}>{country}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Language</label>
-              <input name="language" value={profile.language} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Occupation</label>
-              <input name="occupation" value={profile.occupation} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Favorite Team</label>
-              <input name="favoriteTeam" value={profile.favoriteTeam} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Address</label>
-              <input name="address" value={profile.address} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Website</label>
-              <input name="website" value={profile.website} onChange={handleChange} type="url" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Bio</label>
-              <textarea name="bio" value={profile.bio} onChange={handleChange} rows={3} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                rows={4}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all placeholder-white/10"
+                placeholder="Operational brief..."
+              />
             </div>
           </div>
-          <div className="flex justify-end gap-3 mt-6">
-            <button type="button" onClick={() => router.push('/profile')} className="px-6 py-2 rounded-full bg-gray-200 text-blue-700 font-semibold shadow hover:bg-gray-300 transition-all">Cancel</button>
-            <button type="submit" disabled={saving} className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-all disabled:opacity-60">{saving ? 'Saving...' : 'Save'}</button>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-10 border-t border-white/5">
+             <button
+               type="button"
+               onClick={() => router.push('/profile')}
+               className="flex-1 px-8 py-4 glass-card hud-border text-slate-400 hover:text-white hover:bg-white/5 transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3"
+             >
+               <FaTimes />
+               Abort Changes
+             </button>
+             <button
+               type="submit"
+               disabled={saving}
+               className="btn-primary flex-1 py-4 text-[10px] flex items-center justify-center gap-3"
+             >
+               {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-slate-950"></div>
+                    Sychronizing Registry...
+                  </>
+               ) : (
+                  <>
+                    <FaSave />
+                    Commit Core Protocol
+                  </>
+               )}
+             </button>
           </div>
         </form>
       </div>
     </div>
   );
-} 
+}

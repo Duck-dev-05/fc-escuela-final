@@ -63,6 +63,12 @@ export async function GET(req: NextRequest) {
         isMember: true,
         membershipType: true,
         memberSince: true,
+        memberships: {
+          orderBy: {
+            startDate: 'desc'
+          },
+          take: 1
+        },
         emailVerified: true,
       },
     });

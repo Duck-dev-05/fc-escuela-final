@@ -8,13 +8,13 @@ import { signOut } from 'next-auth/react';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAuthPage = pathname.startsWith('/auth/');
+  const isAuthPage = pathname.startsWith('/auth/') || pathname === '/login';
 
   // Cross-tab logout logic
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
       if (event.key === 'logout') {
-        signOut({ callbackUrl: '/auth/signin' });
+        signOut({ callbackUrl: '/login' });
       }
     };
     window.addEventListener('storage', onStorage);
@@ -24,12 +24,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <>
       <Providers>
-        {!isAuthPage && <Navbar />}
-        <main className="container mx-auto px-4 py-8">
+        <Navbar />
+        <main className={!isAuthPage ? "container mx-auto px-4 py-8" : ""}>
           {children}
         </main>
       </Providers>
-      {!isAuthPage && <Footer />}
+      <Footer />
     </>
   );
-} 
+}

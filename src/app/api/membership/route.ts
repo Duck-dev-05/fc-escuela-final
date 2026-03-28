@@ -3,6 +3,9 @@ import Stripe from 'stripe';
 import type { Stripe as StripeType } from 'stripe';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { getCache, setCache, CACHE_TTL } from '@/lib/redis';
+
+const MEMBERSHIP_CACHE_KEY = 'membership_plans';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil',
@@ -50,7 +53,18 @@ const memberships = [
 ];
 
 export async function GET() {
-  return NextResponse.json(memberships);
+  try {
+    // Try to get from cache
+    const cachedMemberships = await getCache(MEMBERSHIP_CACHE_KEY);
+    if (cachedMemberships) return NextResponse.json(cachedMemberships);
+
+    // Set cache (long TTL since it's mostly static)
+    await setCache(MEMBERSHIP_CACHE_KEY, memberships, CACHE_TTL.SQUAD);
+
+    return NextResponse.json(memberships);
+  } catch (error) {
+    return NextResponse.json(memberships); // Fallback to hardcoded list
+  }
 }
 
 export async function POST(request: Request) {

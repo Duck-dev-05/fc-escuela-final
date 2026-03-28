@@ -1,10 +1,17 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { LockClosedIcon, UserCircleIcon, StarIcon, PhoneIcon, EnvelopeIcon, UserIcon, IdentificationIcon, MapPinIcon, CalendarIcon, CheckCircleIcon, UserGroupIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
+import { 
+  FaLock, FaUserCircle, FaStar, FaPhone, FaEnvelope, 
+  FaUser, FaIdCard, FaMapMarkerAlt, FaCalendarAlt, 
+  FaCheckCircle, FaUsers, FaThLarge, FaEdit, FaShieldAlt,
+  FaExclamationTriangle
+} from 'react-icons/fa';
 import { useState, useEffect } from "react";
 import { formatDistanceToNow, format } from 'date-fns';
 import { Tab } from '@headlessui/react';
+import Image from "next/image";
+import { FaTrophy, FaMedal, FaChartPie, FaLightbulb, FaQuoteLeft } from 'react-icons/fa';
 
 interface Profile {
   id?: string;
@@ -28,25 +35,31 @@ interface Profile {
   accounts?: any[];
   isMember?: boolean;
   membershipType?: string;
-  roles?: string[];
+  roles?: string;
 }
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [isMember, setIsMember] = useState<boolean | null>(null);
-  const [membershipType, setMembershipType] = useState<string>('Standard');
-  const [membershipExpiry, setMembershipExpiry] = useState<Date | null>(null);
-  const [joinDate, setJoinDate] = useState<Date | null>(null);
-  const [lastLogin, setLastLogin] = useState<Date | null>(null);
-  const [sessionExpiry, setSessionExpiry] = useState<Date | null>(null);
-  const [socialLinks, setSocialLinks] = useState<any[]>([]);
-  const profileCompletion = 80; // percent, mocked
+   const [profile, setProfile] = useState<Profile | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState("");
+   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
-  const tabs = ['Account', 'Membership', 'Security'];
+   useEffect(() => {
+     const handleMouseMove = (e: MouseEvent) => {
+       setMousePos({
+         x: (e.clientX / window.innerWidth) * 100,
+         y: (e.clientY / window.innerHeight) * 100,
+       });
+     };
+     window.addEventListener('mousemove', handleMouseMove);
+     return () => window.removeEventListener('mousemove', handleMouseMove);
+   }, []);
+
+   const tabs = profile?.roles === 'admin' 
+     ? ['Tactical Overview', 'Personnel Registry', 'Security Protocols'] 
+     : ['Account', 'Membership', 'Security'];
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
@@ -72,340 +85,482 @@ export default function ProfilePage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="flex flex-col items-center gap-6 animate-pulse">
+          <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
+          <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Command Center...</p>
+        </div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <LockClosedIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h2 className="mt-4 text-xl font-bold text-gray-900">Login Required</h2>
-          <p className="mt-2 text-gray-600">Please sign in to view your profile.</p>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-md w-full glass-card hud-border p-10 text-center animate-slide-up">
+          <FaLock className="mx-auto h-12 w-12 text-yellow-500/50 mb-6" />
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">Access Restricted</h2>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-8">Authentication Protocol Required</p>
           <button
-            onClick={() => router.push('/auth/signin')}
-            className="mt-6 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={() => router.push('/login')}
+            className="btn-primary w-full"
           >
-            Sign In
+            Authenticate
           </button>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center text-red-600 font-semibold">{error}</div>
-      </div>
-    );
-  }
+  const profileCompletionFallback = profile ? Math.round([
+    profile.name, profile.username, profile.email, profile.phone,
+    profile.dob, profile.address, profile.gender, profile.nationality,
+    profile.language, profile.bio, profile.website, profile.occupation,
+    profile.favoriteTeam,
+  ].filter(Boolean).length / 13 * 100) : 0;
+ 
+  const now = new Date();
 
-  // Profile fields fallback
-  const joinDateFallback = profile?.memberSince ? new Date(profile.memberSince) : null;
-  const lastLoginFallback = null; // You can add this if you track it
-  const sessionExpiryFallback = null; // You can add this if you track it
-  const profileCompletionFallback = [
-    profile?.name,
-    profile?.username,
-    profile?.email,
-    profile?.phone,
-    profile?.dob,
-    profile?.address,
-    profile?.gender,
-    profile?.nationality,
-    profile?.language,
-    profile?.bio,
-    profile?.website,
-    profile?.occupation,
-    profile?.favoriteTeam,
-  ].filter(Boolean).length / 13 * 100;
-
-  // Use session info for social login if available
-  const displayName = session?.user?.name || profile?.name || 'User';
+  const displayName = session?.user?.name || profile?.name || 'Operator';
   const displayEmail = session?.user?.email || profile?.email || '';
-  const displayImage = session?.user?.image || profile?.image || 'https://www.gstatic.com/images/branding/product/1x/avatar_square_blue_512dp.png';
-  const displayId = profile?.id || '';
+  const displayImage = session?.user?.image || profile?.image || null;
+  const displayId = profile?.id || 'UNA-000';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-12 px-4 flex flex-col items-center">
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-lg w-full flex flex-col items-center border border-blue-100">
-        <div className="relative w-full mb-4">
-          {(session?.user?.roles || profile?.roles || []).includes('admin') && (
-            <a
-              href="http://localhost:3001/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute -top-8 right-0 flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-blue-700 to-blue-500 text-white font-bold shadow-lg hover:from-blue-800 hover:to-blue-600 transition-all text-lg z-10 border-4 border-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              title="Go to Admin Dashboard"
-              style={{ minWidth: '200px', justifyContent: 'center' }}
-            >
-              <Squares2X2Icon className="h-6 w-6 mr-2 text-white" />
-              Admin Dashboard
-            </a>
-          )}
+    <div className="min-h-screen py-20 px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
+       {/* Neural_Orb & Cinematic Background */}
+       <div className="absolute inset-0 pointer-events-none">
+          <div 
+             className="absolute w-[1000px] h-[1000px] rounded-full bg-yellow-500/[0.04] blur-[150px] transition-all duration-1000 ease-out z-0"
+             style={{ 
+                left: `${mousePos.x}%`, 
+                top: `${mousePos.y}%`, 
+                transform: 'translate(-50%, -50%)' 
+             }} 
+          />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.2] brightness-50 z-10" />
+          <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-yellow-500/[0.04] to-transparent z-10" />
+          
+          {/* Ghost Typography */}
+          <div className="absolute top-20 left-10 select-none pointer-events-none opacity-[0.03] whitespace-nowrap z-0">
+             <span className="text-[20vw] font-black ghost-text leading-none uppercase italic tracking-tighter">OPERATOR_INTEL</span>
+          </div>
+       </div>
+
+       <div className="max-w-[1400px] mx-auto relative z-20 pt-20">
+          {/* Maximum Impact Header */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-28 gap-16 animate-slide-up">
+              <div className="flex flex-col gap-10">
+                 <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 text-[9px] text-yellow-500 font-black uppercase tracking-[0.6em]">
+                       <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                       Command_Access: Level_01
+                    </div>
+                    <div className="w-px h-3 bg-white/10" />
+                    <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">REGISTRY: {displayId.toUpperCase()}</span>
+                 </div>
+                 
+                 <div className="relative group/header">
+                    <div className="absolute -top-6 -left-6 w-8 h-8 border-t-2 border-l-2 border-yellow-500/20 group-hover/header:border-yellow-500 transition-colors" />
+                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.85] italic group-hover:scale-[1.02] transition-transform duration-700">
+                       Profile <br />
+                       <span className="text-7xl md:text-9xl not-italic text-slate-800 tracking-[-0.05em] group-hover:text-white transition-colors">Hub</span>
+                    </h1>
+                 </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-10 w-full lg:w-auto">
+                 <div className="flex items-center gap-12 text-[10px] font-black text-slate-700 tracking-[0.4em] uppercase border-b border-white/5 pb-4 w-full justify-end">
+                    <span>SECTOR_ACCOUNT</span>
+                    <span>//</span>
+                    <span className="text-yellow-500/50 flex items-center gap-3 font-mono">
+                       {now.toISOString().split('T')[0]} // {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                 </div>
+                 <div className="px-6 py-2 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-sm skew-x-[-15deg] shadow-[0_0_30px_rgba(234,179,8,0.3)]">
+                    <span className="block skew-x-[15deg]">{profile?.roles === 'admin' ? 'Head_Coach' : 'Operator'}</span>
+                 </div>
+              </div>
+          </div>
+        <div className="flex flex-col gap-8">
+          
+          {/* Elite Profile Header Node */}
+          <div className="glass-card hud-border p-10 md:p-16 bg-slate-950/40 border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.8)] animate-slide-up relative overflow-hidden group mb-16">
+             {/* Technical Corner Accents */}
+             <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-yellow-500/10 group-hover:border-yellow-500 transition-colors" />
+             <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-yellow-500/10 group-hover:border-yellow-500 transition-colors" />
+             
+             <div className="flex flex-col md:flex-row items-center md:items-end gap-12 relative z-10">
+                <div className="relative shrink-0">
+                   <div className="absolute inset-0 bg-yellow-500/10 blur-[80px] rounded-full animate-pulse" />
+                   <div className="w-40 h-40 md:w-56 md:h-56 glass-card hud-border border-white/10 p-2 bg-slate-950/80 relative overflow-hidden group/avatar shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                      {displayImage ? (
+                         <img src={displayImage} alt="O" className="w-full h-full object-cover group-hover/avatar:scale-110 transition-transform duration-[2s] ease-out opacity-70 group-hover/avatar:opacity-100" />
+                      ) : (
+                         <div className="w-full h-full flex items-center justify-center bg-white/[0.02]">
+                            <FaUserCircle className="text-8xl text-slate-800" />
+                         </div>
+                      )}
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-yellow-500/10 to-transparent pointer-events-none" />
+                      {/* Scanning Line */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-yellow-500/10 to-transparent h-1/4 w-full animate-scan opacity-0 group-hover/avatar:opacity-100" />
+                   </div>
+                </div>
+
+                <div className="flex-1 text-center md:text-left min-w-0">
+                   <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
+                      <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,1)]" />
+                      <span className="text-[10px] text-green-500 font-black uppercase tracking-[0.4em]">Unit_Synchronized</span>
+                   </div>
+                   <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-[0.8] mb-8 italic group-hover:text-yellow-50 transition-colors">
+                      {displayName}
+                   </h1>
+                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-12">
+                      <div className="flex flex-col gap-2">
+                         <span className="text-[9px] text-slate-600 font-black uppercase tracking-[0.3em]">Communication_Link</span>
+                         <span className="text-sm text-yellow-500/80 font-bold tracking-widest italic">{displayEmail}</span>
+                      </div>
+                      <div className="w-px h-10 bg-white/5 hidden sm:block" />
+                      <div className="flex flex-col gap-2">
+                         <span className="text-[9px] text-slate-600 font-black uppercase tracking-[0.3em]">Clearance_Role</span>
+                         <span className="text-sm text-white font-black uppercase tracking-[0.2em]">{profile?.roles === 'admin' ? 'Head // Coach' : 'Personnel'}</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
+             
+             {/* Neural Link Line */}
+             <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-yellow-500 group-hover:w-full transition-all duration-[2s]" />
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-8">
+             {/* Side Metrics HUD */}
+             <div className="w-full lg:w-72 shrink-0 space-y-6">
+                <div className="glass-card hud-border p-6 bg-slate-950/60 backdrop-blur-xl">
+                   <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center justify-between">
+                      <span>Profile Integrity</span>
+                      <span className="text-yellow-500 font-mono">{profileCompletionFallback}%</span>
+                   </div>
+                   <div className="relative h-40 flex items-center justify-center">
+                      <svg className="w-32 h-32 transform -rotate-90">
+                         <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-white/5" />
+                         <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="4" fill="transparent" strokeDasharray="351.85" strokeDashoffset={351.85 * (1 - profileCompletionFallback / 100)} className="text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-all duration-1000" />
+                      </svg>
+                      <div className="absolute flex flex-col items-center">
+                         <span className="text-2xl font-black text-white italic">{profileCompletionFallback}</span>
+                         <span className="text-[7px] text-slate-500 font-black uppercase tracking-[0.2em]">Completion</span>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="glass-card hud-border p-4 bg-yellow-500/5 group hover:bg-yellow-500 transition-all duration-500 cursor-pointer overflow-hidden relative">
+                   <div className="relative z-10 flex items-center justify-between" onClick={() => router.push('/profile/edit')}>
+                      <div className="flex items-center gap-3">
+                         <FaEdit className="text-yellow-500 group-hover:text-slate-950 transition-colors" />
+                         <span className="text-[10px] font-black text-yellow-500 group-hover:text-slate-950 uppercase tracking-widest transition-colors">Edit Profile</span>
+                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center group-hover:bg-slate-950/20 transition-colors">
+                         <FaStar className="text-[10px] text-yellow-500 group-hover:text-slate-950 transition-colors" />
+                      </div>
+                   </div>
+                   <div className="absolute top-0 right-0 w-24 h-full bg-white/5 translate-x-32 group-hover:translate-x-0 transition-transform duration-700 skew-x-[30deg]" />
+                </div>
+             </div>
+
+             {/* Main Command Panes */}
+             <div className="flex-1 min-w-0">
+                <Tab.Group>
+                   <Tab.List className="flex gap-4 p-1 glass-card hud-border border-white/5 rounded-xl mb-8 bg-slate-950/40">
+                      {tabs.map((tab) => (
+                         <Tab
+                           key={tab}
+                           className={({ selected }) =>
+                             classNames(
+                               'flex-1 py-4 text-[11px] font-black uppercase tracking-[0.3em] rounded-lg transition-all relative overflow-hidden group/tab',
+                               selected
+                                 ? 'bg-yellow-500 text-slate-950 shadow-[0_10px_30px_rgba(234,179,8,0.2)]'
+                                 : 'text-slate-500 hover:text-white hover:bg-white/[0.04]'
+                             )
+                           }
+                         >
+                            <span className="relative z-10">{tab}</span>
+                         </Tab>
+                      ))}
+                   </Tab.List>
+                   
+                   <Tab.Panels className="focus:outline-none">
+                      <Tab.Panel className="space-y-12 outline-none animate-slide-up">
+                         {profile?.roles === 'admin' && (
+                            <div className="space-y-12 mb-12">
+                               {/* Battle_IQ & Win Rate Node */}
+                               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                  <div className="glass-card hud-border p-8 bg-slate-950/60 relative overflow-hidden group/iq flex flex-col items-center justify-center min-h-[300px]">
+                                     <div className="absolute top-4 left-4 flex items-center gap-2">
+                                        <FaChartPie className="text-yellow-500 text-[10px]" />
+                                        <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.3em]">Battle_IQ Analytics</span>
+                                     </div>
+                                     <div className="relative w-40 h-40 flex items-center justify-center mb-4">
+                                        <svg className="w-full h-full transform -rotate-90">
+                                           <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-white/5" />
+                                           <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="6" fill="transparent" strokeDasharray="439.8" strokeDashoffset="87.96" className="text-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.5)] transition-all duration-[2s] ease-out" />
+                                        </svg>
+                                        <div className="absolute flex flex-col items-center">
+                                           <span className="text-5xl font-black text-white italic tracking-tighter leading-none">82%</span>
+                                           <span className="text-[8px] text-yellow-500/50 font-black uppercase tracking-[0.2em] mt-1">Win_Rate</span>
+                                        </div>
+                                     </div>
+                                     <p className="text-[9px] text-slate-600 font-bold uppercase tracking-[0.4em] italic text-center">Elite Strategic Quotient</p>
+                                  </div>
+
+                                  <div className="md:col-span-2 glass-card hud-border p-10 bg-slate-950/40 relative overflow-hidden group/philosophy flex flex-col justify-between">
+                                     <div className="absolute top-0 right-0 p-6 opacity-5">
+                                        <FaQuoteLeft className="text-8xl text-white" />
+                                     </div>
+                                     <div className="relative z-10">
+                                        <div className="flex items-center gap-3 mb-8">
+                                           <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 shadow-[0_0_10px_orange]" />
+                                           <h3 className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em]">Tactical Philosophy</h3>
+                                        </div>
+                                        <p className="text-xl md:text-3xl font-black text-white uppercase tracking-tighter italic leading-[0.9] mb-10 max-w-xl group-hover:text-yellow-50 transition-colors">
+                                           "Aggression is the primary directive. We dominate the grid through high-frequency transitions and relentless spatial control."
+                                        </p>
+                                     </div>
+                                     <div className="flex items-center gap-8 border-t border-white/5 pt-8">
+                                        {[
+                                           { label: 'System', val: '2-3-1 Matrix' },
+                                           { label: 'Tempo', val: 'Overdrive' },
+                                           { label: 'Focus', val: 'Verticality' }
+                                        ].map((p, i) => (
+                                           <div key={i} className="flex flex-col gap-1">
+                                              <span className="text-[8px] text-slate-700 font-black uppercase tracking-widest">{p.label}</span>
+                                              <span className="text-[11px] text-yellow-500/80 font-mono font-bold uppercase">{p.val}</span>
+                                           </div>
+                                        ))}
+                                     </div>
+                                  </div>
+                               </div>
+
+                               {/* Trophy Cabinet: Cinematic Medal Display */}
+                               <div className="glass-card hud-border p-10 bg-slate-950/60 relative overflow-hidden group/cabinet">
+                                  <div className="flex items-center justify-between mb-12">
+                                     <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 glass-card hud-border border-yellow-500/30 flex items-center justify-center bg-yellow-500/5">
+                                           <FaTrophy className="text-yellow-500" />
+                                        </div>
+                                        <div>
+                                           <h3 className="text-[11px] font-black text-white uppercase tracking-[0.6em]">Championship Registry</h3>
+                                           <p className="text-[7px] text-slate-700 font-mono tracking-widest uppercase mt-1">Authenticated Honors // Level_01</p>
+                                        </div>
+                                     </div>
+                                     <div className="text-right">
+                                        <span className="text-4xl font-black text-slate-800 tracking-tighter italic group-hover/cabinet:text-yellow-500 transition-colors">04_Units</span>
+                                     </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                     {[
+                                        { title: 'Divisional Shield', year: '2025', icon: FaMedal, color: 'text-yellow-500' },
+                                        { title: 'Operational Cup', year: '2024', icon: FaTrophy, color: 'text-slate-400' },
+                                        { title: 'Vanguard Series', year: '2024', icon: FaStar, color: 'text-yellow-600' },
+                                        { title: 'Regional Master', year: '2023', icon: FaShieldAlt, color: 'text-blue-500' }
+                                     ].map((medal, i) => (
+                                        <div key={i} className="p-8 glass-card border-white/5 bg-slate-900/40 hover:bg-yellow-500/5 hover:border-yellow-500/20 transition-all group/medal relative overflow-hidden text-center">
+                                           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-yellow-500/5 to-transparent h-1/2 w-full -translate-y-full group-hover/medal:translate-y-full transition-transform duration-[1.5s]" />
+                                           <medal.icon className={`text-4xl mx-auto mb-6 ${medal.color} group-hover:scale-110 transition-transform duration-500`} />
+                                           <h4 className="text-[10px] font-black text-white uppercase tracking-tighter mb-1.5">{medal.title}</h4>
+                                           <span className="text-[8px] text-slate-600 font-mono font-bold tracking-widest">{medal.year}</span>
+                                        </div>
+                                     ))}
+                                  </div>
+                               </div>
+                            </div>
+                         )}
+
+                         {/* Personal Data Nodes */}
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {[
+                              { label: 'Full Name', value: profile?.name, icon: FaUser },
+                              { label: 'Username', value: profile?.username, icon: FaIdCard },
+                              { label: 'Phone Number', value: profile?.phone, icon: FaPhone },
+                              { label: 'Date of Birth', value: profile?.dob, icon: FaCalendarAlt },
+                              { label: 'Address', value: profile?.address, icon: FaMapMarkerAlt },
+                              { label: 'Gender', value: profile?.gender, icon: FaUsers },
+                              { label: 'Nationality', value: profile?.nationality, icon: FaIdCard },
+                              { label: 'Preferred Language', value: profile?.language, icon: FaEnvelope },
+                            ].map((item, idx) => (
+                               <div key={idx} className="glass-card hud-border p-5 bg-slate-950/40 group hover:bg-white/[0.04] transition-all hover:-translate-y-1">
+                                  <div className="flex items-center gap-3 mb-3">
+                                     <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 group-hover:bg-yellow-500 group-hover:text-slate-950 transition-all">
+                                        <item.icon className="text-[12px]" />
+                                     </div>
+                                     <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">{item.label}</span>
+                                  </div>
+                                  <div className="text-[13px] text-white font-bold ml-11 overflow-hidden truncate opacity-90">
+                                     {item.value || <span className="text-slate-700 italic text-[10px]">Not Specified</span>}
+                                  </div>
+                               </div>
+                            ))}
+                         </div>
+                         
+                         <div className="glass-card hud-border p-6 bg-slate-950/40">
+                            <div className="flex items-center gap-3 mb-4">
+                               <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
+                                  <FaEdit className="text-[12px] text-yellow-500" />
+                               </div>
+                               <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">Bio / Summary</span>
+                            </div>
+                            <div className="text-xs text-slate-300 font-medium leading-relaxed ml-11 opacity-80 italic">
+                               {profile?.bio || 'No biographical data available.'}
+                            </div>
+                         </div>
+                      </Tab.Panel>
+
+                      <Tab.Panel className="outline-none animate-slide-up">
+                         {profile?.roles === 'admin' ? (
+                            <div className="glass-card hud-border p-12 overflow-hidden relative bg-slate-950/40">
+                               <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+                               <div className="flex flex-col items-center text-center relative z-10">
+                                  <div className="w-24 h-24 mb-10 text-yellow-500 transition-all duration-700 flex items-center justify-center glass-card border-yellow-500/20 bg-yellow-500/5 relative">
+                                     <FaUsers className="text-4xl shadow-[0_0_20px_rgba(234,179,8,0.4)]" />
+                                     <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-yellow-500/40" />
+                                     <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-yellow-500/40" />
+                                  </div>
+                                  <h3 className="text-5xl font-black text-white uppercase tracking-tighter mb-4 italic">Personnel <span className="text-yellow-500">Sync</span></h3>
+                                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] mb-12 max-w-lg">
+                                     Operational clearance confirmed. All personnel assets are synchronized with your tactical directive.
+                                  </p>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+                                     <div className="p-8 glass-card hud-border bg-white/[0.02] text-left group hover:bg-yellow-500/5 transition-all">
+                                        <p className="text-[8px] text-slate-600 font-black uppercase tracking-widest mb-2 group-hover:text-yellow-500">Active Operatives</p>
+                                        <p className="text-2xl font-black text-white italic">12 / 12 ASSETS</p>
+                                     </div>
+                                     <div className="p-8 glass-card hud-border border-yellow-500/10 bg-yellow-500/5 text-left">
+                                        <p className="text-[8px] text-yellow-500/60 font-black uppercase tracking-widest mb-2 font-mono">Registry_Status</p>
+                                        <p className="text-2xl text-yellow-500 font-black italic tracking-tighter">FULLY_VETTED</p>
+                                     </div>
+                                  </div>
+                                  <button onClick={() => router.push('/coaching/squad')} className="mt-12 btn-primary px-12 py-5 text-[10px]">
+                                     Manage Registry
+                                  </button>
+                               </div>
+                            </div>
+                         ) : (
+                            <div className="glass-card hud-border p-12 overflow-hidden relative bg-slate-950/40">
+                               {/* Decorative Grid */}
+                               <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+                               
+                               <div className="flex flex-col items-center text-center relative z-10">
+                                  {profile?.isMember ? (() => {
+                                     const latestMembership = (profile as any).memberships?.[0];
+                                     const isExpired = latestMembership?.endDate && new Date(latestMembership.endDate) < now;
+                                     return (
+                                       <div className="w-full">
+                                          <div className="relative inline-block mb-10">
+                                             <div className={`absolute inset-0 blur-[40px] rounded-2xl animate-pulse ${isExpired ? 'bg-red-500/40' : 'bg-yellow-500/40'}`} />
+                                             <div className={`w-24 h-24 text-slate-950 rounded-2xl flex items-center justify-center shadow-2xl relative border border-white/20 transform hover:rotate-6 transition-transform ${isExpired ? 'bg-gradient-to-br from-red-400 to-red-600' : 'bg-gradient-to-br from-yellow-400 to-yellow-600'}`}>
+                                                {isExpired ? <FaExclamationTriangle className="text-5xl" /> : <FaStar className="text-5xl" />}
+                                             </div>
+                                          </div>
+                                          <h3 className={`text-5xl font-black uppercase tracking-tighter mb-4 ${isExpired ? 'text-red-500' : 'text-white'}`}>
+                                             {isExpired ? 'Membership Expired' : 'Elite Member'}
+                                          </h3>
+                                          <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-12 ${isExpired ? 'text-red-500/60' : 'text-yellow-500/60'}`}>
+                                             {isExpired ? 'Protocol Validity Concluded' : 'Authenticated Club Membership'}
+                                          </p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
+                                           <div className="p-6 glass-card hud-border bg-white/[0.02] text-left">
+                                              <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2">Member Since</p>
+                                              <p className="text-sm text-white font-bold">{profile.memberSince ? format(new Date(profile.memberSince), 'PPP') : 'N/A'}</p>
+                                           </div>
+                                           <div className="p-6 glass-card hud-border bg-white/[0.02] text-left border-yellow-500/20">
+                                              <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-2 text-yellow-500/60">Membership Type</p>
+                                              <p className="text-sm text-yellow-500 font-black italic">{profile.membershipType || 'Premium Vanguard'}</p>
+                                           </div>
+                                        </div>
+                                     </div>
+                                    );
+                                  })() : (
+                                     <div className="py-10">
+                                        <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center border border-white/10 mb-8 mx-auto grayscale opacity-40">
+                                           <FaUserCircle className="text-5xl text-slate-500" />
+                                        </div>
+                                        <h3 className="text-4xl font-black text-white uppercase tracking-tighter mb-4 opacity-50">Standard Guest</h3>
+                                        <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest mb-10 max-w-sm mx-auto">Upgrade to a club membership to unlock exclusive benefits and priority access.</p>
+                                        <button
+                                          onClick={() => router.push('/membership')}
+                                          className="btn-primary px-12 py-5 text-[11px]"
+                                        >
+                                          Upgrade Now
+                                        </button>
+                                     </div>
+                                  )}
+                               </div>
+                            </div>
+                         )}
+                      </Tab.Panel>
+
+                      <Tab.Panel className="space-y-6 outline-none animate-slide-up">
+                         <div className="glass-card hud-border p-10 bg-slate-950/40 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/5 blur-[80px] rounded-full pointer-events-none" />
+                            
+                            <div className="flex items-center gap-6 mb-12">
+                               <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/30 shadow-[0_0_30px_rgba(234,179,8,0.15)] group-hover:scale-110 transition-transform">
+                                  <FaShieldAlt className="text-yellow-500 text-3xl" />
+                               </div>
+                               <div>
+                                  <div className="flex items-center gap-2 mb-1.5">
+                                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                     <span className="text-[11px] text-green-500 font-black uppercase tracking-widest">{profile?.roles === 'admin' ? 'Neural_Link Active' : 'Security Secure'}</span>
+                                  </div>
+                                  <p className="text-[9px] text-slate-500 font-black uppercase tracking-[0.3em]">{profile?.roles === 'admin' ? 'Command Protection Active' : 'Protection Protocol Active'}</p>
+                               </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                               {[
+                                 { label: profile?.roles === 'admin' ? 'Neural Linking Protocol' : 'Two-Factor Authentication', status: 'Deactivated', action: 'Initialize', danger: true, icon: FaLock },
+                                 { label: 'Active Command Sessions', status: '1 Active Instance', action: 'Terminate Others', danger: false, icon: FaUsers },
+                                 { label: 'Uplink Location', status: 'HCM City, Southeast Asia', action: 'Refresh Scan', danger: false, icon: FaMapMarkerAlt },
+                               ].map((sec, i) => (
+                                  <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white/[0.02] hover:bg-white/[0.04] rounded-xl border border-white/5 gap-6 transition-all group/sec">
+                                     <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover/sec:bg-yellow-500/10 transition-colors">
+                                           <sec.icon className={`text-lg ${sec.danger ? 'text-red-500/50' : 'text-slate-600'}`} />
+                                        </div>
+                                        <div>
+                                           <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">{sec.label}</p>
+                                           <p className={`text-xs font-black uppercase tracking-tighter ${sec.danger ? 'text-red-500/80' : 'text-white opacity-80'}`}>{sec.status}</p>
+                                        </div>
+                                     </div>
+                                     <button className={`px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${sec.danger ? 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white' : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10 hover:text-white'}`}>
+                                        {sec.action}
+                                     </button>
+                                  </div>
+                               ))}
+                            </div>
+                         </div>
+                         
+                         <div className="flex flex-col sm:flex-row gap-4">
+                            <button
+                              onClick={() => router.push('/auth/change-password')}
+                              className="flex-1 py-5 glass-card hud-border bg-white/[0.02] text-white text-[11px] font-black uppercase tracking-[0.3em] hover:bg-yellow-500 hover:text-slate-950 transition-all text-center relative overflow-hidden group/btn"
+                            >
+                              <span className="relative z-10">Change Password</span>
+                              <div className="absolute inset-y-0 left-0 w-[1px] bg-yellow-400/50 group-hover/btn:w-full transition-all duration-500 opacity-20" />
+                            </button>
+                            <button
+                              className="flex-1 py-5 glass-card hud-border bg-red-500/5 text-red-500/80 border-red-500/30 text-[11px] font-black uppercase tracking-[0.3em] hover:bg-red-500 hover:text-white transition-all text-center group/terminate"
+                            >
+                              Delete Account
+                            </button>
+                         </div>
+                      </Tab.Panel>
+                   </Tab.Panels>
+                </Tab.Group>
+             </div>
+          </div>
         </div>
-        <Tab.Group>
-          <Tab.List className="flex space-x-2 mb-6">
-            {tabs.map((tab) => (
-              <Tab
-                key={tab}
-                className={({ selected }) =>
-                  classNames(
-                    'px-4 py-2 rounded-full text-sm font-semibold focus:outline-none',
-                    selected
-                      ? 'bg-blue-600 text-white shadow'
-                      : 'bg-gray-100 text-blue-700 hover:bg-blue-200'
-                  )
-                }
-              >
-                {tab}
-              </Tab>
-            ))}
-          </Tab.List>
-          <Tab.Panels className="w-full">
-            {/* Account Tab */}
-            <Tab.Panel>
-              <div className="flex flex-col items-center w-full">
-                {/* Profile Picture and Name */}
-                <div className="flex flex-col items-center mb-6">
-                  {displayImage ? (
-                    <img src={displayImage} alt="Profile" className="h-24 w-24 rounded-full object-cover mb-3 border-4 border-blue-200 shadow" />
-                  ) : (
-                    <UserCircleIcon className="h-24 w-24 text-blue-300 mb-3" />
-                  )}
-                  <h1 className="text-4xl font-extrabold text-blue-700 mb-1">{displayName}</h1>
-                  <div className="flex items-center gap-2 text-gray-500 text-base mb-1">
-                    <EnvelopeIcon className="h-5 w-5" />
-                    {displayEmail || <span className="italic text-gray-400">Not set</span>}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <IdentificationIcon className="h-4 w-4" />
-                    User ID: <span className="font-mono text-gray-600">{displayId || <span className="italic text-gray-400">Not set</span>}</span>
-                  </div>
-                </div>
-                {/* Divider */}
-                <div className="w-full border-t border-blue-100 mb-4"></div>
-                {/* Info Grid */}
-                <div className="w-full max-w-md bg-blue-50 rounded-xl shadow-inner p-5 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Username:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.username || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserGroupIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Role:</span></div>
-                  <div className="flex gap-2 flex-wrap">
-                    {(session?.user?.roles || profile?.roles || ['user']).map((role: string) => (
-                      <span
-                        key={role}
-                        className={
-                          role === 'admin'
-                            ? 'bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-bold border border-red-300'
-                            : 'bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold border border-blue-200'
-                        }
-                      >
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm"><PhoneIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Phone:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.phone || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><CalendarIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Date of Birth:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.dob || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><MapPinIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Address:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.address || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Gender:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.gender || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Nationality:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.nationality || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Language:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.language || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Occupation:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.occupation || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Favorite Team:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.favoriteTeam || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><CheckCircleIcon className={profile?.emailVerified ? 'h-5 w-5 text-green-500' : 'h-5 w-5 text-red-500'} /><span className="text-gray-500">Email Verified:</span></div>
-                  <div className={profile?.emailVerified ? 'text-green-600 font-semibold text-sm flex items-center' : 'text-red-600 font-semibold text-sm flex items-center'}>{profile?.emailVerified ? 'Yes' : 'No'}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Bio:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.bio || <span className="italic text-gray-400">Not set</span>}</div>
-                  <div className="flex items-center gap-2 text-sm"><UserIcon className="h-5 w-5 text-blue-400" /><span className="text-gray-500">Website:</span></div>
-                  <div className="text-blue-900 font-medium text-sm flex items-center">{profile?.website ? <a href={profile.website} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{profile.website}</a> : <span className="italic text-gray-400">Not set</span>}</div>
-                </div>
-                {/* Divider */}
-                <div className="w-full border-t border-blue-100 mb-4"></div>
-                {/* Join/Last login */}
-                <div className="w-full max-w-md flex flex-col sm:flex-row sm:justify-between text-xs text-gray-500 mb-4 gap-2">
-                  {profile?.memberSince && (
-                    <div className="flex items-center gap-1"><CalendarIcon className="h-4 w-4" />Joined: {format(new Date(profile.memberSince), 'PPP')}</div>
-                  )}
-                </div>
-                {/* Membership info */}
-                <div className="w-full max-w-md mb-4">
-                  <div className="flex items-center gap-2 text-sm mb-2">
-                    <StarIcon className={profile?.isMember ? 'h-5 w-5 text-yellow-400' : 'h-5 w-5 text-gray-400'} />
-                    <span className="text-gray-500">Membership:</span>
-                    <span className={profile?.isMember ? 'text-yellow-600 font-semibold' : 'text-gray-600'}>{profile?.isMember ? `Yes (${profile.membershipType || 'Standard'})` : 'No'}</span>
-                  </div>
-                </div>
-                {/* Profile completion bar */}
-                <div className="w-full max-w-md mb-4">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-500">Profile Completion</span>
-                    <span className="text-blue-700 font-semibold">{profileCompletionFallback}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div className="bg-blue-600 h-3 rounded-full transition-all duration-500" style={{ width: `${profileCompletionFallback}%` }}></div>
-                  </div>
-                </div>
-                {/* Social links */}
-                <div className="flex gap-4 mt-2 mb-6">
-                  {socialLinks.map((link, index) => (
-                    <a 
-                      key={index}
-                      href={link.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="text-blue-600 hover:underline text-base font-medium"
-                    >
-                      {link.type}
-                    </a>
-                  ))}
-                </div>
-                <button
-                  className="px-8 py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-all text-base"
-                  onClick={() => router.push('/profile/edit')}
-                >
-                  Edit Profile
-                </button>
-              </div>
-            </Tab.Panel>
-            {/* Membership Tab */}
-            <Tab.Panel>
-              <div className="flex flex-col items-center w-full">
-                {isMember ? (
-                  <>
-                    <span className="inline-flex items-center gap-2 px-4 py-1 text-base font-semibold bg-yellow-400 text-white rounded-full shadow border border-yellow-300 mb-2">
-                      <StarIcon className="h-5 w-5" /> Member
-                    </span>
-                    <div className="text-green-700 font-semibold mb-2">Thank you for being a valued member!</div>
-                    <div className="text-sm text-blue-800 mb-2">Membership type: <span className="font-bold">{membershipType}</span></div>
-                    {membershipExpiry && (
-                      <div className="text-xs text-gray-500 mb-2">Membership expires {formatDistanceToNow(membershipExpiry, { addSuffix: true })}</div>
-                    )}
-                    <ul className="text-left space-y-2 mb-4 w-full max-w-xs mx-auto">
-                      <li className="flex items-center gap-2 text-blue-800"><span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>Access to exclusive content</li>
-                      <li className="flex items-center gap-2 text-blue-800"><span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>Priority ticket booking</li>
-                      <li className="flex items-center gap-2 text-blue-800"><span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>Member-only events</li>
-                    </ul>
-                    <button
-                      className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-all mb-2"
-                      onClick={() => router.push('/membership')}
-                    >
-                      Manage Membership
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <span className="inline-flex items-center gap-2 px-4 py-1 text-base font-semibold bg-gray-200 text-gray-700 rounded-full shadow border border-gray-300 mb-2">
-                      Not a Member
-                    </span>
-                    <div className="text-blue-700 font-semibold mb-2">Become a member to unlock exclusive benefits!</div>
-                    {/* Benefits List */}
-                    <ul className="text-left space-y-2 mb-4 w-full max-w-xs mx-auto">
-                      <li className="flex items-center gap-2 text-blue-800"><CheckCircleIcon className="h-5 w-5 text-green-500" />Access to exclusive content</li>
-                      <li className="flex items-center gap-2 text-blue-800"><CheckCircleIcon className="h-5 w-5 text-green-500" />Priority ticket booking</li>
-                      <li className="flex items-center gap-2 text-blue-800"><CheckCircleIcon className="h-5 w-5 text-green-500" />Member-only events</li>
-                      <li className="flex items-center gap-2 text-blue-800"><CheckCircleIcon className="h-5 w-5 text-green-500" />Special discounts</li>
-                      <li className="flex items-center gap-2 text-blue-800"><CheckCircleIcon className="h-5 w-5 text-green-500" />Early access to news</li>
-                    </ul>
-                    {/* Comparison Table */}
-                    <div className="w-full max-w-xs mb-4">
-                      <div className="grid grid-cols-3 text-xs text-center font-semibold mb-2">
-                        <div></div>
-                        <div className="text-gray-500">Free</div>
-                        <div className="text-blue-700">Member</div>
-                      </div>
-                      <div className="grid grid-cols-3 text-xs text-center mb-1">
-                        <div>Exclusive Content</div>
-                        <div className="text-gray-400">&#10005;</div>
-                        <div className="text-green-500">&#10003;</div>
-                      </div>
-                      <div className="grid grid-cols-3 text-xs text-center mb-1">
-                        <div>Priority Tickets</div>
-                        <div className="text-gray-400">&#10005;</div>
-                        <div className="text-green-500">&#10003;</div>
-                      </div>
-                      <div className="grid grid-cols-3 text-xs text-center mb-1">
-                        <div>Member Events</div>
-                        <div className="text-gray-400">&#10005;</div>
-                        <div className="text-green-500">&#10003;</div>
-                      </div>
-                      <div className="grid grid-cols-3 text-xs text-center mb-1">
-                        <div>Discounts</div>
-                        <div className="text-gray-400">&#10005;</div>
-                        <div className="text-green-500">&#10003;</div>
-                      </div>
-                      <div className="grid grid-cols-3 text-xs text-center mb-1">
-                        <div>Early News</div>
-                        <div className="text-gray-400">&#10005;</div>
-                        <div className="text-green-500">&#10003;</div>
-                      </div>
-                    </div>
-                    {/* Testimonial */}
-                    <div className="w-full max-w-xs mb-4 bg-blue-100 rounded-lg p-3 text-xs italic text-blue-800 shadow-inner">
-                      "Becoming a member was the best decision! I get early access to tickets and exclusive content."<br />
-                      <span className="font-semibold">- Happy Member</span>
-                    </div>
-                    {/* Learn More Link */}
-                    <a href="/membership" className="text-blue-600 hover:underline text-sm mb-4">Learn more about membership</a>
-                    <button
-                      className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-all"
-                      onClick={() => router.push('/membership')}
-                    >
-                      Become a Member
-                    </button>
-                  </>
-                )}
-              </div>
-            </Tab.Panel>
-            {/* Security Tab */}
-            <Tab.Panel>
-              <div className="flex flex-col items-center w-full gap-6">
-                <div className="w-full max-w-md bg-blue-50 rounded-xl shadow-inner p-6 flex flex-col gap-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 flex items-center gap-2"><CheckCircleIcon className={profile?.emailVerified ? 'h-5 w-5 text-green-500' : 'h-5 w-5 text-red-500'} />Email Verified:</span>
-                    <span className={profile?.emailVerified ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>{profile?.emailVerified ? 'Yes' : 'No'}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 flex items-center gap-2"><UserIcon className="h-5 w-5 text-blue-400" />Last Password Change:</span>
-                    <span className="text-blue-900 font-medium">about 2 months ago</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 flex items-center gap-2"><UserIcon className="h-5 w-5 text-blue-400" />Last Login:</span>
-                    <span className="text-blue-900 font-medium">about 1 hour ago</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 flex items-center gap-2"><LockClosedIcon className="h-5 w-5 text-blue-400" />Two-Factor Authentication:</span>
-                    <span className="text-red-600 font-semibold">Off</span>
-                  </div>
-                  <button className="px-4 py-1 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-all w-fit self-end text-sm">Set up 2FA</button>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 flex items-center gap-2"><UserGroupIcon className="h-5 w-5 text-blue-400" />Active Sessions:</span>
-                    <span className="text-blue-900 font-medium">1 (this device)</span>
-                  </div>
-                  <button className="px-4 py-1 rounded-full bg-gray-200 text-blue-700 font-semibold shadow hover:bg-gray-300 transition-all w-fit self-end text-sm">Sign out all devices</button>
-                </div>
-                <button
-                  className="px-6 py-2 rounded-full bg-gray-200 text-blue-700 font-semibold shadow hover:bg-gray-300 transition-all mb-2"
-                  onClick={() => router.push('/auth/change-password')}
-                >
-                  Change Password
-                </button>
-              </div>
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
       </div>
     </div>
   );
-} 
+}

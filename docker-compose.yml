@@ -1,0 +1,62 @@
+services:
+  # Primary Coaching App (Isolated)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fc-escuela-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@db:5432/${DB_NAME:-fcwebsite}?schema=public
+      - REDIS_URL=redis://redis:6379
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    depends_on:
+      - db
+      - redis
+    networks:
+      - tactical_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  # Administrative Database (Internal)
+  db:
+    image: postgres:15-alpine
+    container_name: fc-escuela-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-fc_escuela}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - tactical_net
+    expose:
+      - "5432"
+
+  # Tactical Cache (Restricted)
+  redis:
+    image: redis:alpine
+    container_name: fc-escuela-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - tactical_net
+    expose:
+      - "6379"
+
+volumes:
+  pg_data:
+  redis_data:
+
+networks:
+  tactical_net:
+    driver: bridge
+    internal: false # Change to true if no public ingress is needed for app

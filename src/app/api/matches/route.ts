@@ -1,19 +1,16 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCachedData, setCachedData, deleteCachedData } from '@/lib/redis';
+import { getCache, setCache, invalidateCache, CACHE_TTL } from '@/lib/redis';
 
-const CACHE_KEY = 'matches:all';
-const CACHE_TTL = 1800; // 30 minutes
+const MATCHES_CACHE_KEY = 'all_matches';
 
 // GET /api/matches - Get all matches
 export async function GET() {
   try {
-    // Try to get cached data first
-    const cachedMatches = await getCachedData(CACHE_KEY);
-    if (cachedMatches) {
-      return NextResponse.json(cachedMatches);
-    }
+    // Try to get from cache
+    const cachedMatches = await getCache(MATCHES_CACHE_KEY);
+    if (cachedMatches) return NextResponse.json(cachedMatches);
 
     const matches = await prisma.match.findMany({
       orderBy: {
@@ -37,11 +34,18 @@ export async function GET() {
       }
       
       // Otherwise, it's scheduled
-      return { ...match, status: 'Scheduled' };
+      const status = matchDate < now ? 'Finished' : 'Scheduled';
+      
+      return { 
+        ...match, 
+        status: match.score ? 'Finished' : status,
+        homeLineup: match.homeLineup ? JSON.parse(match.homeLineup) : [],
+        awayLineup: match.awayLineup ? JSON.parse(match.awayLineup) : []
+      };
     });
     
-    // Cache the matches data
-    await setCachedData(CACHE_KEY, processedMatches, CACHE_TTL);
+    // Set cache
+    await setCache(MATCHES_CACHE_KEY, processedMatches, CACHE_TTL.MATCHES);
     
     return NextResponse.json(processedMatches);
   } catch (error) {
@@ -66,12 +70,14 @@ export async function POST(req: NextRequest) {
         venue: data.venue,
         competition: data.competition,
         score: data.score,
+        homePower: data.homePower || 80,
+        awayPower: data.awayPower || 75,
         status: data.score ? 'Finished' : 'Scheduled'
       }
     });
     
-    // Invalidate the matches cache when a new match is added
-    await deleteCachedData(CACHE_KEY);
+    // Invalidate the matches cache
+    await invalidateCache(MATCHES_CACHE_KEY);
     
     return NextResponse.json(match, { status: 201 });
   } catch (error) {
