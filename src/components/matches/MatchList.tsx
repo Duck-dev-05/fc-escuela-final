@@ -10,8 +10,8 @@ interface MatchListProps {
 export default function MatchList({ matches }: MatchListProps) {
   if (matches.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">No matches scheduled at the moment.</p>
+      <div className="text-center py-20 bg-white/50 rounded-2xl border border-slate-100 shadow-sm animate-slide-up">
+        <p className="text-slate-400 font-black uppercase tracking-widest text-xs">No matches scheduled at the moment.</p>
       </div>
     )
   }

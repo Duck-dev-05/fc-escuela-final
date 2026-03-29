@@ -56,7 +56,7 @@ export default function NewsPage() {
       <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="flex flex-col items-center gap-6 animate-pulse">
           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
-          <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Data...</p>
+          <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-[10px]">Accessing Data...</p>
         </div>
       </div>
     )
@@ -75,79 +75,65 @@ export default function NewsPage() {
   }
 
   return (
-    <div className="min-h-screen py-20 px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
+    <div className="min-h-screen py-20 px-4 md:px-8 relative overflow-hidden bg-slate-50 selection:bg-yellow-500 selection:text-slate-950">
        {/* Neural_Orb & Cinematic Background */}
        <div className="absolute inset-0 pointer-events-none">
           <div 
-             className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.03] blur-[120px] transition-all duration-1000 ease-out z-0"
+             className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.05] blur-[120px] transition-all duration-1000 ease-out z-0"
              style={{ 
                 left: `${mousePos.x}%`, 
                 top: `${mousePos.y}%`, 
                 transform: 'translate(-50%, -50%)' 
              }} 
           />
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] brightness-50 z-10" />
-          <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-yellow-500/[0.02] to-transparent z-10" />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] z-10" />
+          <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-yellow-500/[0.04] to-transparent z-10" />
           
-          {/* Ghost Typography */}
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 select-none pointer-events-none opacity-[0.03] whitespace-nowrap z-0">
-             <span className="text-[25vw] font-black ghost-text leading-none uppercase italic tracking-tighter">MEDIA_HUB</span>
+          {/* Ghost Typography - More centered and massive */}
+          <div className="absolute top-40 left-1/2 -translate-x-1/2 select-none pointer-events-none opacity-[0.02] whitespace-nowrap z-0">
+             <span className="text-[35vw] font-black ghost-text leading-none uppercase italic tracking-tighter">MEDIA</span>
           </div>
        </div>
 
        <div className="max-w-[1600px] mx-auto relative z-20 pt-20">
-          {/* Maximum Impact Header */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-28 gap-16 animate-slide-up">
-              <div className="flex flex-col gap-10">
-                 <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-3 text-[9px] text-yellow-500 font-black uppercase tracking-[0.6em]">
-                       <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                       Registry_Access: Sector_04
-                    </div>
-                    <div className="w-px h-3 bg-white/10" />
-                    <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">BROADCAST_FEED // SYNC_ACTIVE</span>
-                 </div>
-                 
-                 <div className="relative group/header">
-                    <div className="absolute -top-6 -left-6 w-8 h-8 border-t-2 border-l-2 border-yellow-500/20 group-hover/header:border-yellow-500 transition-colors" />
-                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.85] italic group-hover:scale-[1.02] transition-transform duration-700">
-                       News <br />
-                       <span className="text-7xl md:text-9xl not-italic text-slate-800 tracking-[-0.05em] group-hover:text-white transition-colors">Hub</span>
-                    </h1>
-                 </div>
+          {/* Maximum Impact Centered Header */}
+          <div className="flex flex-col items-center justify-center mb-40 text-center animate-slide-up">
+              <div className="flex items-center gap-8 mb-12">
+                 <div className="h-px w-24 bg-gradient-to-r from-transparent to-yellow-500" />
+                 <span className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.8em]">Vanguard_Broadcast</span>
+                 <div className="h-px w-24 bg-gradient-to-l from-transparent to-yellow-500" />
+              </div>
+              
+              <div className="relative group/header">
+                 <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-px h-12 bg-yellow-500/30" />
+                 <h1 className="text-7xl md:text-[10rem] font-black text-slate-900 uppercase tracking-tighter leading-[0.8] italic group-hover:scale-[1.02] transition-transform duration-700">
+                    News <br />
+                    <span className="text-8xl md:text-[14rem] not-italic text-slate-200 tracking-[-0.05em] group-hover:text-slate-900 transition-colors">Hub</span>
+                 </h1>
+                 <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-px h-12 bg-yellow-500/30" />
               </div>
 
-              <div className="flex flex-col items-end gap-10 w-full lg:w-auto">
-                 <div className="flex items-center gap-12 text-[10px] font-black text-slate-700 tracking-[0.4em] uppercase border-b border-white/5 pb-4 w-full justify-end">
-                    <span>SECTOR_EDITORIAL</span>
-                    <span>//</span>
-                    <span className="text-yellow-500/50 flex items-center gap-3">
-                       <div className="w-1 h-1 bg-yellow-500 rounded-full animate-ping" />
-                       REAL_TIME_SYNC
-                    </span>
-                 </div>
-                 <p className="text-right text-[12px] text-slate-500 font-mono font-bold uppercase tracking-widest max-w-[400px] italic leading-relaxed">
-                    Direct telemetry from the heart of the club. Official announcements, match reports, and exclusive insights.
-                 </p>
-              </div>
+              <p className="mt-24 text-[11px] text-slate-400 font-black uppercase tracking-[0.5em] max-w-xl italic leading-loose opacity-60">
+                 Official telemetry // Strategic intelligence // Operational updates
+              </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
             {articles.map((article, idx) => (
               <Link key={article.id} href={`/news/${article.id}`} passHref>
-                <article className="glass-card hud-border overflow-hidden group hover:bg-slate-900/40 transition-all duration-700 flex flex-col h-full bg-slate-950/40 relative shadow-[0_30px_70px_rgba(0,0,0,0.5)] border-white/5 hover:border-yellow-500/30">
+                <article className="glass-card hud-border overflow-hidden group hover:bg-white transition-all duration-700 flex flex-col h-full bg-white/70 relative shadow-[0_20px_60px_rgba(0,0,0,0.03)] border-slate-200 hover:border-yellow-500/30 hover:-translate-y-2">
                   {/* HUD Corner Decor */}
-                  <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-white/10 group-hover:border-yellow-500/40 transition-colors z-30" />
-                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-white/10 group-hover:border-yellow-500/40 transition-colors z-30" />
+                  <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-slate-200 group-hover:border-yellow-500/40 transition-colors z-30" />
+                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-slate-200 group-hover:border-yellow-500/40 transition-colors z-30" />
                   
                   <div className="relative aspect-video overflow-hidden">
                     <img
                       src={article.imageUrl}
                       alt={article.title}
-                      className="object-cover w-full h-full transform transition-transform duration-1000 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                      className="object-cover w-full h-full transform transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                     />
                     <div className="absolute top-6 left-6 z-20">
-                      <span className="px-4 py-1.5 bg-yellow-500 h-8 flex items-center justify-center text-slate-950 text-[9px] font-black uppercase tracking-widest rounded-sm skew-x-[-15deg]">
+                      <span className="px-4 py-1.5 bg-yellow-500 h-8 flex items-center justify-center text-slate-950 text-[9px] font-black uppercase tracking-widest rounded-sm skew-x-[-15deg] shadow-lg">
                         <span className="block skew-x-[15deg]">{article.category}</span>
                       </span>
                     </div>
@@ -156,28 +142,28 @@ export default function NewsPage() {
                   </div>
   
                   <div className="p-10 flex flex-col flex-1 relative z-20">
-                    <div className="flex items-center gap-8 text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8">
+                    <div className="flex items-center gap-8 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">
                       <span className="flex items-center gap-3">
-                        <CalendarIcon className="h-4 w-4 text-yellow-500/40" />
+                        <CalendarIcon className="h-4 w-4 text-yellow-600/40" />
                         {new Date(article.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                       <span className="flex items-center gap-3">
-                        <UserIcon className="h-4 w-4 text-yellow-500/40" />
-                        ID_{article.author.split(' ')[0].toUpperCase()}
+                        <UserIcon className="h-4 w-4 text-yellow-600/40" />
+                        AUTH:{article.author.split(' ')[0].toUpperCase()}
                       </span>
                     </div>
   
-                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-6 group-hover:text-yellow-500 transition-colors duration-500 line-clamp-2 leading-[0.9] italic">
+                    <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter mb-6 group-hover:text-yellow-600 transition-colors duration-500 line-clamp-2 leading-[0.9] italic">
                       {article.title}
                     </h2>
                     
-                    <p className="text-[13px] text-slate-500 font-mono leading-relaxed mb-10 flex-1 line-clamp-3 uppercase tracking-wider font-bold italic group-hover:text-slate-300 transition-colors">
+                    <p className="text-[13px] text-slate-400 font-mono leading-relaxed mb-10 flex-1 line-clamp-3 uppercase tracking-wider font-bold italic group-hover:text-slate-600 transition-colors">
                       {article.content}
                     </p>
   
-                    <div className="flex items-center justify-between pt-8 border-t border-white/5">
-                      <span className="text-[10px] font-black text-white uppercase tracking-[0.4em] italic group-hover:text-yellow-500 transition-colors">AUTHORIZE_INTEL</span>
-                      <div className="w-12 h-[2px] bg-white/5 relative overflow-hidden">
+                    <div className="flex items-center justify-between pt-8 border-t border-slate-100">
+                      <span className="text-[10px] font-black text-slate-900 uppercase tracking-[0.4em] italic group-hover:text-yellow-600 transition-colors">AUTHORIZE_INTEL</span>
+                      <div className="w-12 h-[2px] bg-slate-100 relative overflow-hidden">
                          <div className="absolute inset-0 bg-yellow-500 -translate-x-full group-hover:translate-x-0 transition-transform duration-700" />
                       </div>
                     </div>
@@ -193,4 +179,3 @@ export default function NewsPage() {
     </div>
   )
 }
- 

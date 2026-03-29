@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import Stripe from 'stripe';
 import type { Stripe as StripeType } from 'stripe';
 import { getServerSession } from 'next-auth/next';
@@ -8,7 +10,7 @@ import { getCache, setCache, CACHE_TTL } from '@/lib/redis';
 const MEMBERSHIP_CACHE_KEY = 'membership_plans';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil',
+  apiVersion: '2025-08-27.basil',
 });
 
 const memberships = [

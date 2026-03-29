@@ -6,8 +6,10 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { 
   FaUserTie, FaUsers, FaChartLine, FaClipboardList, 
-  FaShieldAlt, FaRunning, FaHome
+  FaShieldAlt, FaRunning, FaHome, FaSignOutAlt
 } from 'react-icons/fa';
+import ProfileImage from "@/components/ProfileImage";
+import { signOut } from "next-auth/react";
 
 export default function CoachingLayout({
   children,
@@ -96,15 +98,33 @@ export default function CoachingLayout({
               </div>
            </div>
            
-           <div className="flex items-center gap-4 bg-white/[0.03] border border-white/5 px-4 py-2 rounded group hover:border-yellow-500/30 transition-all cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-white/10 group-hover:border-yellow-500/30">
-                 <FaShieldAlt className="text-yellow-500 text-xs" />
-              </div>
+           <div 
+             onClick={() => router.push('/settings')}
+             className="flex items-center gap-4 bg-white/[0.03] border border-white/5 px-4 py-2 rounded group hover:border-yellow-500/30 transition-all cursor-pointer"
+           >
+              <ProfileImage 
+                src={session?.user?.image} 
+                name={session?.user?.name} 
+                size={34} 
+                className="group-hover:rotate-6 transition-transform" 
+              />
               <div className="flex flex-col">
-                 <span className="text-[10px] font-black uppercase tracking-tighter">Head</span>
-                 <span className="text-[7px] text-slate-500 font-mono uppercase tracking-widest leading-none mt-0.5">Carlos</span>
+                 <span className="text-[10px] font-black uppercase tracking-tighter">
+                   {(session?.user as any)?.roles || 'Staff'}
+                 </span>
+                 <span className="text-[7px] text-slate-500 font-mono uppercase tracking-widest leading-none mt-0.5">
+                   {session?.user?.name || 'Vanguard'}
+                 </span>
               </div>
            </div>
+           
+           <button 
+             onClick={() => signOut({ callbackUrl: '/' })}
+             className="p-3 bg-white/[0.03] border border-white/5 rounded-full hover:bg-red-500/10 hover:border-red-500/30 group transition-all" 
+             title="Terminate Session"
+           >
+             <FaSignOutAlt className="text-slate-500 group-hover:text-red-500 text-xs" />
+           </button>
         </div>
       </nav>
 

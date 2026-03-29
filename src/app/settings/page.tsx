@@ -6,6 +6,8 @@ import {
   FaLock, FaUserCircle, FaCheckCircle, FaExclamationCircle, 
   FaShieldAlt, FaTrashAlt, FaTerminal, FaBroadcastTower, FaCog
 } from 'react-icons/fa';
+import ProfileImage from "@/components/ProfileImage";
+import NeuralBackdrop from "@/components/NeuralBackdrop";
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
@@ -58,24 +60,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen py-20 px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
-       {/* Neural_Orb & Cinematic Background */}
-       <div className="absolute inset-0 pointer-events-none">
-          <div 
-             className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.03] blur-[120px] transition-all duration-1000 ease-out z-0"
-             style={{ 
-                left: `${mousePos.x}%`, 
-                top: `${mousePos.y}%`, 
-                transform: 'translate(-50%, -50%)' 
-             }} 
-          />
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] brightness-50 z-10" />
-          <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-yellow-500/[0.03] to-transparent z-10" />
-          
-          {/* Ghost Typography */}
-          <div className="absolute top-20 left-10 select-none pointer-events-none opacity-[0.03] whitespace-nowrap z-0">
-             <span className="text-[20vw] font-black ghost-text leading-none uppercase italic tracking-tighter">SECURITY_PROTOCOL</span>
-          </div>
-       </div>
+        <NeuralBackdrop ghostText="SECURITY_OP" />
 
        <div className="max-w-[1400px] mx-auto relative z-20 pt-20">
           {/* Maximum Impact Header */}
@@ -120,16 +105,15 @@ export default function SettingsPage() {
                 SYS_METRIC_01
              </div>
              <div className="flex flex-col md:flex-row gap-10 items-center">
-                <div className="relative group">
-                   <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full" />
-                   {profile?.image ? (
-                     <img src={profile.image} alt="Avatar" className="h-28 w-28 rounded-2xl object-cover relative border-2 border-white/10" />
-                   ) : (
-                     <div className="h-28 w-28 rounded-2xl bg-white/5 flex items-center justify-center relative border-2 border-white/10">
-                        <FaUserCircle className="h-16 w-16 text-slate-700" />
-                     </div>
-                   )}
-                </div>
+                 <div className="relative group">
+                    <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full" />
+                    <ProfileImage 
+                       src={profile?.image} 
+                       name={profile?.name} 
+                       size={112} 
+                       className="rounded-2xl" 
+                    />
+                 </div>
                 
                 <div className="flex-1 text-center md:text-left space-y-4">
                    <div>

@@ -12,6 +12,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { Tab } from '@headlessui/react';
 import Image from "next/image";
 import { FaTrophy, FaMedal, FaChartPie, FaLightbulb, FaQuoteLeft } from 'react-icons/fa';
+import ProfileImage from "@/components/ProfileImage";
 
 interface Profile {
   id?: string;
@@ -193,14 +194,14 @@ export default function ProfilePage() {
              <div className="flex flex-col md:flex-row items-center md:items-end gap-12 relative z-10">
                 <div className="relative shrink-0">
                    <div className="absolute inset-0 bg-yellow-500/10 blur-[80px] rounded-full animate-pulse" />
-                   <div className="w-40 h-40 md:w-56 md:h-56 glass-card hud-border border-white/10 p-2 bg-slate-950/80 relative overflow-hidden group/avatar shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                      {displayImage ? (
-                         <img src={displayImage} alt="O" className="w-full h-full object-cover group-hover/avatar:scale-110 transition-transform duration-[2s] ease-out opacity-70 group-hover/avatar:opacity-100" />
-                      ) : (
-                         <div className="w-full h-full flex items-center justify-center bg-white/[0.02]">
-                            <FaUserCircle className="text-8xl text-slate-800" />
-                         </div>
-                      )}
+                   <div className="w-40 h-40 md:w-56 md:h-56 glass-card hud-border border-white/10 p-2 bg-slate-950/80 relative overflow-hidden group/avatar shadow-[0_0_50px_rgba(0,0,0,0.5)] flex items-center justify-center">
+                      <ProfileImage 
+                         src={displayImage} 
+                         name={displayName} 
+                         size={224} 
+                         className="w-full h-full rounded-none border-none bg-transparent"
+                         glow={false}
+                      />
                       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-yellow-500/10 to-transparent pointer-events-none" />
                       {/* Scanning Line */}
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-yellow-500/10 to-transparent h-1/4 w-full animate-scan opacity-0 group-hover/avatar:opacity-100" />

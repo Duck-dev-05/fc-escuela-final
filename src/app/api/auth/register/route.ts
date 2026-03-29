@@ -2,13 +2,23 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { sendMail } from '@/lib/mailer';
+import { registerSchema } from '@/lib/validations';
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password, username } = await request.json();
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    const body = await request.json();
+    const validatedData = registerSchema.safeParse(body);
+
+    if (!validatedData.success) {
+      return NextResponse.json({ 
+        error: 'Invalid input data', 
+        details: validatedData.error.issues.map((e: any) => e.message) 
+      }, { status: 400 });
     }
+
+    const { name, email, password, username } = validatedData.data;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -54,6 +64,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: isDev && error.message ? error.message : 'Internal server error' }, { status: 500 });
   }
 }
-
-export const dynamic = "force-dynamic";
-

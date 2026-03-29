@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
@@ -20,7 +22,7 @@ export async function GET() {
     });
 
     // Transform the data for the frontend
-    const tickets = matches.map(match => ({
+    const tickets = matches.map((match: any) => ({
       id: match.id,
       match: `${match.homeTeam} vs ${match.awayTeam}`,
       date: match.date.toISOString().split('T')[0],

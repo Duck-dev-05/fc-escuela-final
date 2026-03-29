@@ -108,4 +108,24 @@ export const userApi = {
   },
 };
 
+// News API calls (with cache invalidation)
+export const newsApi = {
+  getAll: async () => {
+    const response = await api.get('/news');
+    return response;
+  },
+  getById: async (id: string) => {
+    const response = await api.get(`/news/${id}`);
+    return response;
+  },
+  create: async (newsData: any) => {
+    const response = await api.post('/news', newsData);
+    return response;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/news/${id}`);
+    return response;
+  },
+};
+
 export default api; 

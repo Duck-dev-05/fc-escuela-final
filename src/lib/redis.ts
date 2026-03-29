@@ -1,7 +1,22 @@
 import Redis from 'ioredis'
 
 const redisClientSingleton = () => {
-  return new Redis(process.env.REDIS_URL || 'redis://localhost:6379')
+  const client = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+    maxRetriesPerRequest: 1,
+    retryStrategy: (times) => {
+      if (times > 3) return null;
+      return Math.min(times * 50, 2000);
+    },
+  });
+
+  client.on('error', (err) => {
+    // Only log if not during build/static-gen to keep build logs clean
+    if (process.env.NEXT_PHASE !== 'phase-production-build') {
+      console.error('[REDIS] Connection error:', err);
+    }
+  });
+
+  return client;
 }
 
 declare global {

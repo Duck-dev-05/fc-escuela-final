@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
    FaUserTie, FaUsers, FaChartLine, FaClipboardList,
-   FaShieldAlt, FaArrowRight, FaCrosshairs, FaCalendarAlt, FaHeartbeat, FaVectorSquare
+   FaShieldAlt, FaArrowRight, FaCrosshairs, FaCalendarAlt, FaHeartbeat, FaVectorSquare, FaPowerOff
 } from 'react-icons/fa';
+import NeuralBackdrop from "@/components/NeuralBackdrop";
 
 export default function CoachingMissionControl() {
    const { data: session } = useSession();
@@ -122,19 +123,7 @@ export default function CoachingMissionControl() {
 
    return (
       <div className="min-h-screen py-20 px-4 md:px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
-         {/* Neural_Orb & Cinematic Background */}
-         <div className="absolute inset-0 pointer-events-none">
-            <div
-               className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.03] blur-[120px] transition-all duration-1000 ease-out z-0"
-               style={{
-                  left: `${mousePos.x}%`,
-                  top: `${mousePos.y}%`,
-                  transform: 'translate(-50%, -50%)'
-               }}
-            />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] brightness-50 z-10" />
-            <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px] z-10" />
-         </div>
+         <NeuralBackdrop ghostText="COMMAND_UNIT" />
 
          <div className="max-w-[1600px] mx-auto relative z-20">
             {/* Maximum Impact Operational Header */}
@@ -195,13 +184,18 @@ export default function CoachingMissionControl() {
                         <p className="text-[12px] text-slate-600 font-mono leading-relaxed mb-12 text-center uppercase tracking-[0.05em] font-bold italic">{hub.desc}</p>
                      </div>
                      <div className="space-y-10">
-                        <Link
-                           href={hub.href}
-                           className="w-full py-4 bg-yellow-500/5 border border-yellow-500/10 text-yellow-500 hover:bg-yellow-500 hover:text-slate-950 text-[10px] font-black uppercase tracking-[0.5em] flex items-center justify-center gap-4 transition-all italic relative overflow-hidden group/btn"
-                        >
-                           <span className="relative z-10">AUTHORIZE_OPS</span>
-                           <FaArrowRight className="relative z-10 transition-transform group-hover:translate-x-3" />
-                        </Link>
+                         <Link
+                            href={hub.href}
+                            className={`w-full py-4 border text-[10px] font-black uppercase tracking-[0.5em] flex items-center justify-center gap-4 transition-all italic relative overflow-hidden group/btn ${
+                               hub.priority 
+                               ? 'bg-yellow-500 text-slate-950 border-yellow-500' 
+                               : 'bg-white/[0.02] border-white/10 text-slate-400 hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500'
+                            }`}
+                         >
+                            <span className="relative z-10">{hub.priority ? 'AUTHORIZE_DEPLOYMENT' : 'ACCESS_PROTOCOL'}</span>
+                            <FaArrowRight className="relative z-10 transition-transform group-hover:translate-x-3" />
+                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform" />
+                         </Link>
                      </div>
                   </div>
                ))}
@@ -281,13 +275,31 @@ export default function CoachingMissionControl() {
                                     <p className="text-[7px] text-slate-600 font-black uppercase tracking-widest">{player.role}</p>
                                  </div>
                               </div>
-                              <button
-                                 onClick={() => togglePlayerStatus(player.id, player.status)}
-                                 disabled={updatingId === player.id}
-                                 className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${updatingId === player.id ? 'opacity-20 cursor-wait' : ''} ${player.status === 'available' ? 'border-red-500/20 text-red-500/80 hover:bg-red-500 hover:text-white' : 'border-green-500/20 text-green-500/80 hover:bg-green-500 hover:text-white'}`}
-                              >
-                                 {updatingId === player.id ? 'SYNCING...' : player.status === 'available' ? 'SET_INJURED' : 'SET_ACTIVE'}
-                              </button>
+                               <button
+                                  onClick={() => togglePlayerStatus(player.id, player.status)}
+                                  disabled={updatingId === player.id}
+                                  className={`relative group/toggle w-24 h-8 rounded-full border transition-all flex items-center px-1 overflow-hidden ${
+                                     player.status === 'available' 
+                                     ? 'border-green-500/30 hover:border-green-500/50 bg-green-500/5' 
+                                     : 'border-red-500/30 hover:border-red-500/50 bg-red-500/5'
+                                  }`}
+                               >
+                                  <div className={`h-6 w-10 rounded-full transition-all flex items-center justify-center ${
+                                     player.status === 'available' 
+                                     ? 'translate-x-0 bg-green-500' 
+                                     : 'translate-x-12 bg-red-500'
+                                  }`}>
+                                     {updatingId === player.id 
+                                        ? <div className="w-2 h-2 border-t-2 border-white rounded-full animate-spin" />
+                                        : <FaPowerOff className="text-[8px] text-white" />
+                                     }
+                                  </div>
+                                  <span className={`absolute text-[7px] font-black uppercase tracking-tighter transition-all ${
+                                     player.status === 'available' ? 'right-3 text-green-500' : 'left-3 text-red-500'
+                                  }`}>
+                                     {player.status === 'available' ? 'ON' : 'OFF'}
+                                  </span>
+                               </button>
                            </div>
                         ))}
                      </div>

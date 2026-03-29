@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import Stripe from 'stripe';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
 type TicketCategory = 'standard' | 'premium' | 'vip';
 
@@ -13,10 +15,10 @@ const PRICE_MULTIPLIERS: Record<TicketCategory, number> = {
 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil',
+  apiVersion: '2025-08-27.basil',
 });
 
-const prisma = new PrismaClient();
+
 
 export async function POST(request: Request) {
   try {

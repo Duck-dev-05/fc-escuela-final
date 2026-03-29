@@ -57,28 +57,28 @@ export default function MatchesPage() {
   const finished = matches.filter(m => m.status === 'Finished');
 
   return (
-    <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden animate-scan">
+    <div className="min-h-screen bg-slate-50 py-20 px-4 relative overflow-hidden">
       {/* Ghost Typography Background */}
-      <div className="absolute top-10 left-10 select-none pointer-events-none opacity-5">
-        <span className="text-[15vw] ghost-text leading-none uppercase">FIXTURES</span>
+      <div className="absolute top-10 left-10 select-none pointer-events-none opacity-[0.02]">
+        <span className="text-[15vw] ghost-text leading-none uppercase italic font-black">FIXTURES</span>
       </div>
 
       <div className="container-custom relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16 animate-slide-up">
            <div className="flex items-center gap-6">
-              <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
-                 <FaBroadcastTower className="text-yellow-500 text-2xl animate-pulse" />
+              <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shadow-[0_10px_30px_rgba(234,179,8,0.1)]">
+                 <FaBroadcastTower className="text-yellow-600 text-2xl animate-pulse" />
               </div>
               <div>
-                 <h1 className="text-4xl font-black text-white uppercase tracking-tighter">Match <span className="text-yellow-500">Center</span></h1>
-                 <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">Live Feed & Deployment Records</p>
+                 <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Match <span className="text-yellow-600">Center</span></h1>
+                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mt-1">Live Feed & Deployment Records</p>
               </div>
            </div>
            
            <div className="flex items-center gap-4">
-              <div className="glass-card border-white/5 px-4 py-2 flex items-center gap-3">
+              <div className="glass-card border-slate-200 px-4 py-2 flex items-center gap-3 bg-white/70 shadow-sm">
                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest pt-0.5">Stream Active</span>
+                 <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest pt-0.5">Stream Active</span>
               </div>
            </div>
         </div>
@@ -88,7 +88,7 @@ export default function MatchesPage() {
           <div className="mb-20 animate-slide-up" style={{ animationDelay: '0.1s' }}>
             <div className="flex items-center gap-3 mb-8">
                <div className="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-               <h2 className="text-sm font-black text-white uppercase tracking-[0.3em]">Next Operations</h2>
+               <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em]">Next Operations</h2>
             </div>
             <MatchList matches={scheduled.length > 0 ? scheduled : matches} />
           </div>
@@ -98,27 +98,27 @@ export default function MatchesPage() {
         {finished.length > 0 && (
           <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <div className="flex items-center gap-3 mb-8">
-               <div className="w-2 h-2 rounded-full bg-slate-700 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
-               <h2 className="text-sm font-black text-white uppercase tracking-[0.3em]">Archive Transmissions</h2>
+               <div className="w-2 h-2 rounded-full bg-slate-300 shadow-[0_0_10px_rgba(0,0,0,0.05)]" />
+               <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em]">Archive Transmissions</h2>
             </div>
             <MatchList matches={finished} />
           </div>
         )}
 
         {matches.length === 0 && !loading && (
-           <div className="glass-card hud-border p-20 text-center animate-slide-up">
-              <FaTrophy className="mx-auto h-16 w-16 text-slate-800 mb-6" />
-              <h3 className="text-xl font-black text-white uppercase tracking-tighter">No Units Deployed</h3>
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Zero match data found in the current transmission cycle.</p>
+           <div className="glass-card hud-border p-20 text-center animate-slide-up bg-white/70 border-slate-200 shadow-sm">
+              <FaTrophy className="mx-auto h-16 w-16 text-slate-200 mb-6" />
+              <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter">No Units Deployed</h3>
+              <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Zero match data found in the current transmission cycle.</p>
            </div>
         )}
       </div>
 
        {/* Floating UI Elements */}
-       <div className="fixed bottom-10 right-10 flex flex-col items-end gap-2 pointer-events-none opacity-20">
-          <div className="text-[8px] text-slate-500 font-mono">LATENCY: 12ms</div>
-          <div className="text-[8px] text-slate-500 font-mono">ENCRYPTION: AES-256</div>
-          <div className="text-[8px] text-slate-500 font-mono">FREQ: 5.4GHz</div>
+       <div className="fixed bottom-10 right-10 flex flex-col items-end gap-2 pointer-events-none opacity-40">
+          <div className="text-[8px] text-slate-300 font-mono">LATENCY: 12ms</div>
+          <div className="text-[8px] text-slate-300 font-mono">ENCRYPTION: AES-256</div>
+          <div className="text-[8px] text-slate-300 font-mono">FREQ: 5.4GHz</div>
        </div>
     </div>
   )

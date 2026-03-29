@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { FaUserEdit, FaCamera, FaSave, FaTimes, FaLock, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
+import ProfileImage from "@/components/ProfileImage";
+import NeuralBackdrop from "@/components/NeuralBackdrop";
 
 interface Profile {
   name: string;
@@ -141,11 +143,8 @@ export default function EditProfilePage() {
   } : {};
 
   return (
-    <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden animate-scan">
-      {/* Ghost Typography */}
-      <div className="absolute top-10 right-10 select-none pointer-events-none opacity-5">
-        <span className="text-[15vw] ghost-text leading-none uppercase text-right">MODIFY</span>
-      </div>
+    <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden">
+      <NeuralBackdrop ghostText="REG_DELTA" />
 
       {/* Notifications */}
       <div className="fixed top-24 right-6 z-50 space-y-4">
@@ -182,13 +181,12 @@ export default function EditProfilePage() {
             <div className="relative group">
               <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative w-32 h-32 rounded-2xl overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all">
-                {imagePreview || profile?.image ? (
-                  <img src={imagePreview || profile?.image} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <FaUserEdit className="text-4xl text-slate-700" />
-                  </div>
-                )}
+                <ProfileImage 
+                   src={imagePreview || profile?.image} 
+                   name={profile?.name} 
+                   size={128} 
+                   className="rounded-2xl" 
+                />
                 <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                   <FaCamera className="text-2xl mb-1" />
                   <span className="text-[8px] font-black uppercase tracking-widest">Upload Key</span>
@@ -216,15 +214,15 @@ export default function EditProfilePage() {
                   <label className="text-[9px] text-slate-500 font-black uppercase tracking-widest">{field.label}</label>
                   {field.locked && <FaLock className="text-[9px] text-yellow-500" title="System Locked" />}
                 </div>
-                <div className="relative">
-                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-0 bg-yellow-500 group-focus-within:h-8 transition-all" />
+                <div className="relative group">
+                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-yellow-500 group-focus-within:h-full transition-all duration-500" />
                   <input
                     name={field.name}
                     type={field.type}
                     value={field.locked ? lockedFields[field.name as keyof typeof lockedFields] : profile[field.name]}
                     onChange={handleChange}
                     readOnly={field.locked}
-                    className={`w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all ${field.locked ? 'opacity-50 cursor-not-allowed' : ''} placeholder-white/10`}
+                    className={`w-full bg-slate-950/40 border border-white/5 rounded-0 px-4 py-4 text-xs font-bold text-white focus:outline-none focus:border-yellow-500/50 transition-all ${field.locked ? 'opacity-30 cursor-not-allowed bg-transparent' : 'hover:border-white/20'} placeholder-white/5`}
                     placeholder={`Assign ${field.label}...`}
                   />
                 </div>

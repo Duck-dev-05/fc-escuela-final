@@ -1,11 +1,13 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import Stripe from 'stripe';
 import type { Stripe as StripeType } from 'stripe';
 import { prisma } from '@/lib/prisma';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil',
+  apiVersion: '2025-08-27.basil',
 });
 
 
