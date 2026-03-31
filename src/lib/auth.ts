@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client'
 import { compare } from 'bcrypt'
 import GoogleProvider from 'next-auth/providers/google'
 import type { GoogleProfile } from 'next-auth/providers/google'
+import { verifyTurnstile } from './turnstile'
 
 declare module 'next-auth' {
   interface User {
@@ -51,11 +52,20 @@ export const authOptions: NextAuthOptions = {
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email', placeholder: 'hello@example.com' },
-        password: { label: 'Password', type: 'password' }
+        password: { label: 'Password', type: 'password' },
+        turnstileToken: { label: 'Turnstile Token', type: 'hidden' }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Please enter your email and password')
+        }
+
+        // Verify Turnstile
+        if (process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY) {
+          const isHuman = await verifyTurnstile(credentials.turnstileToken || "");
+          if (!isHuman) {
+            throw new Error('Security verification failed. Please try again.');
+          }
         }
 
         const user = await prisma.user.findUnique({
@@ -122,9 +132,22 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    async jwt({ token, user, account, profile }) {
-      console.log('jwt callback', { token, user, account, profile });
-      if (user) {
+    async jwt({ token, user, account, profile, trigger, session }) {
+      if (trigger === 'update') {
+        const freshUser = await prisma.user.findUnique({
+          where: { email: token.email as string }
+        });
+        if (freshUser) {
+          token.id = freshUser.id;
+          token.name = freshUser.name;
+          token.picture = freshUser.image;
+          token.username = freshUser.username;
+          token.roles = freshUser.roles;
+          token.walletBalance = freshUser.walletBalance;
+          token.isMember = freshUser.isMember;
+          token.membershipType = freshUser.membershipType;
+        }
+      } else if (user) {
         token.id = user.id
         token.email = user.email
         token.name = user.name
@@ -206,6 +229,9 @@ export const authOptions: NextAuthOptions = {
                 roles: 'user',
                 emailVerified: new Date(),
                 profileInitialized: true,
+                isMember: true,
+                membershipType: 'free',
+                memberSince: new Date(),
                 favoriteTeam: 'FC Escuela',
                 language: 'English',
                 accounts: {

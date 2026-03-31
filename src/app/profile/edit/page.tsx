@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { FaUserEdit, FaCamera, FaSave, FaTimes, FaLock, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 import ProfileImage from "@/components/ProfileImage";
-import NeuralBackdrop from "@/components/NeuralBackdrop";
+import DatePicker from "@/components/DatePicker";
 
 interface Profile {
   name: string;
@@ -46,7 +46,8 @@ export default function EditProfilePage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const isSocialLogin = Boolean(session?.user?.email && session?.user?.name && session?.user?.image);
+  // Allow all users to edit their profile fields
+  const isSocialLogin = false;
 
   useEffect(() => {
     async function fetchProfile() {
@@ -121,184 +122,186 @@ export default function EditProfilePage() {
       setTimeout(() => router.push("/profile"), 1500);
     } catch (err) {
       setSaving(false);
-      setError("Synchronization Failure: Write request rejected.");
+      setError("Failed to save profile changes. Please try again.");
     }
   }
 
   if (loading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-transparent">
-        <div className="flex flex-col items-center gap-6 animate-pulse">
-           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
-           <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Profile Core...</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <div className="w-12 h-12 border-t-2 border-slate-900 rounded-full animate-spin"></div>
+          <p className="text-slate-500 font-medium tracking-wide text-sm">Loading editor...</p>
         </div>
       </div>
     );
   }
 
-  const lockedFields = isSocialLogin ? {
-    name: session?.user?.name || '',
+  const lockedFields = {
     email: session?.user?.email || '',
-    username: session?.user?.email?.split("@")[0] || '',
-  } : {};
+  };
 
   return (
-    <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden">
-      <NeuralBackdrop ghostText="REG_DELTA" />
-
+    <div className="min-h-screen bg-slate-50 py-24 px-6 md:px-12 relative">
       {/* Notifications */}
       <div className="fixed top-24 right-6 z-50 space-y-4">
         {success && (
-          <div className="glass-card border-green-500/50 bg-green-500/10 px-6 py-4 flex items-center gap-3 animate-slide-up">
-            <FaCheckCircle className="text-green-500" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-white">Registry Updated</span>
+          <div className="bg-white border border-green-200 shadow-lg px-6 py-4 flex items-center gap-3 rounded-2xl animate-fade-in">
+            <FaCheckCircle className="text-green-600 text-xl" />
+            <span className="text-sm font-semibold text-slate-900">Profile Updated</span>
           </div>
         )}
         {error && (
-          <div className="glass-card border-red-500/50 bg-red-500/10 px-6 py-4 flex items-center gap-3 animate-slide-up">
-            <FaExclamationTriangle className="text-red-500" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-white">{error}</span>
+          <div className="bg-white border border-red-200 shadow-lg px-6 py-4 flex items-center gap-3 rounded-2xl animate-fade-in">
+            <FaExclamationTriangle className="text-red-500 text-xl" />
+            <span className="text-sm font-semibold text-red-500">{error}</span>
           </div>
         )}
       </div>
 
-      <div className="max-w-3xl mx-auto glass-card hud-border p-10 animate-slide-up relative z-10">
-        <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/5">
-           <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
-                 <FaUserEdit className="text-yellow-500 text-xl" />
-              </div>
-              <div>
-                 <h1 className="text-2xl font-black text-white uppercase tracking-widest">Protocol Delta</h1>
-                 <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest leading-none mt-1">Registry Modification Interface</p>
-              </div>
-           </div>
+      <div className="max-w-4xl mx-auto z-10 relative">
+        <div className="mb-10 flex flex-col items-center text-center">
+          <div className="w-16 h-16 bg-white rounded-2xl mb-6 flex items-center justify-center shadow-sm border border-slate-200">
+            <FaUserEdit className="text-2xl text-slate-400" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">
+            Edit <span className="font-light text-slate-400">Profile</span>
+          </h1>
+          <p className="text-slate-500 text-lg">Update your personal details and account settings.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-12">
-          {/* Image Upload Area */}
-          <div className="flex flex-col items-center gap-6">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative w-32 h-32 rounded-2xl overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all">
-                <ProfileImage 
-                   src={imagePreview || profile?.image} 
-                   name={profile?.name} 
-                   size={128} 
-                   className="rounded-2xl" 
-                />
-                <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                  <FaCamera className="text-2xl mb-1" />
-                  <span className="text-[8px] font-black uppercase tracking-widest">Upload Key</span>
-                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                </label>
-              </div>
-            </div>
-            <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Visual Identifier Synthesis</p>
-          </div>
-
-          {/* Form Fields Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {[
-              { label: 'Operator Name', name: 'name', type: 'text', locked: isSocialLogin },
-              { label: 'Transmission Code', name: 'username', type: 'text', locked: isSocialLogin },
-              { label: 'Primary Terminal', name: 'email', type: 'email', locked: isSocialLogin },
-              { label: 'Communications', name: 'phone', type: 'text' },
-              { label: 'Origin Chronology', name: 'dob', type: 'date' },
-              { label: 'Language Class', name: 'language', type: 'text' },
-              { label: 'Primary Occupation', name: 'occupation', type: 'text' },
-              { label: 'Liaison Unit', name: 'favoriteTeam', type: 'text' },
-            ].map((field) => (
-              <div key={field.name} className="relative group">
-                <div className="flex justify-between items-center mb-1.5 px-1">
-                  <label className="text-[9px] text-slate-500 font-black uppercase tracking-widest">{field.label}</label>
-                  {field.locked && <FaLock className="text-[9px] text-yellow-500" title="System Locked" />}
-                </div>
-                <div className="relative group">
-                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-yellow-500 group-focus-within:h-full transition-all duration-500" />
-                  <input
-                    name={field.name}
-                    type={field.type}
-                    value={field.locked ? lockedFields[field.name as keyof typeof lockedFields] : profile[field.name]}
-                    onChange={handleChange}
-                    readOnly={field.locked}
-                    className={`w-full bg-slate-950/40 border border-white/5 rounded-0 px-4 py-4 text-xs font-bold text-white focus:outline-none focus:border-yellow-500/50 transition-all ${field.locked ? 'opacity-30 cursor-not-allowed bg-transparent' : 'hover:border-white/20'} placeholder-white/5`}
-                    placeholder={`Assign ${field.label}...`}
+        <div className="bg-white border border-slate-200 p-8 md:p-12 rounded-3xl shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-10">
+            {/* Image Upload Area */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative group w-32 h-32 md:w-40 md:h-40">
+                <div className="w-full h-full rounded-full overflow-hidden border border-slate-200 shadow-sm bg-slate-50 flex items-center justify-center">
+                  <ProfileImage 
+                    src={imagePreview || profile?.image} 
+                    name={profile?.name} 
+                    size={160} 
+                    className="w-full h-full object-cover" 
+                    glow={false}
                   />
+                  <label className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white rounded-full">
+                    <FaCamera className="text-3xl" />
+                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  </label>
                 </div>
               </div>
-            ))}
-            
-            <div className="relative group">
-               <label className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1.5 px-1">Geo-Location Nationality</label>
-               <select 
-                 name="nationality" 
-                 value={profile.nationality || ""} 
-                 onChange={handleChange}
-                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all appearance-none"
+              <p className="text-sm text-slate-500 font-medium">Click image to upload a new avatar</p>
+            </div>
+
+            <hr className="border-slate-100" />
+
+            {/* Form Fields Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[
+                { label: 'Full Name', name: 'name', type: 'text', locked: false },
+                { label: 'Username', name: 'username', type: 'text', locked: false },
+                { label: 'Email Address', name: 'email', type: 'email', locked: true },
+                { label: 'Phone Number', name: 'phone', type: 'text' },
+                { label: 'Date of Birth', name: 'dob', type: 'date' },
+                { label: 'Language', name: 'language', type: 'text' },
+                { label: 'Occupation', name: 'occupation', type: 'text' },
+                { label: 'Favorite Team', name: 'favoriteTeam', type: 'text' },
+              ].map((field) => (
+                <div key={field.name} className="flex flex-col gap-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{field.label}</label>
+                    {field.locked && <FaLock className="text-xs text-slate-400" title="Managed by OAuth provider" />}
+                  </div>
+                  {field.type === 'date' ? (
+                    <DatePicker 
+                      value={profile[field.name] || ''} 
+                      onChange={(date) => setProfile({ ...profile, [field.name]: date })} 
+                      placeholder={`Select ${field.label.toLowerCase()}...`}
+                    />
+                  ) : (
+                    <input
+                      name={field.name}
+                      type={field.type}
+                      value={field.locked ? lockedFields[field.name as keyof typeof lockedFields] : (profile[field.name] || '')}
+                      onChange={handleChange}
+                      readOnly={field.locked}
+                      className={`w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm ${field.locked ? 'opacity-60 cursor-not-allowed bg-slate-100' : 'hover:border-slate-300'}`}
+                      placeholder={`Enter ${field.label.toLowerCase()}...`}
+                    />
+                  )}
+                </div>
+              ))}
+              
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nationality</label>
+                <select 
+                  name="nationality" 
+                  value={profile.nationality || ""} 
+                  onChange={handleChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm appearance-none"
+                >
+                  <option value="">Select country...</option>
+                  {countries.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gender</label>
+                <select 
+                  name="gender" 
+                  value={profile.gender || ""} 
+                  onChange={handleChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm appearance-none"
+                >
+                  <option value="">Select gender...</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2 flex flex-col gap-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bio</label>
+                <textarea
+                  name="bio"
+                  value={profile.bio || ''}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm resize-y"
+                  placeholder="Tell us a bit about yourself..."
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-slate-100">
+               <button
+                 type="button"
+                 onClick={() => router.push('/profile')}
+                 className="flex-1 py-4 bg-white border border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center justify-center gap-2 shadow-sm"
                >
-                 <option value="" className="bg-slate-900">Select Geo-Origin</option>
-                 {countries.map(c => <option key={c} value={c} className="bg-slate-900">{c}</option>)}
-               </select>
-            </div>
-
-            <div className="relative group">
-               <label className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1.5 px-1">Gender Classification</label>
-               <select 
-                 name="gender" 
-                 value={profile.gender || ""} 
-                 onChange={handleChange}
-                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all appearance-none"
+                 <FaTimes />
+                 Cancel
+               </button>
+               <button
+                 type="submit"
+                 disabled={saving}
+                 className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70"
                >
-                 <option value="" className="bg-slate-900">Classification</option>
-                 <option value="Male" className="bg-slate-900">Male</option>
-                 <option value="Female" className="bg-slate-900">Female</option>
-                 <option value="Other" className="bg-slate-900">Other</option>
-               </select>
+                 {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-200 border-t-white"></div>
+                      Saving Changes...
+                    </>
+                 ) : (
+                    <>
+                      <FaSave />
+                      Save Changes
+                    </>
+                 )}
+               </button>
             </div>
-
-            <div className="md:col-span-2 relative group">
-              <label className="block text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1.5 px-1">Operational Bio / Notes</label>
-              <textarea
-                name="bio"
-                value={profile.bio}
-                onChange={handleChange}
-                rows={4}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all placeholder-white/10"
-                placeholder="Operational brief..."
-              />
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-10 border-t border-white/5">
-             <button
-               type="button"
-               onClick={() => router.push('/profile')}
-               className="flex-1 px-8 py-4 glass-card hud-border text-slate-400 hover:text-white hover:bg-white/5 transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3"
-             >
-               <FaTimes />
-               Abort Changes
-             </button>
-             <button
-               type="submit"
-               disabled={saving}
-               className="btn-primary flex-1 py-4 text-[10px] flex items-center justify-center gap-3"
-             >
-               {saving ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-slate-950"></div>
-                    Sychronizing Registry...
-                  </>
-               ) : (
-                  <>
-                    <FaSave />
-                    Commit Core Protocol
-                  </>
-               )}
-             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

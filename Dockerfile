@@ -4,24 +4,25 @@ RUN apk add --no-cache libc6-compat openssl ca-certificates curl
 
 # Stage 1: Dependency Builder
 FROM base AS deps
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ build-base
 WORKDIR /app
 
 # Copy lockfiles and install dependencies
 COPY package.json ./
 # If you have a lockfile, uncomment the next line
-# COPY package-lock.json ./
+COPY package-lock.json ./
 RUN npm install --legacy-peer-deps
 
 # Stage 2: Application Builder
 FROM base AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma Client and Build
 RUN npx prisma generate
-RUN STRIPE_SECRET_KEY=dummy_key STRIPE_WEBHOOK_SECRET=dummy_key NEXTAUTH_SECRET=dummy_key NEXTAUTH_URL=http://localhost:3000 DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" REDIS_URL=redis://localhost:6379 npm run build
+RUN STRIPE_SECRET_KEY=dummy_key STRIPE_WEBHOOK_SECRET=dummy_key NEXTAUTH_SECRET=dummy_key NEXTAUTH_URL=http://localhost:3000 DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" REDIS_URL=redis://localhost:6379 NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY npm run build
 
 # Stage 3: Production Runner (Hardened)
 FROM base AS runner

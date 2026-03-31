@@ -44,9 +44,9 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  isMember      Boolean   @default(false)
-  membershipType String?
-  memberSince    DateTime?
+  isMember      Boolean   @default(true)
+  membershipType String?  @default("free")
+  memberSince    DateTime? @default(now())
   username      String?
   phone         String?
   dob           String?

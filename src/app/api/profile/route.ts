@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { PrismaClient } from '@prisma/client';
+import { sanitizePayload } from '@/lib/sanitizer';
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,9 @@ export async function POST(req: NextRequest) {
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const data = await req.json();
+  const rawData = await req.json();
+  const data = sanitizePayload<any>(rawData);
+
   try {
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },

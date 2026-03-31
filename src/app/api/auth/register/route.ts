@@ -3,13 +3,28 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { sendMail } from '@/lib/mailer';
 import { registerSchema } from '@/lib/validations';
+import { verifyTurnstile } from '@/lib/turnstile';
+import { sanitizePayload } from '@/lib/sanitizer';
 
 export const dynamic = "force-dynamic";
+
+import { getWelcomeEmailTemplate } from '@/lib/email-templates';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const validatedData = registerSchema.safeParse(body);
+    const { turnstileToken, ...rest } = body;
+
+    // Verify Turnstile
+    if (process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY) {
+      const isHuman = await verifyTurnstile(turnstileToken);
+      if (!isHuman) {
+        return NextResponse.json({ error: 'Security verification failed. Please try again.' }, { status: 400 });
+      }
+    }
+
+    const cleanBody = sanitizePayload(rest);
+    const validatedData = registerSchema.safeParse(cleanBody);
 
     if (!validatedData.success) {
       return NextResponse.json({ 
@@ -44,6 +59,9 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         roles: 'user',
+        isMember: true,
+        membershipType: 'free',
+        memberSince: new Date(),
         profileInitialized: false,
         username: finalUsername,
         lastLogin: null,
@@ -51,10 +69,13 @@ export async function POST(request: Request) {
     });
 
     // Send welcome email
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const emailHtml = getWelcomeEmailTemplate(name || finalUsername, baseUrl);
+
     await sendMail({
       to: email,
-      subject: 'Welcome to FC ESCUELA!',
-      html: `<h2>Welcome, ${name}!</h2><p>Your account has been created successfully at FC ESCUELA.</p><p>Thank you for joining us!</p>`
+      subject: 'Registry Activation: Welcome to FC ESCUELA',
+      html: emailHtml
     });
 
     return NextResponse.json({ message: 'Registration successful' }, { status: 201 });

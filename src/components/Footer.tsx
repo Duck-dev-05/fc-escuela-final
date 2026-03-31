@@ -8,132 +8,107 @@ declare global {
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaFacebookF, FaYoutube, FaShieldAlt } from "react-icons/fa";
+import { FaFacebookF, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-slate-50 pt-32 pb-16 overflow-hidden border-t border-slate-200">
-      {/* Decorative HUD background elements */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
-      <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-yellow-500/[0.04] to-transparent pointer-events-none" />
-      
-      <div className="max-w-[1600px] mx-auto relative z-10 px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 mb-24">
+    <footer className="bg-slate-950 pt-24 pb-12 overflow-hidden selection:bg-slate-800 selection:text-white">
+      <div className="max-w-[1600px] mx-auto px-8 relative z-10">
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
+          
           {/* Brand Engine Section */}
-          <div className="lg:col-span-5 space-y-12">
-            <div className="flex flex-col gap-8 group">
-              <div className="flex items-center gap-6">
-                <div className="relative w-16 h-16 glass-card border-slate-200 p-1 bg-white overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
-                  <div className="absolute inset-0 bg-yellow-500/5 animate-pulse" />
-                  <Image 
-                    src="/images/logo.jpg" 
-                    alt="FC ESCUELA" 
-                    width={64} 
-                    height={64} 
-                    className="object-cover w-full h-full relative border border-slate-100 opacity-90 group-hover:opacity-100 transition-opacity" 
-                  />
+          <div className="md:col-span-4 flex flex-col justify-between">
+            <div className="space-y-8">
+              <Link href="/" className="inline-block group">
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 bg-white flex items-center justify-center p-1">
+                    <Image 
+                      src="/images/logo.jpg" 
+                      alt="FC ESCUELA" 
+                      width={64} 
+                      height={64} 
+                      className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500" 
+                    />
+                  </div>
+                  <h2 className="text-3xl font-black text-white tracking-tight leading-none group-hover:text-slate-300 transition-colors">
+                     FC <br />
+                     <span className="text-slate-500 font-light">ESCUELA</span>
+                  </h2>
                 </div>
-                <div className="flex flex-col gap-1">
-                   <div className="flex items-center gap-3 text-[9px] text-yellow-600 font-black uppercase tracking-[0.5em]">
-                      <div className="w-1.5 h-1.5 rounded-full bg-yellow-600 animate-pulse" />
-                      Protocol: ACTIVE_LEGACY
-                   </div>
-                   <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic leading-none group-hover:tracking-widest transition-all duration-700">
-                      ESCUELA <br />
-                      <span className="text-5xl not-italic text-slate-200 transition-colors group-hover:text-slate-900">LEGACY</span>
-                   </h2>
-                </div>
-              </div>
-              <p className="text-[13px] text-slate-400 leading-loose font-mono font-bold uppercase tracking-wider max-w-sm italic">
-                Direct updates from the heart of the club. Elite performance, legendary legacy. Direct telemetry synchronisation active.
+              </Link>
+              <p className="text-sm font-medium text-slate-500 max-w-sm leading-relaxed">
+                Elevating the beautiful game through elite analytics, comprehensive editorial coverage, and premier club experiences.
               </p>
             </div>
-            
-            <div id="google_translate_element" className="relative z-50 glass-card border-slate-200 p-4 inline-block bg-white/60 shadow-sm" />
           </div>
- 
-           {/* Quick Links Section */}
-          <div className="lg:col-span-2 space-y-10">
-            <h3 className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.6em] border-b border-slate-100 pb-4">Registry</h3>
-            <div className="flex flex-col gap-6">
+
+          {/* Quick Links Section */}
+          <div className="md:col-span-2 md:col-start-7 space-y-8">
+            <h3 className="text-xs font-bold text-white uppercase tracking-widest">Explore</h3>
+            <div className="flex flex-col gap-5">
               {[
                 { label: 'Home', href: '/' },
                 { label: 'News Hub', href: '/news' },
-                { label: 'Squad Registry', href: '/team' },
-                { label: 'Ticket Hub', href: '/ticketing' }
+                { label: 'The Squad', href: '/team' },
+                { label: 'Ticketing', href: '/ticketing' }
               ].map((link) => (
                 <Link 
                    key={link.label} 
                    href={link.href}
-                   className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-slate-900 transition-all flex items-center gap-4 group/link italic"
+                   className="text-sm font-bold text-slate-500 hover:text-white transition-colors"
                 >
-                  <div className="w-4 h-[1px] bg-yellow-500/0 group-hover/link:w-8 group-hover/link:bg-yellow-500 transition-all duration-500" />
                   {link.label}
                 </Link>
               ))}
             </div>
           </div>
- 
-          <div className="lg:col-span-2 space-y-10">
-            <h3 className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.6em] border-b border-slate-100 pb-4">Protocol</h3>
-            <div className="flex flex-col gap-6">
+
+          {/* Protocol Section */}
+          <div className="md:col-span-2 space-y-8">
+            <h3 className="text-xs font-bold text-white uppercase tracking-widest">Legal</h3>
+            <div className="flex flex-col gap-5">
               {['About', 'Contact', 'Privacy Policy'].map((link) => (
                 <Link 
                    key={link} 
                    href="#"
-                   className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-slate-900 transition-all flex items-center gap-4 group/link italic"
+                   className="text-sm font-bold text-slate-500 hover:text-white transition-colors"
                 >
-                  <div className="w-4 h-[1px] bg-yellow-500/0 group-hover/link:w-8 group-hover/link:bg-yellow-500 transition-all duration-500" />
                   {link}
                 </Link>
               ))}
             </div>
           </div>
- 
-           {/* Social Section */}
-          <div className="lg:col-span-3 space-y-12">
-            <div className="space-y-8">
-               <h3 className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.6em] border-b border-slate-100 pb-4 text-right">Connect_Sync</h3>
-               <div className="flex items-center justify-end gap-6">
-                 <a href="https://www.facebook.com/profile.php?id=100083085867194" target="_blank" className="w-14 h-14 glass-card border-slate-200 flex items-center justify-center text-slate-400 hover:text-yellow-600 transition-all hover:bg-yellow-500/5 group shadow-sm bg-white/50">
-                   <FaFacebookF className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                 </a>
-                 <a href="https://www.youtube.com/@NhaTruongKhu" target="_blank" className="w-14 h-14 glass-card border-slate-200 flex items-center justify-center text-slate-400 hover:text-yellow-600 transition-all hover:bg-yellow-500/5 group shadow-sm bg-white/50">
-                   <FaYoutube className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                 </a>
-               </div>
-            </div>
-            
-            <div className="p-8 glass-card border-yellow-500/10 bg-white/80 relative overflow-hidden group/secure shadow-sm">
-               <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500/30 group-hover/secure:bg-yellow-500 transition-colors" />
-               <div className="flex items-center gap-4 mb-4">
-                 <FaShieldAlt className="text-yellow-600 text-sm animate-pulse" />
-                 <span className="text-[9px] text-slate-900 font-black uppercase tracking-[0.4em]">Secure_Ops_Locked</span>
-               </div>
-               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed italic">Encryption: AES-256 Synchronous Registry Active.</p>
-            </div>
+
+          {/* Action / Social Section */}
+          <div className="md:col-span-2 space-y-8">
+             <h3 className="text-xs font-bold text-white uppercase tracking-widest">Connect</h3>
+             <div className="flex items-center gap-4">
+               <a href="https://www.facebook.com/profile.php?id=100083085867194" target="_blank" className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center text-slate-400 hover:border-slate-500 hover:text-white transition-all hover:bg-slate-800 group">
+                 <FaFacebookF className="w-4 h-4 group-hover:scale-110 transition-transform" />
+               </a>
+               <a href="https://www.youtube.com/@NhaTruongKhu" target="_blank" className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center text-slate-400 hover:border-slate-500 hover:text-white transition-all hover:bg-slate-800 group">
+                 <FaYoutube className="w-4 h-4 group-hover:scale-110 transition-transform" />
+               </a>
+             </div>
+             <div className="pt-4">
+                <div id="google_translate_element" className="inline-block bg-slate-900 border border-slate-800 rounded-lg p-2 overflow-hidden" />
+             </div>
+          </div>
+
+        </div>
+
+        {/* Global Bottom Bar */}
+        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+            © {new Date().getFullYear()} FC ESCUELA. All Rights Reserved.
+          </div>
+          <div className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">
+             Deployed via Technical Hub
           </div>
         </div>
- 
-        {/* HUD Bottom Bar */}
-        <div className="border-t border-slate-100 pt-12 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="text-[9px] text-slate-400 font-black uppercase tracking-[0.5em] flex items-center gap-4 italic hover:text-slate-900 transition-colors">
-            <span className="w-12 h-[1px] bg-slate-200" />
-            © {new Date().getFullYear()} FC ESCUELA // DIGITAL ARCHIVE
-          </div>
-          
-          <div className="flex items-center gap-8 group cursor-default">
-             <div className="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-ping" />
-             <span className="text-[8px] text-yellow-600/50 font-black uppercase tracking-[0.6em]">OVERWATCH_ACTIVE</span>
-          </div>
-        </div>
-      </div>
- 
-      {/* Ghost Typography Background */}
-      <div className="absolute -bottom-20 right-0 select-none pointer-events-none opacity-[0.03] rotate-[-5deg]">
-        <span className="text-[25vw] font-black text-slate-900 uppercase leading-none italic tracking-tighter">LEGACY_ENGINE</span>
+
       </div>
     </footer>
   );
 }
-

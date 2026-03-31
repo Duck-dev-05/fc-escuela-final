@@ -6,6 +6,7 @@ import { Match } from '@/types/match'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { FaBroadcastTower, FaLock, FaTrophy } from 'react-icons/fa'
+import MembershipGuard from '@/components/auth/MembershipGuard'
 
 export default function MatchesPage() {
   const { data: session, status } = useSession();
@@ -94,15 +95,17 @@ export default function MatchesPage() {
           </div>
         )}
 
-        {/* Finished Matches */}
+        {/* Finished Matches - Gated for Standard Operators */}
         {finished.length > 0 && (
-          <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="flex items-center gap-3 mb-8">
-               <div className="w-2 h-2 rounded-full bg-slate-300 shadow-[0_0_10px_rgba(0,0,0,0.05)]" />
-               <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em]">Archive Transmissions</h2>
+          <MembershipGuard tier="standard">
+            <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="flex items-center gap-3 mb-8">
+                 <div className="w-2 h-2 rounded-full bg-slate-300 shadow-[0_0_10px_rgba(0,0,0,0.05)]" />
+                 <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.3em]">Archive Transmissions</h2>
+              </div>
+              <MatchList matches={finished} />
             </div>
-            <MatchList matches={finished} />
-          </div>
+          </MembershipGuard>
         )}
 
         {matches.length === 0 && !loading && (

@@ -20,9 +20,9 @@ const pages = [
   { name: "Settings", href: "/settings", description: "Manage your account settings and preferences." },
   { name: "Support", href: "/support", description: "Get help and support for any issues or questions." },
   { name: "Sign In", href: "/login", description: "Access your account by signing in." },
-  { name: "Register", href: "/auth/register", description: "Create a new account to join FC ESCUELA." },
-  { name: "Forgot Password", href: "/auth/forgot-password", description: "Reset your password if you've forgotten it." },
-  { name: "Reset Password", href: "/auth/reset-password", description: "Set a new password for your account." },
+  { name: "Register", href: "/register", description: "Create a new account to join FC ESCUELA." },
+  { name: "Forgot Password", href: "/forgot-password", description: "Reset your password if you've forgotten it." },
+  { name: "Reset Password", href: "/reset-password", description: "Set a new password for your account." },
 ];
 
 function SearchPageInner() {

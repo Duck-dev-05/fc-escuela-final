@@ -1,47 +1,150 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { FaArrowLeft, FaStar, FaBolt, FaShieldAlt, FaCrosshairs, FaTrophy, FaCalendarAlt, FaMapMarkerAlt, FaUserAlt, FaCodeBranch, FaCogs, FaMicrochip } from 'react-icons/fa'
+import { 
+  ArrowLeftIcon, StarIcon, TrophyIcon, 
+  CalendarIcon, MapPinIcon, UserIcon,
+  ShieldCheckIcon, BoltIcon, AdjustmentsHorizontalIcon,
+  IdentificationIcon, ScaleIcon, ClockIcon,
+  ChartBarIcon, PresentationChartLineIcon, DocumentCheckIcon,
+  SparklesIcon, RectangleStackIcon, AcademicCapIcon
+} from '@heroicons/react/24/outline'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 interface Player {
-  id: number;
+  id: string;
   name: string;
   role: string;
   image: string | null;
   bio: string;
   captain: boolean;
+  physical: {
+    height: string;
+    weight: string;
+    age: number;
+    dob: string;
+    foot: string;
+  };
+  stats: {
+    appearances: number;
+    goals?: number;
+    assists?: number;
+    cleanSheets?: number;
+    saves?: number;
+    tackles?: number;
+    minutes: number;
+  };
+  contract: {
+    joined: string;
+    expires: string;
+  };
+}
+
+// Custom Radar Chart SVG Component
+function AttributeMatrix({ stats }: { stats: any }) {
+  const points = [
+    { label: 'TACTICAL', val: 92 },
+    { label: 'PHYSICAL', val: 88 },
+    { label: 'TECHNICAL', val: 94 },
+    { label: 'MENTAL', val: 90 },
+    { label: 'SPEED', val: 86 }
+  ];
+  
+  const size = 480;
+  const center = size / 2;
+  const radius = center * 0.7;
+  
+  const getCoordinates = (index: number, value: number) => {
+    const angle = (Math.PI * 2 * index) / points.length - Math.PI / 2;
+    const distance = (value / 100) * radius;
+    return {
+      x: center + distance * Math.cos(angle),
+      y: center + distance * Math.sin(angle)
+    };
+  };
+
+  const pathData = points.map((p, i) => {
+    const coords = getCoordinates(i, p.val);
+    return `${i === 0 ? 'M' : 'L'} ${coords.x} ${coords.y}`;
+  }).join(' ') + ' Z';
+
+  return (
+    <div className="relative flex flex-col items-center scale-110 lg:scale-125">
+      <svg width={size} height={size} className="overflow-visible">
+        {/* Grids */}
+        {[25, 50, 75, 100].map((r, i) => (
+          <circle
+            key={i}
+            cx={center}
+            cy={center}
+            r={(r / 100) * radius}
+            fill="none"
+            stroke="rgba(0, 0, 0, 0.03)"
+            strokeWidth="0.5"
+          />
+        ))}
+        {/* Data Area */}
+        <motion.path
+          initial={{ pathLength: 0, opacity: 0 }}
+          whileInView={{ pathLength: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 2.5, ease: "circOut" }}
+          d={pathData}
+          fill="rgba(234, 179, 8, 0.05)"
+          stroke="#000"
+          strokeWidth="1.5"
+        />
+        {/* Labels */}
+        {points.map((p, i) => {
+          const coords = getCoordinates(i, 115);
+          return (
+            <text
+              key={i}
+              x={coords.x}
+              y={coords.y}
+              textAnchor="middle"
+              className="text-[9px] font-black uppercase tracking-[0.4em] fill-slate-300"
+            >
+              {p.label}
+            </text>
+          );
+        })}
+      </svg>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+         <span className="text-7xl font-black italic text-slate-950 leading-none">92</span>
+         <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mt-3">GRADE A+</span>
+      </div>
+    </div>
+  );
 }
 
 export default function PlayerDetailPage() {
   const { id } = useParams()
   const router = useRouter()
-   const [player, setPlayer] = useState<Player | null>(null)
-   const [loading, setLoading] = useState(true)
-   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-
-   useEffect(() => {
-     const handleMouseMove = (e: MouseEvent) => {
-       setMousePos({
-         x: (e.clientX / window.innerWidth) * 100,
-         y: (e.clientY / window.innerHeight) * 100,
-       });
-     };
-     window.addEventListener('mousemove', handleMouseMove);
-     return () => window.removeEventListener('mousemove', handleMouseMove);
-   }, []);
+  const [player, setPlayer] = useState<Player | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  const { scrollYProgress } = useScroll();
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
+  const nameY = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
 
   useEffect(() => {
     if (!id) return;
     const fetchPlayer = async () => {
       try {
         const response = await fetch('/api/team')
-        if (response.ok) {
-          const data = await response.json()
-          const roster = Array.isArray(data) ? data : data.team
-          const found = roster.find((p: any) => String(p.id) === id)
-          setPlayer(found)
-        }
+        if (!response.ok) throw new Error('Player profile unavailable.')
+        const data = await response.json()
+        const roster = Array.isArray(data.team) ? data.team : data
+        const found = roster.find((p: any) => String(p.id) === id)
+        if (!found) throw new Error('Unit not found.')
+        setPlayer(found)
+      } catch (err) {
+        setError('Failed to load player intel.')
       } finally {
         setLoading(false)
       }
@@ -50,201 +153,301 @@ export default function PlayerDetailPage() {
   }, [id])
 
   if (loading) {
-     return (
-       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-8 animate-pulse">
-             <div className="w-24 h-24 border-2 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin shadow-[0_10px_30px_rgba(234,179,8,0.1)]" />
-             <p className="text-yellow-600 font-black uppercase tracking-[0.5em] text-[10px]">INITIALIZING_PERSONNEL_LINK...</p>
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-12">
+          <div className="relative w-24 h-24">
+            <div className="absolute inset-0 border-t-2 border-slate-950 rounded-full animate-spin-slow opacity-20" />
+            <div className="absolute inset-4 border-b-2 border-yellow-500 rounded-full animate-reverse-spin opacity-40" />
           </div>
-       </div>
-     )
+          <p className="text-slate-950 font-black uppercase tracking-[0.6em] text-[10px] animate-pulse">SYNCHRONIZING ARCHIVE...</p>
+        </div>
+      </div>
+    )
   }
 
-  if (!player) {
+  if (error || !player) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-8">
-        <h1 className="text-6xl font-black uppercase mb-8 tracking-tighter text-slate-900">Unit_Offline</h1>
-        <button onClick={() => router.push('/team')} className="btn-primary px-12 py-4">Return to Command Registry</button>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
+        <h1 className="text-7xl font-black uppercase mb-12 tracking-tighter text-slate-950 italic">ARCHIVE_NOT_FOUND</h1>
+        <button onClick={() => router.push('/team')} className="px-16 py-6 bg-slate-950 text-white rounded-full text-[10px] font-black uppercase tracking-[0.5em] hover:bg-slate-800 transition-all shadow-2xl">RETURN TO ROSTER</button>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen py-20 px-8 relative overflow-hidden bg-slate-50 selection:bg-yellow-500 selection:text-slate-950">
-       {/* Neural_Orb & Cinematic Background */}
-       <div className="absolute inset-0 pointer-events-none">
-          <div 
-             className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.04] blur-[120px] transition-all duration-1000 ease-out z-0"
-             style={{ 
-                left: `${mousePos.x}%`, 
-                top: `${mousePos.y}%`, 
-                transform: 'translate(-50%, -50%)' 
-             }} 
-          />
-          <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-yellow-500/[0.03] to-transparent z-10" />
-          
-          {/* Ghost Typography */}
-          <div className="absolute top-20 left-10 select-none pointer-events-none opacity-[0.02] whitespace-nowrap z-0">
-             <span className="text-[20vw] font-black ghost-text leading-none uppercase italic tracking-tighter">PERSONNEL_INTEL</span>
-          </div>
-       </div>
-
-       <div className="max-w-[1400px] mx-auto relative z-20">
-          {/* Back Link HUD */}
-          <button 
-            onClick={() => router.push('/team')}
-            className="inline-flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 hover:text-yellow-600 transition-all group mb-20"
-          >
-             <div className="w-12 h-12 rounded-lg border border-slate-200 bg-white/50 flex items-center justify-center group-hover:border-yellow-500/50 group-hover:bg-yellow-500/5 transition-all shadow-sm">
-                <FaArrowLeft className="group-hover:-translate-x-2 transition-transform" />
-             </div>
-             <span className="group-hover:translate-x-2 transition-transform italic">Return to Registry</span>
-          </button>
-
-          {/* Maximum Impact Header */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-28 gap-16 animate-slide-up">
-              <div className="flex flex-col gap-10">
-                 <div className="relative group/header">
-                    <div className="absolute -top-6 -left-6 w-8 h-8 border-t-2 border-l-2 border-yellow-500/20 group-hover/header:border-yellow-500 transition-colors" />
-                    <h1 className="text-4xl md:text-6xl font-black text-slate-900 uppercase tracking-tighter leading-[0.85] italic group-hover:scale-[1.02] transition-transform duration-700">
-                       Personnel <br />
-                       <span className="text-7xl md:text-9xl not-italic text-slate-200 tracking-[-0.05em] group-hover:text-slate-900 transition-colors">Profile</span>
-                    </h1>
-                 </div>
-              </div>
-
-              <div className="flex flex-col items-end gap-10 w-full lg:w-auto">
-                 <div className="flex items-center gap-12 text-[10px] font-black text-slate-300 tracking-[0.4em] uppercase border-b border-slate-100 pb-4 w-full justify-end">
-                    <span>UNIT_STATUS</span>
-                    <span>//</span>
-                    <span className="text-yellow-600/50 flex items-center gap-3 font-mono">
-                       ID_VANGUARD_{String(player.id).padStart(3, '0')}
-                    </span>
-                 </div>
-                 <div className="px-6 py-2 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-sm skew-x-[-15deg] shadow-[0_10px_30px_rgba(234,179,8,0.2)]">
-                    <span className="block skew-x-[15deg]">{player.role}</span>
-                 </div>
-              </div>
+    <div className="min-h-screen bg-white selection:bg-yellow-500 selection:text-slate-950 overflow-x-hidden">
+       {/* Hero Section */}
+       <section className="relative h-[80vh] w-full flex items-center justify-center overflow-hidden bg-white">
+          {/* Back to Roster Action */}
+          <div className="absolute top-8 left-8 md:left-16 z-50">
+             <motion.button 
+               initial={{ opacity: 0, x: -20 }}
+               animate={{ opacity: 1, x: 0 }}
+               onClick={() => router.push('/team')}
+               className="group flex items-center gap-3 text-[10px] font-black text-slate-900 uppercase tracking-[0.4em] hover:text-yellow-600 transition-colors"
+             >
+                <ArrowLeftIcon className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform" />
+                <span className="italic">ROSTER</span>
+             </motion.button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
-             
-             {/* Cinematic Portrait Section */}
-             <div className="lg:col-span-5 animate-slide-right relative">
-                <div className="absolute -top-10 -left-10 text-[12vw] font-black text-slate-900/[0.02] uppercase tracking-tighter select-none pointer-events-none italic rotate-[-10deg]">VANGUARD</div>
-                
-                <div className="relative group">
-                   <div className="absolute -inset-6 bg-yellow-500/[0.05] blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="absolute inset-0">
+             {player.image ? (
+                <img 
+                   src={`/avatars/${player.image}`} 
+                   alt={player.name}
+                   className="w-full h-full object-cover transition-all duration-1000"
+                />
+             ) : (
+                <div className="w-full h-full bg-slate-50 flex items-center justify-center">
+                   <UserIcon className="h-[15vw] text-slate-100" />
+                </div>
+             )}
+             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-white" />
+          </motion.div>
+
+          {/* Player Name Overlay */}
+          <div className="absolute inset-x-0 bottom-8 flex flex-col items-center z-20">
+             <motion.h1 
+               style={{ y: nameY }}
+               className="text-[8vw] lg:text-[7rem] font-black text-slate-950 uppercase tracking-[-0.05em] leading-none italic select-none"
+             >
+                {player.name}
+             </motion.h1>
+             <div className="h-[40px] w-[1px] bg-yellow-500 mt-6" />
+          </div>
+       </section>
+
+       {/* SECTION 2: Narrative Profile */}
+       <section className="relative z-30 max-w-[1600px] mx-auto px-8 md:px-16 pt-24 pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+             <div className="lg:col-span-12 space-y-16">
+                <div className="flex flex-col lg:flex-row gap-8 items-baseline justify-between border-b border-slate-100 pb-8">
+                   <div className="space-y-3">
+                      <span className="text-[10px] font-black text-yellow-600 uppercase tracking-[0.5em]">ELITE ARCHIVE NO. {String(player.id).padStart(3, '0')}</span>
+                      <h2 className="text-5xl md:text-7xl font-black text-slate-950 uppercase tracking-tighter leading-none italic">
+                         {player.role}
+                      </h2>
+                   </div>
                    
-                   {/* The Main Frame */}
-                   <div className="relative aspect-[4/5] glass-card hud-border border-slate-200 p-1 bg-white/50 shadow-[0_20px_60px_rgba(0,0,0,0.03)] overflow-hidden">
-                      <div className="w-full h-full relative overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-100">
-                         {player.image ? (
-                            <img 
-                               src={`/avatars/${player.image}`} 
-                               alt={player.name}
-                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                   <div className="flex flex-col items-end text-right">
+                      <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">STATUS</span>
+                      <span className="text-xl font-black text-slate-950 italic">FIRST TEAM</span>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 pt-8">
+                   <div className="lg:col-span-8">
+                      <p className="text-2xl md:text-3xl font-black text-slate-950 leading-[1.3] uppercase tracking-tight italic opacity-90 pr-8">
+                        {player.bio}
+                      </p>
+                   </div>
+                   <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
+                      <SignatureOverlay name={player.name} color="#000" />
+                   </div>
+                </div>
+             </div>
+          </div>
+
+
+          {/* SECTION 3: Performance Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center py-16">
+             <div className="lg:col-span-6 order-2 lg:order-1 flex justify-center">
+                <AttributeMatrix stats={player.stats} />
+             </div>
+
+             <div className="lg:col-span-6 space-y-12 order-1 lg:order-2">
+                <div className="space-y-4">
+                   <h3 className="text-3xl md:text-4xl font-black text-slate-950 uppercase tracking-tighter italic">
+                      Technical <br />
+                      <span className="text-slate-200" style={{ WebkitTextStroke: '1px #0f172a' }}>Dominance.</span>
+                   </h3>
+                </div>
+
+                <div className="grid grid-cols-1 gap-10 pt-4">
+                   {[
+                      { label: 'Tactical', val: '94%' },
+                      { label: 'Technical', val: '91%' },
+                      { label: 'Mental', val: '96%' },
+                   ].map((item, i) => (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        key={i} 
+                        className="space-y-3"
+                      >
+                         <div className="flex justify-between items-baseline">
+                            <span className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em]">{item.label}</span>
+                            <span className="text-xl font-black text-slate-900 italic">{item.val}</span>
+                         </div>
+                         <div className="h-[1px] w-full bg-slate-100 relative">
+                            <motion.div 
+                               initial={{ width: 0 }}
+                               whileInView={{ width: item.val }}
+                               transition={{ duration: 2, ease: "circOut" }}
+                               className="h-full bg-slate-950 absolute top-0 left-0" 
                             />
-                         ) : (
-                            <FaUserAlt className="text-[10rem] text-slate-200" />
-                         )}
+                         </div>
+                      </motion.div>
+                   ))}
+                </div>
+             </div>
+          </div>
 
-                         {/* Ranging HUD Overlay */}
-                         <div className="absolute inset-0 pointer-events-none border-[1px] border-slate-200/50" />
-                         <div className="absolute top-8 left-8 w-12 h-12 border-t-2 border-l-2 border-yellow-500/20 group-hover:border-yellow-500 transition-colors" />
-                         <div className="absolute bottom-8 right-8 w-12 h-12 border-b-2 border-r-2 border-yellow-500/20 group-hover:border-yellow-500 transition-colors" />
-                         
-                         {/* Dynamic Scanning Bar */}
-                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent animate-scanline opacity-0 group-hover:opacity-100" />
-                         
-                         {/* Player Role HUD Labels */}
-                         <div className="absolute top-8 right-8 flex flex-col items-end gap-3 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-700">
-                            {player.captain && (
-                               <div className="px-6 py-2 bg-yellow-500 text-slate-950 font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-2 rounded shadow-[0_10px_30px_rgba(234,179,8,0.3)] border border-white/20">
-                                  <FaStar className="animate-pulse" /> COMMAND_CORE
+          {/* SECTION 4: Physical Matrix */}
+          <div className="py-24 border-t border-slate-50">
+             <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+                {[
+                   { label: 'HEIGHT', val: player.physical.height, icon: ScaleIcon, code: 'H_UNIT_V2' },
+                   { label: 'WEIGHT', val: player.physical.weight, icon: BoltIcon, code: 'M_LOAD_STABLE' },
+                   { label: 'CYCLE', val: player.physical.age, icon: ClockIcon, code: 'ELITE_MATURITY' },
+                   { label: 'VECTOR', val: player.physical.foot, icon: SparklesIcon, code: 'PREF_COORD' },
+                ].map((p, i) => (
+                   <div key={i} className="group flex flex-col gap-5 border-l border-slate-100 pl-8 hover:border-yellow-500 transition-colors">
+                      <div className="flex items-center gap-3">
+                         <span className="text-[8px] font-black text-slate-200 uppercase tracking-tighter">0{i+1}</span>
+                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">{p.label}</span>
+                      </div>
+                      <div className="space-y-1">
+                         <span className="block text-4xl font-black text-slate-950 uppercase tracking-tighter italic">{p.val}</span>
+                         <span className="block text-[7px] font-bold text-slate-300 uppercase tracking-[0.3em] font-mono">{p.code}</span>
+                      </div>
+                   </div>
+                ))}
+             </div>
+          </div>
+
+          {/* SECTION 5: Legacy & Commitment */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 py-24 border-t border-slate-50">
+             <div className="lg:col-span-8 space-y-16">
+                <div className="space-y-12">
+                   {[
+                      { year: '2026', title: 'Champions Circuit MVP', desc: 'Recognized as the primary tactical node in the flagship hub.', icon: StarIcon },
+                      { year: '2025', title: 'Scoring Protocol Alpha', desc: 'Achieving a record-breaking efficiency of 28 targets.', icon: TrophyIcon },
+                      { year: '2024', title: 'First Team Deployment', desc: 'Full integration into the elite performance unit.', icon: IdentificationIcon },
+                   ].map((item, i) => (
+                      <div key={i} className="group relative">
+                         <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-16 pb-12 border-b border-slate-50 last:border-0 last:pb-0">
+                            <div className="flex flex-col gap-2 shrink-0">
+                               <span className="text-3xl font-black italic text-slate-950 uppercase tracking-tighter w-20">{item.year}</span>
+                               <div className="h-0.5 w-8 bg-yellow-500" />
+                            </div>
+                            <div className="space-y-4 pt-1">
+                               <div className="flex items-center gap-4">
+                                  <item.icon className="h-4 w-4 text-slate-950" />
+                                  <h4 className="text-[11px] font-black text-slate-950 uppercase tracking-[0.4em]">{item.title}</h4>
                                </div>
-                            )}
-                            <div className="px-5 py-2 bg-white/90 border border-slate-200 rounded-lg backdrop-blur-xl text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] shadow-sm">
-                               {player.role}
+                               <p className="text-[13px] text-slate-400 font-medium uppercase tracking-[0.05em] leading-relaxed max-w-lg transition-colors group-hover:text-slate-600">
+                                  {item.desc}
+                               </p>
                             </div>
                          </div>
+                      </div>
+                   ))}
+                </div>
+             </div>
 
-                         {/* Name Banner Overlay */}
-                         <div className="absolute bottom-10 left-0 w-full px-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                            <div className="p-8 glass-card border-slate-200 bg-white/90 backdrop-blur-2xl relative overflow-hidden shadow-xl">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500/50" />
-                                <h1 className="text-6xl font-black uppercase tracking-tighter text-slate-900 transition-all group-hover:tracking-widest group-hover:text-yellow-600 mb-2 italic">{player.name.split(' ').slice(-1)}</h1>
-                                <div className="flex justify-between items-center text-[9px] font-black tracking-[0.4em] text-slate-400">
-                                   <span className="uppercase">{player.name}</span>
-                                   <span className="font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200 text-slate-900">ID://{String(player.id).padStart(4, '0')}</span>
-                                </div>
-                            </div>
+             <div className="lg:col-span-4">
+                <div className="p-10 bg-slate-50/50 rounded-[4rem] border border-slate-100/50 space-y-12 h-full flex flex-col justify-between">
+                   <div className="space-y-10">
+                      <div className="space-y-3">
+                         <span className="block text-[10px] text-slate-300 font-black uppercase tracking-widest">TENURE_SYNC</span>
+                         <div className="flex items-center gap-3">
+                            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                            <span className="text-3xl font-black uppercase tracking-tighter italic">UNTIL {player.contract.expires}</span>
                          </div>
+                      </div>
+                      
+                      <div className="space-y-3 pt-10 border-t border-slate-100">
+                         <span className="block text-[10px] text-slate-300 font-black uppercase tracking-widest">ASSIGNMENT</span>
+                         <span className="block text-4xl font-black italic text-slate-950 uppercase tracking-tighter leading-none">ELITE <br /> UNIT</span>
+                      </div>
+                   </div>
+
+                   <div className="pt-8">
+                      <div className="h-[1px] w-full bg-slate-200 mb-8" />
+                      <div className="flex items-center gap-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                         <span>REF: CLUB_OFFICIAL_STAMP</span>
+                         <div className="w-3 h-3 rounded-full border border-slate-200" />
                       </div>
                    </div>
                 </div>
              </div>
+          </div>
+       </section>
 
-             {/* Performance Intel Section */}
-             <div className="lg:col-span-7 space-y-12 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-                 
-                 {/* Profile Data Matrix */}
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Personal Bio Card */}
-                    <div className="glass-card hud-border p-10 bg-white/70 border-slate-200 relative overflow-hidden group/bio shadow-sm">
-                       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover/bio:opacity-10 transition-opacity">
-                          <FaCalendarAlt className="text-4xl text-slate-900" />
-                       </div>
-                       <h3 className="text-[11px] font-black text-yellow-600 uppercase tracking-[0.5em] mb-10 flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-yellow-600" />
-                          Personnel_Summary
-                       </h3>
-                       <p className="text-sm font-black uppercase tracking-[0.15em] text-slate-600 leading-loose italic">"{player.bio}"</p>
-                       
-                       <div className="mt-12 space-y-6 border-t border-slate-100 pt-8">
-                          <div className="flex items-center gap-4 text-slate-400 hover:text-slate-900 transition-colors">
-                             <FaCalendarAlt className="text-yellow-600/50" />
-                             <span className="text-[10px] font-black tracking-[0.2em] uppercase">Deployment: OCT_2023</span>
-                          </div>
-                          <div className="flex items-center gap-4 text-slate-400 hover:text-slate-900 transition-colors">
-                             <FaMapMarkerAlt className="text-yellow-600/50" />
-                             <span className="text-[10px] font-black tracking-[0.2em] uppercase">Sector: ESCUELA_CENTRAL</span>
-                          </div>
-                       </div>
-                    </div>
-
-                    {/* Role Efficacy Card */}
-                    <div className="glass-card hud-border p-10 bg-white/70 border-slate-200 flex flex-col justify-between shadow-sm">
-                       <h3 className="text-[11px] font-black text-yellow-600 uppercase tracking-[0.5em] mb-10 flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-yellow-600" />
-                          Operational_Focus
-                       </h3>
-                       <div className="space-y-10">
-                          {[
-                             { label: 'Tactical Discipline', val: '94%', color: 'yellow-500' },
-                             { label: 'Physical Endurance', val: '88%', color: 'yellow-500' },
-                             { label: 'Technical Precision', val: '91%', color: 'yellow-500' },
-                          ].map((stat, idx) => (
-                             <div key={idx} className="group/stat">
-                                <div className="flex justify-between items-center mb-3 px-1">
-                                   <span className="text-[10px] text-slate-900 font-black uppercase tracking-[0.2em] transition-colors group-hover/stat:text-yellow-600">{stat.label}</span>
-                                   <span className="text-[10px] text-yellow-600 font-mono italic">{stat.val}</span>
-                                </div>
-                                <div className="h-[2px] bg-slate-100 relative overflow-visible">
-                                   <div className="absolute inset-y-0 left-0 bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)] transition-all duration-1000" style={{ width: stat.val }} />
-                                   <div className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-slate-900 scale-0 group-hover/stat:scale-100 transition-transform" style={{ left: stat.val }} />
-                                </div>
-                             </div>
-                          ))}
-                       </div>
-                    </div>
-                 </div>
-
-
-
+       {/* SECTION 6: High-End Data Synthesis */}
+       <section className="bg-slate-50/30 py-32 px-8 border-t border-slate-100 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8">
+             <div className="flex items-center gap-3 text-[8px] font-black text-slate-200 uppercase tracking-[0.5em] font-mono">
+                <span>METRIC_SURFACE_ACTIVE</span>
+                <div className="w-1 h-1 rounded-full bg-slate-200 animate-pulse" />
              </div>
           </div>
-       </div>
+
+          <div className="max-w-[1600px] mx-auto">
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-16 relative z-10">
+                {[
+                  { label: 'DEPLOYS', val: player.stats.appearances, sub: 'SEASON_TOTAL' },
+                  { label: 'TENURE', val: `${player.stats.minutes}m`, sub: 'ACTIVE_PLAYTIME' },
+                  ...(player.role === 'GK' ? [
+                    { label: 'SAVES', val: player.stats.saves, sub: 'TARGET_DEFENSE' },
+                    { label: 'CLEAN SHEETS', val: player.stats.cleanSheets, sub: 'ZERO_RATIO' }
+                  ] : [
+                    { label: 'TARGETS', val: player.stats.goals, sub: 'PRIMARY_STRIKE' },
+                    { label: 'ASSISTS', val: player.stats.assists, sub: 'TACTICAL_FEED' }
+                  ])
+                ].map((s, i) => (
+                   <div key={i} className="flex flex-col items-center md:items-start gap-4">
+                      <div className="flex items-center gap-3">
+                         <div className="w-1 h-1 bg-yellow-500 rounded-full" />
+                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">{s.label}</span>
+                      </div>
+                      <span className="block text-6xl font-black text-slate-950 italic tracking-tighter leading-none">{s.val}</span>
+                      <span className="block text-[7px] font-bold text-slate-200 uppercase tracking-[0.4em] pt-2 border-t border-slate-100 w-full">{s.sub}</span>
+                   </div>
+                ))}
+             </div>
+          </div>
+       </section>
+
+       {/* Footer: Archive Completion */}
+       <section className="h-80 w-full bg-white flex flex-col items-center justify-center border-t border-slate-50 relative overflow-hidden">
+          <div className="flex flex-col items-center gap-8 relative z-10">
+             <div className="flex flex-col items-center gap-2">
+                <span className="text-[9px] font-black text-slate-200 uppercase tracking-[1em] mb-4">END_OF_ARCHIVE</span>
+                <div className="h-16 w-[1px] bg-gradient-to-b from-slate-100 to-transparent" />
+             </div>
+             <div className="space-y-4 text-center">
+                <p className="text-[11px] font-black text-slate-950 uppercase tracking-[0.6em] italic">ESCUELA FIRST TEAM // HUB_05</p>
+                <div className="flex justify-center items-center gap-6">
+                   <div className="h-[1px] w-12 bg-slate-100" />
+                   <span className="text-[8px] font-bold text-slate-300 uppercase tracking-[0.4em]">VALIDATED BY CENTRAL CORE</span>
+                   <div className="h-[1px] w-12 bg-slate-100" />
+                </div>
+             </div>
+          </div>
+          
+          {/* Subtle Background Mark */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none">
+             <span className="text-[20vw] font-black text-slate-950 italic uppercase tracking-tighter">FLAGSHIP</span>
+          </div>
+       </section>
     </div>
-  );
+  )
+}
+
+function SignatureOverlay({ name, color }: { name: string, color: string }) {
+  return (
+    <div className="relative h-24 flex items-center justify-center opacity-40 select-none pointer-events-none">
+       <span 
+         className="text-6xl font-black italic uppercase tracking-[-0.1em] scale-y-150 rotate-[-4deg]"
+         style={{ color }}
+       >
+         {name.split(' ').slice(-1)}
+       </span>
+    </div>
+  )
 }
