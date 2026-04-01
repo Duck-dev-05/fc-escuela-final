@@ -5,6 +5,7 @@ import { StarIcon, UserIcon, ArrowRightIcon, ChevronRightIcon } from '@heroicons
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { adminService, AdminPlayer } from '@/services/admin-api'
 
 interface TeamMember {
   id: string;
@@ -28,10 +29,17 @@ export default function TeamPage() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await fetch('/api/team')
-        if (!response.ok) throw new Error('Roster unavailable.')
-        const data = await response.json()
-        setMembers(Array.isArray(data) ? data : data.team)
+        const data = await adminService.getPlayers();
+        const mappedMembers: TeamMember[] = data.map(p => ({
+          id: p.id.toString(),
+          name: p.name,
+          role: p.position,
+          image: p.image,
+          captain: p.captain,
+          status: p.status as 'available' | 'injured' | 'suspended',
+          bio: p.bio || undefined
+        }));
+        setMembers(mappedMembers);
       } catch (err) {
         setError('Failed to load squad.')
       } finally {
@@ -40,6 +48,7 @@ export default function TeamPage() {
     }
     fetchTeam()
   }, [])
+
 
   const groupedMembers = useMemo(() => {
     const categories = {

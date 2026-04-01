@@ -121,11 +121,7 @@ const eventsImages = [
   "/images/Events/475795770_607359112043612_7418395893194555409_n.jpg",
 ];
 
-const tabs = [
-  { label: "All Units", images: galleryImages },
-  { label: "Deployment", images: afterMatchImages },
-  { label: "Operations", images: eventsImages },
-];
+import { adminService, AdminGalleryImage } from "@/services/admin-api";
 
 export default function GalleryPage() {
   const { data: session, status } = useSession();
@@ -137,9 +133,28 @@ export default function GalleryPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadCount, setUploadCount] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("general");
+  const [galleryAssets, setGalleryAssets] = useState<AdminGalleryImage[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const images = tabs[activeTab].images;
+  useEffect(() => {
+    const syncGallery = async () => {
+      try {
+        const data = await adminService.getGallery();
+        setGalleryAssets(data);
+      } catch (err) {
+        console.error("Gallery sync interrupted:", err);
+      }
+    };
+    syncGallery();
+  }, []);
+
+  const tabs = [
+    { label: "All Units", images: galleryAssets.map(img => img.url) },
+    { label: "Deployment", images: galleryAssets.filter(img => img.category === 'after-match').map(img => img.url) },
+    { label: "Operations", images: galleryAssets.filter(img => img.category === 'events').map(img => img.url) },
+  ];
+
+  const images = tabs[activeTab]?.images || [];
 
   useEffect(() => {
     if (session?.user?.id) {

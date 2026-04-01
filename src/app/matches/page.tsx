@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from 'react'
 import MatchList from '@/components/matches/MatchList'
@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { FaBroadcastTower, FaLock, FaTrophy } from 'react-icons/fa'
 import MembershipGuard from '@/components/auth/MembershipGuard'
+import { adminService, AdminMatch } from '@/services/admin-api'
 
 export default function MatchesPage() {
   const { data: session, status } = useSession();
@@ -16,14 +17,52 @@ export default function MatchesPage() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      fetch('/api/matches')
-        .then(res => res.json())
-        .then(data => {
-          setMatches(data);
-        })
-        .finally(() => setLoading(false))
+      const fetchMatches = async () => {
+        try {
+          const data = await adminService.getMatches();
+          
+          if (!Array.isArray(data)) {
+            console.warn('Invalid match telemetry format received:', data);
+            setMatches([]);
+            return;
+          }
+
+          const mappedMatches: Match[] = data
+            .filter(m => !!m) // Aggressive filter for broken or null records
+            .map(m => {
+              // Radical null-safety for match names and other metadata
+              const matchName = m?.match || "TBD vs TBD";
+              const matchParts = matchName.split(' vs ');
+              const home = matchParts[0] || 'FC Escuela';
+              const away = matchParts[1] || 'Opponent';
+
+              return {
+                id: m?.id?.toString() || Math.random().toString(),
+                homeTeam: home,
+                awayTeam: away,
+                date: new Date(m?.date || Date.now()),
+                time: "15:00", // Default time if not in admin
+                venue: m?.stadium || "HQ Stadium",
+                competition: m?.competition || "Friendly Match",
+                status: m?.status === 'Upcoming' ? 'Scheduled' : (m?.status || 'Scheduled'),
+                score: m?.score || null,
+                stadiumCapacity: m?.capacity || undefined,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              };
+            });
+          setMatches(mappedMatches);
+        } catch (err) {
+          console.error('Match telemetry stream interrupted:', err);
+          setMatches([]); // Clear state on error to prevent partial crashes
+        } finally {
+          setLoading(false)
+        }
+      }
+      fetchMatches();
     }
   }, [status])
+
 
   if (status === 'loading' || (status === 'authenticated' && loading)) {
     return (

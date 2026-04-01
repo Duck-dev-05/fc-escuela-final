@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { CalendarIcon, UserIcon, ArrowRightIcon, ChevronRightIcon, ChartBarIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { adminService, AdminArticle } from '@/services/admin-api'
 
 interface NewsArticle {
   id: string;
@@ -38,12 +39,17 @@ export default function NewsPage() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('/api/news')
-        if (!response.ok) {
-          throw new Error('Failed to fetch news')
-        }
-        const data = await response.json()
-        setArticles(data)
+        const data = await adminService.getArticles();
+        const mappedArticles: NewsArticle[] = data.map(a => ({
+          id: a.id.toString(),
+          title: a.title,
+          content: a.content,
+          imageUrl: a.imageUrl,
+          author: a.author,
+          createdAt: a.createdAt,
+          category: a.category
+        }));
+        setArticles(mappedArticles);
       } catch (err) {
         setError('Failed to load news articles')
         console.error('Error fetching news:', err)
@@ -54,6 +60,7 @@ export default function NewsPage() {
 
     fetchNews()
   }, [])
+
 
   const categories = useMemo(() => {
     const cats = ['ALL', ...new Set(articles.map(a => a.category))]
