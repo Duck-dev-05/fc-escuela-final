@@ -46,9 +46,6 @@ export default function EditProfilePage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // Allow all users to edit their profile fields
-  const isSocialLogin = false;
-
   useEffect(() => {
     async function fetchProfile() {
       setLoading(true);
@@ -68,7 +65,6 @@ export default function EditProfilePage() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     if (!profile) return;
-    if (isSocialLogin && ["name", "email", "username"].includes(e.target.name)) return;
     setProfile({ ...profile, [e.target.name]: e.target.value });
   }
 
@@ -86,16 +82,12 @@ export default function EditProfilePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!profile) return;
     setSaving(true);
     setError("");
     setSuccess(false);
     try {
       const submitProfile = { ...profile };
-      if (isSocialLogin) {
-        submitProfile.name = session?.user?.name || '';
-        submitProfile.email = session?.user?.email || '';
-        submitProfile.username = session?.user?.email?.split("@")[0] || '';
-      }
 
       if (imageFile) {
         const formData = new FormData();
@@ -130,7 +122,7 @@ export default function EditProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4 animate-pulse">
-          <div className="w-12 h-12 border-t-2 border-slate-900 rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-t-2 border-slate-950 rounded-full animate-spin"></div>
           <p className="text-slate-500 font-medium tracking-wide text-sm">Loading editor...</p>
         </div>
       </div>
@@ -143,7 +135,6 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-24 px-6 md:px-12 relative">
-      {/* Notifications */}
       <div className="fixed top-24 right-6 z-50 space-y-4">
         {success && (
           <div className="bg-white border border-green-200 shadow-lg px-6 py-4 flex items-center gap-3 rounded-2xl animate-fade-in">
@@ -172,29 +163,26 @@ export default function EditProfilePage() {
 
         <div className="bg-white border border-slate-200 p-8 md:p-12 rounded-3xl shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-10">
-            {/* Image Upload Area */}
             <div className="flex flex-col items-center gap-4">
               <div className="relative group w-32 h-32 md:w-40 md:h-40">
                 <div className="w-full h-full rounded-full overflow-hidden border border-slate-200 shadow-sm bg-slate-50 flex items-center justify-center">
                   <ProfileImage 
-                    src={imagePreview || profile?.image} 
+                    src={imagePreview || profile?.image || null} 
                     name={profile?.name} 
                     size={160} 
                     className="w-full h-full object-cover" 
-                    glow={false}
                   />
-                  <label className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white rounded-full">
-                    <FaCamera className="text-3xl" />
-                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                  </label>
                 </div>
+                <label className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white rounded-full">
+                  <FaCamera className="text-3xl" />
+                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                </label>
               </div>
               <p className="text-sm text-slate-500 font-medium">Click image to upload a new avatar</p>
             </div>
 
             <hr className="border-slate-100" />
 
-            {/* Form Fields Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 { label: 'Full Name', name: 'name', type: 'text', locked: false },
@@ -209,7 +197,7 @@ export default function EditProfilePage() {
                 <div key={field.name} className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
                     <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{field.label}</label>
-                    {field.locked && <FaLock className="text-xs text-slate-400" title="Managed by OAuth provider" />}
+                    {field.locked && <FaLock className="text-xs text-slate-400" title="System Locked" />}
                   </div>
                   {field.type === 'date' ? (
                     <DatePicker 
@@ -272,7 +260,6 @@ export default function EditProfilePage() {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-slate-100">
                <button
                  type="button"
@@ -285,7 +272,7 @@ export default function EditProfilePage() {
                <button
                  type="submit"
                  disabled={saving}
-                 className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70"
+                 className="flex-1 py-4 bg-slate-950 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70"
                >
                  {saving ? (
                     <>

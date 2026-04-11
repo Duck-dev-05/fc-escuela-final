@@ -7,16 +7,36 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      { protocol: 'http', hostname: 'localhost' },
-      { protocol: 'https', hostname: '**.googleusercontent.com' },
-      { protocol: 'https', hostname: '**.facebook.com' },
-      { protocol: 'https', hostname: '**.fbsbx.com' },
-      { protocol: 'https', hostname: '**.githubusercontent.com' },
+      { protocol: 'http', hostname: 'localhost', pathname: '/**' },
+      { protocol: 'https', hostname: '**.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh4.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh5.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh6.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'graph.facebook.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'platform-lookaside.fbsbx.com', pathname: '/**' },
+      { protocol: 'https', hostname: '**.fbsbx.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'pbs.twimg.com', pathname: '/**' },
     ],
     unoptimized: false,
   },
   async redirects() {
     return [];
+  },
+  async headers() {
+    return [
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Credentials", value: "true" },
+          { key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
+          { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT,OPTIONS" },
+          { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" },
+          { key: "Vary", value: "Origin" },
+        ]
+      }
+    ]
   },
 }
 

@@ -6,10 +6,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { 
   FaUserTie, FaUsers, FaChartLine, FaClipboardList, 
-  FaShieldAlt, FaRunning, FaHome, FaSignOutAlt
+  FaShieldAlt, FaRunning, FaHome
 } from 'react-icons/fa';
-import ProfileImage from "@/components/ProfileImage";
-import { signOut } from "next-auth/react";
 
 export default function CoachingLayout({
   children,
@@ -29,8 +27,8 @@ export default function CoachingLayout({
   }, [status, session, router]);
 
   if (status === "loading") return (
-    <div className="min-h-screen bg-[#020202] flex items-center justify-center text-yellow-500 font-mono tracking-[0.5em] animate-pulse">
-      INITIALIZING_COMMAND_ENVIRONMENT...
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 font-bold animate-pulse">
+      Loading...
     </div>
   );
 
@@ -43,24 +41,21 @@ export default function CoachingLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#010101] flex flex-col text-white">
-      {/* Top HUD Refined Navbar */}
-      <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/[0.05] h-20 px-10 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50 flex flex-col text-slate-900">
+      {/* Top Professional Navbar */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 h-20 px-8 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/coaching" className="flex items-center gap-4 group">
-            <div className="w-10 h-10 glass-card hud-border border-yellow-500/50 flex items-center justify-center bg-slate-900 group-hover:scale-105 transition-transform">
-              <FaUserTie className="text-xl text-yellow-500" />
+            <div className="w-10 h-10 flex items-center justify-center bg-slate-900 rounded-xl transition-transform group-hover:scale-105">
+              <FaUserTie className="text-xl text-amber-500" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black uppercase tracking-tighter">FC <span className="text-yellow-500">Escuela</span></span>
-              <div className="flex items-center gap-1">
-                 <div className="w-1 h-1 rounded-full bg-yellow-500 animate-pulse" />
-                 <span className="text-[7px] text-slate-500 font-mono uppercase tracking-widest">Command_Interface</span>
-              </div>
+              <span className="text-xl font-black uppercase tracking-tighter text-slate-900">FC <span className="text-amber-500">Escuela</span></span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Coach Dashboard</span>
             </div>
           </Link>
 
-          {/* Centered Navigation Matrix */}
+          {/* Navigation Matrix */}
           <div className="hidden lg:flex items-center gap-1">
              {navItems.map((item) => {
                const isActive = pathname === item.href;
@@ -69,74 +64,36 @@ export default function CoachingLayout({
                    key={item.href}
                    href={item.href}
                    className={`px-6 py-2 transition-all relative group ${
-                     isActive ? 'text-yellow-500' : 'text-slate-500 hover:text-white'
+                     isActive ? 'text-amber-600 bg-amber-50 rounded-lg' : 'text-slate-500 hover:text-slate-900'
                    }`}
                  >
                    <div className="flex items-center gap-3">
-                      <item.icon className={`text-[10px] ${isActive ? 'text-yellow-500' : 'group-hover:text-yellow-500'} transition-colors`} />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em]">{item.label}</span>
+                      <item.icon className={`text-[11px] ${isActive ? 'text-amber-600' : 'group-hover:text-amber-600'} transition-colors`} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
                    </div>
                    {isActive && (
-                     <div className="absolute bottom-[-24px] left-0 right-0 h-[2px] bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
+                     <div className="absolute bottom-[-24px] left-1/2 -translate-x-1/2 w-4 h-[3px] bg-amber-500 rounded-full" />
                    )}
-                   <div className="absolute bottom-[-24px] left-0 right-0 h-[2px] bg-white lg:opacity-0 group-hover:opacity-20 transition-opacity" />
                  </Link>
                );
              })}
           </div>
         </div>
 
-        {/* Global HUD Indicators */}
-        <div className="flex items-center gap-8">
-           <div className="hidden xl:flex items-center gap-6 pr-6 border-r border-white/5">
-              <div className="text-right">
-                 <p className="text-[7px] text-slate-600 font-black uppercase tracking-widest mb-1">Status</p>
-                 <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] text-green-500 font-black uppercase tracking-widest">Uplink_Ok</span>
-                 </div>
-              </div>
+        {/* User Status */}
+        <div className="flex items-center gap-4 bg-slate-100 border border-slate-200 px-4 py-2 rounded-xl group hover:bg-white transition-all cursor-pointer">
+           <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center border border-white/10">
+              <FaShieldAlt className="text-amber-500 text-xs" />
            </div>
-           
-           <div 
-             onClick={() => router.push('/settings')}
-             className="flex items-center gap-4 bg-white/[0.03] border border-white/5 px-4 py-2 rounded group hover:border-yellow-500/30 transition-all cursor-pointer"
-           >
-              <ProfileImage 
-                src={session?.user?.image} 
-                name={session?.user?.name} 
-                size={34} 
-                className="group-hover:rotate-6 transition-transform" 
-              />
-              <div className="flex flex-col">
-                 <span className="text-[10px] font-black uppercase tracking-tighter">
-                   {(session?.user as any)?.roles || 'Staff'}
-                 </span>
-                 <span className="text-[7px] text-slate-500 font-mono uppercase tracking-widest leading-none mt-0.5">
-                   {session?.user?.name || 'Vanguard'}
-                 </span>
-              </div>
+           <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-tighter text-slate-900">Head Coach</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest leading-none mt-0.5">Carlos</span>
            </div>
-           
-           <button 
-             onClick={() => signOut({ callbackUrl: '/' })}
-             className="p-3 bg-white/[0.03] border border-white/5 rounded-full hover:bg-red-500/10 hover:border-red-500/30 group transition-all" 
-             title="Terminate Session"
-           >
-             <FaSignOutAlt className="text-slate-500 group-hover:text-red-500 text-xs" />
-           </button>
         </div>
       </nav>
 
-      {/* Main Command View */}
-      <main className="flex-1 relative overflow-x-hidden">
-        {/* Cinematic Backdrop Overlay */}
-        <div className="fixed inset-0 pointer-events-none z-0">
-           <div className="absolute inset-0 bg-grid-white/[0.01] bg-[size:40px_40px]" />
-           <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-           <div className="absolute top-0 left-0 w-full h-[2px] bg-white/[0.02]" />
-        </div>
-        
+      {/* Main Content View */}
+      <main className="flex-1 relative bg-slate-50">
         <div className="relative z-10">
           {children}
         </div>

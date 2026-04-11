@@ -2,10 +2,17 @@
 
 import { Match } from '@/types/match'
 import Link from 'next/link'
-import { FaChevronRight, FaTrophy, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa'
+import { motion } from 'framer-motion'
+import { FaArrowRight, FaTrophy, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa'
 
 interface MatchCardProps {
   match: Match
+}
+
+const statusStyles: Record<string, string> = {
+  Cancelled: 'border-red-200 bg-red-50 text-red-800',
+  Finished: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+  Scheduled: 'border-amber-200 bg-amber-50 text-amber-900',
 }
 
 export default function MatchCard({ match }: MatchCardProps) {
@@ -16,93 +23,80 @@ export default function MatchCard({ match }: MatchCardProps) {
     day: 'numeric',
   })
 
-  const statusColors = {
-    'Cancelled': 'text-red-500 border-red-500/20 bg-red-500/5',
-    'Finished': 'text-green-500 border-green-500/20 bg-green-500/5',
-    'Scheduled': 'text-yellow-500 border-yellow-500/20 bg-yellow-500/5',
-    'Ongoing': 'text-blue-500 border-blue-500/20 bg-blue-500/5 animate-pulse',
-    'Postponed': 'text-amber-600 border-amber-600/20 bg-amber-600/5',
-  }
+  const statusKey = match.status || 'Scheduled'
+  const statusClass =
+    statusStyles[statusKey] || 'border-slate-200 bg-slate-50 text-slate-700'
 
   return (
-    <div className="glass-card hud-border p-8 group hover:bg-white transition-all duration-500 relative overflow-hidden animate-slide-up border-slate-200 bg-white/70 shadow-sm">
-      {/* HUD Accent Line */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      
-      <div className="flex flex-col space-y-8">
-        {/* Header: Competition & Status */}
-        <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <FaTrophy className="text-yellow-600/50 text-xs" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-              {match.competition}
-            </span>
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+      className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md md:p-6"
+    >
+      <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+            <FaTrophy className="text-sm" />
           </div>
-          <div className={`px-3 py-1 rounded-lg border text-[9px] font-black uppercase tracking-widest ${statusColors[match.status as keyof typeof statusColors] || statusColors.Scheduled}`}>
-            {match.status}
-          </div>
+          <span className="truncate text-xs font-semibold uppercase tracking-wider text-slate-600">
+            {match.competition}
+          </span>
         </div>
+        <span
+          className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${statusClass}`}
+        >
+          {statusKey}
+        </span>
+      </div>
 
-        {/* Core: Teams & Score */}
-        <div className="flex justify-between items-center px-2">
-          <div className="text-center flex-1">
-            <p className="font-black text-2xl text-slate-900 uppercase tracking-tighter group-hover:text-yellow-600 transition-colors leading-tight">
-               {match.homeTeam}
-            </p>
-            <p className="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Home Unit</p>
-          </div>
-          
-          <div className="flex flex-col items-center px-6 gap-2 shrink-0">
-             {match.score ? (
-                <div className="text-4xl font-black text-slate-900 font-mono tracking-tighter bg-slate-100 px-4 py-2 rounded-xl hud-border border-slate-200">
-                   {match.score}
-                </div>
-             ) : (
-                <div className="text-xs font-black text-slate-300 uppercase tracking-widest italic pt-2">vs</div>
-             )}
-          </div>
-
-          <div className="text-center flex-1">
-            <p className="font-black text-2xl text-slate-900 uppercase tracking-tighter group-hover:text-yellow-600 transition-colors leading-tight">
-               {match.awayTeam}
-            </p>
-            <p className="text-[8px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Away Unit</p>
-          </div>
+      <div className="relative flex flex-1 items-center justify-between gap-2 py-6">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <span className="text-5xl font-black uppercase tracking-widest text-slate-100">vs</span>
         </div>
-
-        {/* Footer: Meta & Action */}
-        <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-slate-100 gap-6">
-          <div className="flex flex-wrap justify-center sm:justify-start gap-6">
-            <div className="flex items-center gap-2">
-              <FaCalendarAlt className="text-yellow-600/50 text-[10px]" />
-              <div className="flex flex-col">
-                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">Kickoff</span>
-                 <span className="text-[10px] text-slate-900 font-bold uppercase tracking-widest">{formattedDate} // {match.time}</span>
-              </div>
+        <div className="relative z-10 flex-1 text-center">
+          <h3 className="text-base font-black uppercase tracking-tight text-slate-900 md:text-lg">
+            {match.homeTeam}
+          </h3>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Home</p>
+        </div>
+        <div className="relative z-10 flex shrink-0 flex-col items-center px-2">
+          {match.score ? (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 font-mono text-xl font-black tracking-tight text-slate-900">
+              {match.score}
             </div>
-            <div className="flex items-center gap-2">
-              <FaMapMarkerAlt className="text-yellow-600/50 text-[10px]" />
-              <div className="flex flex-col">
-                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">Venue</span>
-                 <span className="text-[10px] text-slate-900 font-bold uppercase tracking-widest truncate max-w-[120px]">{match.venue}</span>
-              </div>
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400">
+              vs
             </div>
-          </div>
-
-          <Link
-            href={`/matches/${match.id}`}
-            className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 glass-card hud-border text-slate-900 border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500 hover:text-slate-950 transition-all group scale-100 hover:scale-105 active:scale-95 shadow-sm bg-white/50"
-          >
-            Telemetry 
-            <FaChevronRight className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          )}
+        </div>
+        <div className="relative z-10 flex-1 text-center">
+          <h3 className="text-base font-black uppercase tracking-tight text-slate-900 md:text-lg">
+            {match.awayTeam}
+          </h3>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Away</p>
         </div>
       </div>
-      
-      {/* Decorative Corner */}
-      <div className="absolute -bottom-[1px] -right-[1px] w-8 h-8 pointer-events-none overflow-hidden">
-         <div className="absolute top-0 left-0 w-[150%] h-[150%] bg-yellow-500/[0.03] -rotate-45 translate-x-1/2 translate-y-1/2" />
+
+      <div className="mt-auto flex flex-col gap-4 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap gap-4 text-slate-600">
+          <div className="flex items-center gap-2 text-xs font-medium">
+            <FaCalendarAlt className="shrink-0 text-amber-600" />
+            {formattedDate}
+          </div>
+          <div className="flex min-w-0 max-w-[160px] items-center gap-2 text-xs font-medium">
+            <FaMapMarkerAlt className="shrink-0 text-amber-600" />
+            <span className="truncate">{match.venue}</span>
+          </div>
+        </div>
+        <Link
+          href={`/matches/${match.id}`}
+          className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-slate-900 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-amber-500 hover:text-slate-950 sm:self-auto"
+        >
+          Details
+          <FaArrowRight className="text-[9px]" />
+        </Link>
       </div>
-    </div>
+    </motion.article>
   )
 }

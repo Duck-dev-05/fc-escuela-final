@@ -1,41 +1,61 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { createCheckoutSession } from '@/lib/stripe';
+import { stripe } from '@/lib/stripe';
 
-export const dynamic = "force-dynamic";
+const PLAN_MAP: Record<string, { name: string; amount: number; interval: 'month' | 'year' }> = {
+  'price_1TGtrg09wIpZTJdbzNoTXoIE': { name: 'Pro Member', amount: 1900, interval: 'month' },
+  'price_1TGtrh09wIpZTJdbswMvJici': { name: 'Elite VIP', amount: 19900, interval: 'year' },
+};
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user || !session.user.email) {
-      return NextResponse.json({ error: 'Unauthorized access protocol' }, { status: 401 });
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { priceId } = body;
+    const { planId } = await req.json();
 
-    if (!priceId) {
-      return NextResponse.json({ error: 'Missing price registry ID' }, { status: 400 });
+    if (!planId || !PLAN_MAP[planId]) {
+      return NextResponse.json({ error: 'Invalid plan selected' }, { status: 400 });
     }
 
-    // Determine secure success and cancel URLs
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const successUrl = `${baseUrl}/profile/membership/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${baseUrl}/profile/membership?canceled=true`;
+    const { name, amount, interval } = PLAN_MAP[planId];
 
-    const stripeSession = await createCheckoutSession({
-      userId: (session.user as any).id,
-      userEmail: session.user.email,
-      priceId: priceId,
-      successUrl,
-      cancelUrl,
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: name,
+              description: `FC Escuela ${name} Membership`,
+            },
+            unit_amount: amount,
+            recurring: {
+              interval: interval,
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile/orders?success=1&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile/membership`,
+      customer_email: session.user.email,
+      metadata: {
+        type: 'membership',
+        userId: session.user.id as string,
+        planId,
+      },
     });
 
-    return NextResponse.json({ url: stripeSession.url });
+    return NextResponse.json({ url: checkoutSession.url });
   } catch (error: any) {
-    console.error('Checkout error:', error);
-    return NextResponse.json({ error: 'Failed to initialize secure financial gate' }, { status: 500 });
+    console.error('Error creating membership checkout session:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

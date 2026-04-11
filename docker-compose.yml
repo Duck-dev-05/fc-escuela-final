@@ -10,16 +10,32 @@ services:
     restart: always
     ports:
       - "3000:3000"
-    env_file:
-      - .env
     environment:
       - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@db:5432/${DB_NAME:-fcwebsite}?schema=public
       - REDIS_URL=redis://redis:6379
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID}
+      - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - CLOUDFLARE_TURNSTILE_SECRET_KEY=${CLOUDFLARE_TURNSTILE_SECRET_KEY}
+      - NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - INTERNAL_ADMIN_API_URL=http://fc-admin-app-instance:3001/api/external
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
     depends_on:
       - db
       - redis
     networks:
-      - tactical_net
+      - fc-shared-net
     deploy:
       resources:
         limits:
@@ -38,7 +54,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
-      - tactical_net
+      - fc-shared-net
     expose:
       - "5432"
 
@@ -50,7 +66,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - tactical_net
+      - fc-shared-net
     expose:
       - "6379"
 
@@ -59,6 +75,6 @@ volumes:
   redis_data:
 
 networks:
-  tactical_net:
+  fc-shared-net:
+    name: fc-shared-net
     driver: bridge
-    internal: false # Change to true if no public ingress is needed for app

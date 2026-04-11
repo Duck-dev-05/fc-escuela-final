@@ -1,24 +1,26 @@
 import { z } from 'zod';
 
 export const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(50),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  username: z.string().min(3, 'Username must be at least 3 characters').max(30).optional(),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  username: z.string().min(3, 'Username must be at least 3 characters').optional().or(z.literal('')),
 });
 
-export const searchSchema = z.object({
-  query: z.string().max(100, 'Search query too long').default(''),
+export const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
 });
 
-export const matchUpdateSchema = z.object({
-  id: z.string().cuid(),
-  status: z.enum(['Scheduled', 'Live', 'Finished', 'Postponed', 'Cancelled']),
-  score: z.string().optional(),
-});
-
-export const checkoutSchema = z.object({
-  matchId: z.string().cuid(),
-  quantity: z.number().int().min(1).max(10),
-  category: z.enum(['standard', 'premium', 'vip']),
+export const profileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+  username: z.string().min(3, 'Username must be at least 3 characters').optional(),
+  phone: z.string().optional(),
+  dob: z.string().optional(),
+  gender: z.string().optional(),
+  nationality: z.string().optional(),
+  language: z.string().optional(),
+  occupation: z.string().optional(),
+  favoriteTeam: z.string().optional(),
+  bio: z.string().optional(),
 });

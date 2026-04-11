@@ -27,9 +27,9 @@ function ResetPasswordPageInner() {
     const data = await res.json();
     setLoading(false);
     if (res.ok) {
-      setSuccess("Security Protocol Complete. Access Key reset successfully.");
+      setSuccess("Your password has been reset successfully.");
     } else {
-      setError(data.error || "Reset Sequence Interrupted");
+      setError(data.error || "Failed to reset password.");
     }
   };
 
@@ -37,7 +37,7 @@ function ResetPasswordPageInner() {
     <div className="min-h-screen flex items-center justify-center bg-transparent relative overflow-hidden animate-scan">
       {/* Ghost Typography */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 select-none pointer-events-none opacity-10 whitespace-nowrap">
-        <span className="text-[20vw] ghost-text leading-none uppercase">SECURITY</span>
+        <span className="text-[20vw] ghost-text leading-none uppercase">RESET</span>
       </div>
 
       <div className="max-w-md w-full glass-card hud-border p-10 animate-slide-up relative z-10 mx-4">
@@ -48,9 +48,9 @@ function ResetPasswordPageInner() {
           </div>
           <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
             <FaShieldAlt className="text-yellow-500 text-[10px]" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-yellow-500 font-bold">Key Override</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-yellow-500 font-bold">Secure Reset</span>
           </div>
-          <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center">Protocol <span className="text-yellow-500">Omega</span></h2>
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center">Reset <span className="text-yellow-500">Password</span></h2>
         </div>
 
         {success ? (
@@ -60,7 +60,7 @@ function ResetPasswordPageInner() {
               <FaCheckCircle className="h-16 w-16 text-green-500 relative" />
             </div>
             <div className="text-green-500 font-black uppercase tracking-widest text-xs mb-4">{success}</div>
-            <Link href="/login" className="ml-2 text-yellow-500 font-black uppercase tracking-widest text-[10px] hover:text-white transition-colors">Return to Base</Link>
+            <Link href="/login" className="ml-2 text-yellow-500 font-black uppercase tracking-widest text-[10px] hover:text-white transition-colors">Return to Login</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -75,7 +75,7 @@ function ResetPasswordPageInner() {
                   onChange={e => setPassword(e.target.value)}
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder-white/20"
-                  placeholder="New Security Key"
+                  placeholder="New Password"
                   disabled={loading}
                 />
               </div>
@@ -99,7 +99,7 @@ function ResetPasswordPageInner() {
                   <span className="uppercase tracking-[0.2em]">Processing...</span>
                 </div>
               ) : (
-                <span className="uppercase tracking-[0.2em]">Update Security Core</span>
+                <span className="uppercase tracking-[0.2em]">Update Password</span>
               )}
             </button>
           </form>
@@ -115,7 +115,7 @@ export default function ResetPasswordPage() {
        <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="flex flex-col items-center gap-6 animate-pulse">
           <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
-          <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Security Core...</p>
+          <p className="text-yellow-500 font-bold uppercase tracking-[0.2em] text-xs">Loading...</p>
         </div>
       </div>
     }>

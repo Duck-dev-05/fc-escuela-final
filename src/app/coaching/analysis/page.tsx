@@ -7,7 +7,7 @@ import {
    FaShieldAlt, FaBolt, FaCrosshairs
 } from 'react-icons/fa'
 
-export default function MatchAnalysis() {
+export default function MatchAnalytics() {
    const [matches, setMatches] = useState<any[]>([])
    const [selectedMatch, setSelectedMatch] = useState<any>(null)
    const [loading, setLoading] = useState(true)
@@ -35,7 +35,7 @@ export default function MatchAnalysis() {
       { label: 'Possession', val: '58%', icon: FaChartPie, color: 'yellow-500' },
       { label: 'Pass Accuracy', val: '86%', icon: FaBullseye, color: 'blue-500' },
       { label: 'Expected Goals (xG)', val: '2.4', icon: FaChartBar, color: 'green-500' },
-      { label: 'Tactical Discipline', val: '92%', icon: FaShieldAlt, color: 'yellow-500' },
+      { label: 'Tactical Rating', val: '92%', icon: FaShieldAlt, color: 'yellow-500' },
    ]
 
    const [aiReport, setAiReport] = useState<any>(null)
@@ -96,11 +96,11 @@ export default function MatchAnalysis() {
             <div className="flex flex-col gap-8">
                <div className="flex items-center gap-6">
                   <div className="px-4 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-sm skew-x-[-20deg]">
-                     <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.4em] block skew-x-[20deg]">Network: Tactical_Intelligence</span>
+                     <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] block skew-x-[20deg]">Status: Analytics Engine</span>
                   </div>
                   <div className="flex items-center gap-3">
                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse" />
-                     <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">Encryption_Link // RSA-4096</span>
+                     <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">Secure Link // Active</span>
                   </div>
                </div>
                
@@ -113,11 +113,11 @@ export default function MatchAnalysis() {
             </div>
 
             <div className="flex flex-col items-end gap-8 w-full lg:w-auto">
-               <div className="flex items-center gap-12 text-[9px] font-black text-slate-700 tracking-[0.4em] uppercase border-b border-white/5 pb-4 w-full justify-end">
-                  <span>OPS_RESOLVED: {matches.length}</span>
-                  <span>//</span>
-                  <span className="text-yellow-500/50">INTEL_DECOMPRESSION_ACTIVE</span>
-               </div>
+                <div className="flex items-center gap-12 text-[9px] font-black text-slate-700 tracking-[0.4em] uppercase border-b border-white/5 pb-4 w-full justify-end">
+                   <span>MATCHES ANALYZED: {matches.length}</span>
+                   <span>//</span>
+                   <span className="text-yellow-500/50">ANALYTICS ENGINE READY</span>
+                </div>
                <div className="flex items-center gap-4">
                   <div className="px-6 py-2 bg-yellow-500 border border-yellow-500 text-slate-950 text-[9px] font-black uppercase tracking-[0.3em] italic">
                      Live_Update: Active
@@ -135,11 +135,11 @@ export default function MatchAnalysis() {
                   <div className="absolute inset-0 bg-grid-white/[0.01] pointer-events-none" />
                   
                   <div className="flex items-center justify-between mb-12 pb-8 border-b border-white/5 relative z-10">
-                     <div className="flex items-center gap-4">
-                        <div className="w-1 h-1 rounded-full bg-yellow-500 animate-pulse" />
-                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Signals_Matrix</h3>
-                     </div>
-                     <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase">RC_LINK: ACTIVE</span>
+                      <div className="flex items-center gap-4">
+                         <div className="w-1 h-1 rounded-full bg-yellow-500 animate-pulse" />
+                         <h3 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Match History</h3>
+                      </div>
+                      <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase">LIVE SYNC</span>
                   </div>
 
                   <div className="space-y-6 max-h-[720px] overflow-y-auto pr-4 custom-scrollbar relative z-10">
@@ -168,7 +168,7 @@ export default function MatchAnalysis() {
                                  <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-black text-white font-mono">{match.score || 'PENDING'}</span>
                                     <div className="w-1 h-1 rounded-full bg-slate-800" />
-                                    <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest">{selectedMatch?.id === match.id ? 'ACTIVE_LINK' : 'SIGNAL_IDLE'}</span>
+                                     <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest">{selectedMatch?.id === match.id ? 'SELECTED' : 'READY'}</span>
                                  </div>
                               </div>
                               <FaArrowRight className={`text-sm transition-all duration-500 group-hover/btn:translate-x-2 ${selectedMatch?.id === match.id ? 'text-yellow-500' : 'text-slate-800'}`} />
@@ -195,26 +195,26 @@ export default function MatchAnalysis() {
                                      <div className="absolute inset-0 bg-yellow-500/5 animate-pulse" />
                                      <FaBolt className={`text-3xl text-yellow-500 relative z-10 ${analyzing ? 'animate-bounce' : 'animate-pulse'}`} />
                                   </div>
-                                  <div className="flex flex-col gap-2">
-                                     <h3 className="text-[12px] font-black text-white uppercase tracking-[0.6em] italic">Mission_Oracle_v3</h3>
-                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2">
-                                           <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
-                                           <span className="text-[8px] text-slate-500 font-mono tracking-widest uppercase">Signal_Locked</span>
-                                        </div>
-                                        <div className="w-[1px] h-3 bg-white/10" />
-                                        <span className="text-[8px] text-slate-700 font-mono">ENCRYPT: VANGUARD_DEEP</span>
-                                     </div>
-                                  </div>
+                                   <div className="flex flex-col gap-2">
+                                      <h3 className="text-[12px] font-black text-white uppercase tracking-[0.4em] italic">AI Match Insights</h3>
+                                      <div className="flex items-center gap-4">
+                                         <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
+                                            <span className="text-[8px] text-slate-500 font-mono tracking-widest uppercase">Data Ready</span>
+                                         </div>
+                                         <div className="w-[1px] h-3 bg-white/10" />
+                                         <span className="text-[8px] text-slate-700 font-mono">INSIGHTS ENGINE</span>
+                                      </div>
+                                   </div>
                                </div>
-                               <button 
-                                 onClick={runAiAnalysis}
-                                 disabled={analyzing}
-                                 className={`px-12 py-5 text-slate-950 text-[10px] font-black uppercase tracking-[0.5em] transition-all shadow-[0_0_50px_rgba(234,179,8,0.4)] disabled:opacity-50 relative overflow-hidden group/gen skew-x-[-15deg] ${analyzing ? 'bg-yellow-600' : 'bg-yellow-500 hover:bg-white'}`}
-                               >
-                                  <span className="relative z-10 block skew-x-[15deg]">{analyzing ? 'DECRYPTING...' : 'AUTHORIZE_SCAN'}</span>
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/gen:translate-x-full transition-transform duration-1000" />
-                               </button>
+                                <button 
+                                  onClick={runAiAnalysis}
+                                  disabled={analyzing}
+                                  className={`px-12 py-5 text-slate-950 text-[10px] font-black uppercase tracking-[0.5em] transition-all shadow-[0_0_50px_rgba(234,179,8,0.4)] disabled:opacity-50 relative overflow-hidden group/gen skew-x-[-15deg] ${analyzing ? 'bg-yellow-600' : 'bg-yellow-500 hover:bg-white'}`}
+                                >
+                                   <span className="relative z-10 block skew-x-[15deg]">{analyzing ? 'ANALYZING...' : 'GENERATE INSIGHTS'}</span>
+                                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover/gen:translate-x-full transition-transform duration-1000" />
+                                </button>
                             </div>
 
                            <div 
@@ -227,14 +227,14 @@ export default function MatchAnalysis() {
                                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                                           <FaBolt size={120} />
                                        </div>
-                                        <p className="mb-6 text-yellow-500 font-extrabold tracking-[0.3em] italic uppercase">[INTEL_STREAM_ACTIVE] // SECTOR: {selectedMatch.venue.toUpperCase()}</p>
+                                         <p className="mb-6 text-yellow-500 font-extrabold tracking-[0.3em] italic uppercase">[ANALYSIS REPORT] // VENUE: {selectedMatch.venue.toUpperCase()}</p>
                                         <p className="mb-14 text-justify text-slate-400 first-letter:text-5xl first-letter:font-black first-letter:text-white first-letter:mr-3 first-letter:float-left leading-relaxed">{aiReport.summary}</p>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mt-16 pb-16 border-b border-white/5">
                                            <div className="space-y-8">
                                               <div className="flex items-center gap-4">
                                                  <div className="w-3 h-3 glass-card border-blue-500 bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
-                                                 <p className="text-[11px] text-blue-400 font-black uppercase tracking-[0.4em]">Tactical_Efficiency</p>
+                                                  <p className="text-[11px] text-blue-400 font-black uppercase tracking-[0.4em]">Efficiency</p>
                                               </div>
                                               <ul className="space-y-6 opacity-80 border-l border-white/5 pl-8">
                                                  {aiReport.efficiency?.map((point: string, i: number) => (
@@ -249,7 +249,7 @@ export default function MatchAnalysis() {
                                            <div className="space-y-8">
                                               <div className="flex items-center gap-4">
                                                  <div className="w-3 h-3 glass-card border-red-500 bg-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-                                                 <p className="text-[11px] text-red-400 font-black uppercase tracking-[0.4em]">Strategic_Vulnerability</p>
+                                                  <p className="text-[11px] text-red-400 font-black uppercase tracking-[0.4em]">Areas for Improvement</p>
                                               </div>
                                               <ul className="space-y-6 opacity-80 border-l border-white/5 pl-8">
                                                  {aiReport.vulnerability?.map((point: string, i: number) => (
@@ -269,10 +269,10 @@ export default function MatchAnalysis() {
                                              <div className="w-10 h-10 glass-card border-yellow-500/20 flex items-center justify-center bg-slate-900 group-hover:border-yellow-500/50 transition-all">
                                                 <FaProjectDiagram className="text-yellow-500" />
                                              </div>
-                                             <div className="flex flex-col">
-                                                <p className="text-[11px] text-white font-black uppercase tracking-[0.5em]">Protocol_Ajustments</p>
-                                                <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase">VANGUARD_RECOMMENDATIONS_STREAM</span>
-                                             </div>
+                                              <div className="flex flex-col">
+                                                 <p className="text-[11px] text-white font-black uppercase tracking-[0.2em]">Recommended Adjustments</p>
+                                                 <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase">AUTOMATED COACHING RECOMMENDATIONS</span>
+                                              </div>
                                           </div>
                                           <div className="grid grid-cols-1 gap-6">
                                              {aiReport.next_match_adjustments?.map((adj: string, i: number) => (
@@ -288,9 +288,9 @@ export default function MatchAnalysis() {
                                     
                                     <div className="grid grid-cols-3 gap-8">
                                        {[
-                                          { label: 'Tactical_Intensity', val: aiReport.metrics?.intensity, color: 'text-white' },
-                                          { label: 'Success_Probability', val: aiReport.metrics?.success_rate, color: 'text-green-500' },
-                                          { label: 'Neural_Sync', val: aiReport.metrics?.sync_link, color: 'text-blue-500 italic' },
+                                           { label: 'Intensity', val: aiReport.metrics?.intensity, color: 'text-white' },
+                                           { label: 'Win Probability', val: aiReport.metrics?.success_rate, color: 'text-green-500' },
+                                           { label: 'Team Cohesion', val: aiReport.metrics?.sync_link, color: 'text-blue-500 italic' },
                                        ].map((m, idx) => (
                                           <div key={idx} className="p-6 glass-card border-white/5 bg-slate-950/60 text-center hover:border-white/20 transition-all">
                                              <p className="text-[8px] text-slate-500 font-black uppercase tracking-widest mb-3">{m.label}</p>
@@ -313,10 +313,10 @@ export default function MatchAnalysis() {
                         
                         <div className="relative z-10">
                            <div className="flex items-center gap-6 mb-12">
-                              <div className="px-5 py-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[9px] font-black uppercase tracking-[0.3em] rounded-sm skew-x-[-15deg]">
-                                 <span className="block skew-x-[15deg]">Data: Validated</span>
-                              </div>
-                              <span className="text-[8px] text-slate-700 font-mono tracking-widest pt-1 px-4 border-l border-white/5 uppercase">Encryption_ID: RC-INTEL-X9</span>
+                               <div className="px-5 py-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm skew-x-[-15deg]">
+                                  <span className="block skew-x-[15deg]">Data Verified</span>
+                               </div>
+                               <span className="text-[8px] text-slate-700 font-mono tracking-widest pt-1 px-4 border-l border-white/5 uppercase">Report ID: ANALYTICS-9</span>
                            </div>
 
                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-8 italic">
@@ -325,7 +325,7 @@ export default function MatchAnalysis() {
                            
                            <div className="flex items-end gap-16">
                               <div className="flex flex-col gap-2">
-                                 <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.4em]">Final_Outcome</span>
+                                 <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">Final Score</span>
                                  <div className="flex items-baseline gap-4">
                                     <span className="text-6xl font-black text-white font-mono tracking-tighter">{selectedMatch.score || '0-0'}</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,1)]" />
@@ -333,7 +333,7 @@ export default function MatchAnalysis() {
                               </div>
                               <div className="w-[1px] h-20 bg-white/5" />
                               <div className="flex flex-col gap-2 mb-2">
-                                 <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.4em]">Operational_Venue</span>
+                                 <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">Venue</span>
                                  <span className="text-lg font-black text-yellow-500 uppercase tracking-widest italic">{selectedMatch.venue}</span>
                               </div>
                            </div>
@@ -366,10 +366,10 @@ export default function MatchAnalysis() {
                         <div className="absolute inset-0 bg-grid-white/[0.01] pointer-events-none" />
                         <div className="flex items-center gap-6 mb-16 pb-10 border-b border-white/5 relative z-10">
                            <FaCogs className="text-yellow-500 text-xl" />
-                           <div className="flex flex-col gap-1">
-                              <h3 className="text-[12px] font-black text-white uppercase tracking-[0.6em]">Sector_Evaluation</h3>
-                              <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase ml-1">MULTIDIMENSIONAL_METRICS_ACTIVE</span>
-                           </div>
+                            <div className="flex flex-col gap-1">
+                               <h3 className="text-[12px] font-black text-white uppercase tracking-[0.4em]">Performance Evaluation</h3>
+                               <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase ml-1">DETAILED PERFORMANCE METRICS</span>
+                            </div>
                         </div>
                         <div className="space-y-12 relative z-10">
                            {[
@@ -381,7 +381,7 @@ export default function MatchAnalysis() {
                                  <div className="flex justify-between items-end mb-4">
                                     <div className="flex flex-col gap-1">
                                        <p className="text-[11px] text-white font-black uppercase tracking-[0.2em] group-hover/bar:text-yellow-500 transition-colors">{item.label}</p>
-                                       <p className="text-[9px] text-slate-600 font-bold uppercase italic opacity-60">"Protocol: {item.desc}"</p>
+                                        <p className="text-[9px] text-slate-600 font-bold uppercase italic opacity-60">"Note: {item.desc}"</p>
                                     </div>
                                     <span className="text-2xl font-black text-yellow-500/80 font-mono tracking-tighter italic">{item.val}%</span>
                                  </div>
@@ -399,11 +399,11 @@ export default function MatchAnalysis() {
 
                      {/* Technical Telemetry Final Area */}
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                           { icon: FaBolt, label: 'Intensity_Index', val: '8.4', color: 'yellow-500', bg: 'bg-yellow-500/[0.03]' },
-                           { icon: FaShieldAlt, label: 'Clean_Sheet_Prob', val: '62%', color: 'blue-500', bg: 'bg-blue-500/[0.03]' },
-                           { icon: FaCrosshairs, label: 'Precision_Strike', val: '0.92', color: 'red-500', bg: 'bg-red-500/[0.03]' },
-                        ].map((t, idx) => (
+                         {[
+                            { icon: FaBolt, label: 'Intensity', val: '8.4', color: 'yellow-500', bg: 'bg-yellow-500/[0.03]' },
+                            { icon: FaShieldAlt, label: 'Clean Sheet Probability', val: '62%', color: 'blue-500', bg: 'bg-blue-500/[0.03]' },
+                            { icon: FaCrosshairs, label: 'Precision', val: '0.92', color: 'red-500', bg: 'bg-red-500/[0.03]' },
+                         ].map((t, idx) => (
                            <div key={idx} className={`glass-card hud-border p-10 ${t.bg} border-white/5 flex flex-col items-center justify-center text-center group hover:border-${t.color}/30 transition-all duration-500`}>
                               <t.icon className={`text-2xl text-${t.color} opacity-30 group-hover:opacity-100 transition-opacity mb-6`} />
                               <span className="text-[8px] text-slate-600 font-black uppercase tracking-[0.4em] mb-2">{t.label}</span>
@@ -417,8 +417,8 @@ export default function MatchAnalysis() {
                      <div className="absolute inset-0 bg-grid-white/[0.01] pointer-events-none" />
                      <FaChartLine className="text-8xl mb-12 text-slate-900 group-hover/empty:text-yellow-500/20 transition-colors duration-1000" />
                      <div className="flex flex-col items-center gap-4 text-center">
-                        <p className="text-[12px] font-black uppercase tracking-[0.8em] text-slate-600 group-hover/empty:text-white transition-colors">Standby_Mode</p>
-                        <span className="text-[9px] text-slate-800 font-mono tracking-widest uppercase">Select Operation Registry Link For Extraction</span>
+                         <p className="text-[12px] font-black uppercase tracking-[0.4em] text-slate-600 group-hover/empty:text-white transition-colors">Select a Match</p>
+                         <span className="text-[9px] text-slate-800 font-mono tracking-widest uppercase">Select a match from the sidebar to view full analytics</span>
                      </div>
                   </div>
                )}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FaHeartbeat, FaShieldAlt, FaCapsules, FaArrowLeft, FaSyringe } from 'react-icons/fa';
 
-export default function MedicalVanguard() {
+export default function MedicalCentre() {
   const { data: session } = useSession();
   const [players, setPlayers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,27 +61,26 @@ export default function MedicalVanguard() {
               <div className="flex flex-col gap-8">
                  <Link href="/coaching" className="flex items-center gap-3 text-[9px] text-slate-500 font-black uppercase tracking-[0.5em] hover:text-white transition-colors group">
                     <FaArrowLeft className="group-hover:-translate-x-2 transition-transform" />
-                    Back_To_Mission_Control
+                    Back_To_Coaching
                  </Link>
                  
                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-3 text-[9px] text-red-500 font-black uppercase tracking-[0.6em]">
-                       <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-                       Sector_Medical: BIO_SIGNAL_ACTIVE
-                    </div>
+                     <div className="flex items-center gap-3 text-[9px] text-red-500 font-black uppercase tracking-[0.2em]">
+                        Medical Status
+                     </div>
                  </div>
 
                  <h1 className="text-4xl md:text-7xl font-black text-white uppercase tracking-tighter italic leading-[0.85]">
-                    Medical <span className="text-red-500">Vanguard</span>
+                    Medical <span className="text-red-500">Centre</span>
                  </h1>
               </div>
 
               <div className="grid grid-cols-3 gap-6 w-full lg:w-auto">
-                 {[
-                   { label: 'Integrity', val: '94.8%', icon: FaHeartbeat, color: 'text-green-500' },
-                   { label: 'Restricted', val: restrictedPlayers.length, icon: FaShieldAlt, color: 'text-red-500' },
-                   { label: 'Doubtful', val: '02', icon: FaSyringe, color: 'text-yellow-500' },
-                 ].map((stat, i) => (
+                  {[
+                    { label: 'Overall Fitness', val: '94.8%', icon: FaHeartbeat, color: 'text-green-500' },
+                    { label: 'Injured', val: restrictedPlayers.length, icon: FaShieldAlt, color: 'text-red-500' },
+                    { label: 'Doubtful', val: '02', icon: FaSyringe, color: 'text-yellow-500' },
+                  ].map((stat, i) => (
                     <div key={i} className="group p-8 glass-card border-white/5 bg-slate-950/40 relative overflow-hidden text-left">
                        <stat.icon className={`text-[10px] mb-4 ${stat.color} opacity-40`} />
                        <span className="text-[7px] text-slate-700 font-black uppercase tracking-[0.4em] block mb-1">{stat.label}</span>
@@ -113,8 +112,8 @@ export default function MedicalVanguard() {
                       </div>
                       
                       <div className="max-w-md">
-                         <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter mb-4">Neural_Bio_Scanner</h3>
-                         <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] leading-relaxed">System is performing deep-tissue diagnostic analysis across all 12 operational assets. Monitoring for ACL stress, muscle fatigue, and hydration signals.</p>
+                         <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter mb-4">Player Diagnostics</h3>
+                         <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] leading-relaxed">System monitoring for player physical readiness and fitness trends. Monitoring for common injuries, muscle fatigue, and hydration levels.</p>
                       </div>
                    </div>
                 </section>
@@ -124,8 +123,8 @@ export default function MedicalVanguard() {
              <div className="lg:col-span-5 space-y-12 animate-slide-up" style={{ animationDelay: '0.3s' }}>
                 <section className="glass-card hud-border p-10 bg-slate-950/60 border-white/5 relative overflow-hidden min-h-[800px]">
                    <div className="flex flex-col gap-2 mb-12 border-b border-white/5 pb-8">
-                      <h3 className="text-4xl font-black text-white uppercase tracking-tighter italic"><span className="text-red-500">Restriction</span>_Logs</h3>
-                      <span className="text-[8px] text-slate-700 font-mono tracking-[0.5em] uppercase">DECOMMISSIONED_ASSETS // v.0.1</span>
+                       <h3 className="text-4xl font-black text-white uppercase tracking-tighter italic"><span className="text-red-500">Injury</span>_Logs</h3>
+                       <span className="text-[8px] text-slate-700 font-mono tracking-[0.2em] uppercase">RESTRICTED PLAYERS</span>
                    </div>
 
                    <div className="space-y-6">
@@ -134,7 +133,7 @@ export default function MedicalVanguard() {
                             <div key={i} className="group/player p-8 glass-card bg-slate-900/40 border-white/5 hover:border-red-500/30 transition-all relative overflow-hidden">
                                <div className="absolute top-0 right-0 p-4">
                                   <span className={`text-[7px] font-black uppercase tracking-[0.3em] px-2 py-0.5 border ${player.status === 'injured' ? 'border-red-500/40 text-red-500' : 'border-yellow-500/40 text-yellow-500'}`}>
-                                     {player.status === 'injured' ? 'MED_RESTRICTED' : 'SYSTEM_SUSPENSION'}
+                                     {player.status === 'injured' ? 'INJURED' : 'RESTRICTED'}
                                   </span>
                                </div>
                                
@@ -146,7 +145,7 @@ export default function MedicalVanguard() {
                                   </div>
                                   <div className="flex flex-col">
                                      <h4 className="text-xl font-black text-white uppercase italic tracking-tighter leading-none mb-2">{player.name}</h4>
-                                     <span className="text-[9px] text-slate-600 font-black uppercase tracking-[0.4em]">{player.role} // UNIT_{player.id}</span>
+                                     <span className="text-[9px] text-slate-600 font-black uppercase tracking-[0.2em]">{player.role} // PLAYER_{player.id}</span>
                                   </div>
                                </div>
 
@@ -165,7 +164,7 @@ export default function MedicalVanguard() {
                       ) : (
                          <div className="py-32 text-center border border-dashed border-white/5 rounded-sm opacity-20">
                             <FaShieldAlt className="text-5xl mx-auto mb-6 text-slate-800" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.8em] text-slate-500">ALL_ASSETS_OPTIMAL</p>
+                             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">ALL PLAYERS AVAILABLE</p>
                          </div>
                       )}
                    </div>
@@ -173,7 +172,7 @@ export default function MedicalVanguard() {
                    {/* Footer CTA */}
                    <div className="mt-12 pt-10 border-t border-white/5">
                       <button className="w-full py-5 bg-red-500/5 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-[0.6em] transition-all italic shadow-[0_15px_40px_rgba(239,68,68,0.1)]">
-                         EMERGENCY_DECOMMISSION
+                         REPORT NEW INJURY
                       </button>
                    </div>
                 </section>

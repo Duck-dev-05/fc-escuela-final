@@ -5,10 +5,9 @@ import { sendMail } from '@/lib/mailer';
 import { registerSchema } from '@/lib/validations';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { sanitizePayload } from '@/lib/sanitizer';
+import { getWelcomeEmailTemplate } from '@/lib/email-templates';
 
 export const dynamic = "force-dynamic";
-
-import { getWelcomeEmailTemplate } from '@/lib/email-templates';
 
 export async function POST(request: Request) {
   try {
@@ -64,7 +63,6 @@ export async function POST(request: Request) {
         memberSince: new Date(),
         profileInitialized: false,
         username: finalUsername,
-        lastLogin: null,
       },
     });
 

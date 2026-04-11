@@ -9,7 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-export default function SquadRegistryPage() {
+export default function SquadManagementPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
@@ -60,7 +60,7 @@ export default function SquadRegistryPage() {
             transform: 'translate(-50%, -50%)' 
           }} 
         />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.25] brightness-50" />
+        <div className="noise-layer opacity-[0.25] brightness-50" />
       </div>
 
       <div className="relative z-10 container-custom pt-32 pb-20">
@@ -70,23 +70,23 @@ export default function SquadRegistryPage() {
               <div className="w-12 h-12 glass-card hud-border border-yellow-500/30 flex items-center justify-center bg-yellow-500/5">
                  <FaUsers className="text-yellow-500 text-xl" />
               </div>
-              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em] font-mono">Personnel_Registry // 104</span>
+              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em] font-mono">Squad List</span>
            </div>
            <h1 className="text-6xl md:text-9xl font-black uppercase tracking-tighter italic leading-[0.8]">
-              Squad <span className="text-yellow-500">Registry</span>
+              Squad <span className="text-yellow-500">List</span>
            </h1>
            <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-8 max-w-2xl leading-relaxed text-left">
-              Real-time personnel telemetry. Monitor unit availability, performance ratings, and tactical synchronization status across the elite squad.
+              Real-time player status. Monitor player availability, performance ratings, and overall squad status across the elite team.
            </p>
         </div>
 
         {/* Global Stats HUD */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 animate-slide-up delay-100">
            {[
-              { label: "Active Operatives", value: `${players.length}/12`, icon: FaUsers },
+              { label: "Active Players", value: `${players.length}/12`, icon: FaUsers },
               { label: "Squad Efficiency", value: "94%", icon: FaLightbulb },
-              { label: "Medical Alert", value: "01 Units", icon: FaHeartbeat, color: "text-red-500" },
-              { label: "Tactical Sync", value: "Optimized", icon: FaShieldAlt, color: "text-green-500" },
+              { label: "Injured Players", value: `${players.filter((p: any) => p.status !== 'available').length} Players`, icon: FaHeartbeat, color: "text-red-500" },
+              { label: "Squad Status", value: "Healthy", icon: FaShieldAlt, color: "text-green-500" },
            ].map((stat, i) => (
               <div key={i} className="glass-card hud-border p-6 bg-slate-950/40 group hover:bg-white/[0.04] transition-all relative overflow-hidden">
                  <div className="flex items-center gap-4">
@@ -109,11 +109,11 @@ export default function SquadRegistryPage() {
               <table className="w-full text-left border-collapse">
                  <thead>
                     <tr className="border-b border-white/5 bg-slate-900/40">
-                       <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Unit_ID</th>
+                       <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Player</th>
                        <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Role</th>
                        <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Status</th>
                        <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Availability</th>
-                       <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Battle_Rating</th>
+                       <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Rating</th>
                        <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] text-right">Action</th>
                     </tr>
                  </thead>
@@ -129,7 +129,7 @@ export default function SquadRegistryPage() {
                                 </div>
                                 <div className="text-left">
                                    <p className="text-[11px] font-black text-white uppercase tracking-tight italic group-hover:text-yellow-500 transition-colors leading-none">{player.name}</p>
-                                   <p className="text-[8px] text-slate-600 font-mono tracking-widest mt-1">AUTH_CORE_{String(player.id).padStart(3, '0')}</p>
+                                   <p className="text-[8px] text-slate-600 font-mono tracking-widest mt-1">ID_{String(player.id).padStart(3, '0')}</p>
                                 </div>
                              </div>
                           </td>
@@ -139,13 +139,13 @@ export default function SquadRegistryPage() {
                           <td className="px-8 py-6">
                              <div className="flex items-center gap-2">
                                 <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${player.status === 'available' ? 'bg-green-500' : 'bg-red-500'}`} />
-                                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${player.status === 'available' ? 'text-green-500/80' : 'text-red-500/80'}`}>{player.status === 'available' ? 'MISSION_CLEAR' : player.status}</span>
+                                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${player.status === 'available' ? 'text-green-500/80' : 'text-red-500/80'}`}>{player.status === 'available' ? 'AVAILABLE' : player.status.toUpperCase()}</span>
                              </div>
                           </td>
                           <td className="px-8 py-6 w-48">
                              <div className="space-y-2">
                                 <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest text-slate-600">
-                                   <span className="group-hover:text-yellow-500 transition-colors italic">Efficiency</span>
+                                   <span className="group-hover:text-yellow-500 transition-colors italic">Fitness</span>
                                    <span>{player.status === 'available' ? '100%' : '45%'}</span>
                                 </div>
                                 <div className="h-1 bg-white/5 rounded-full overflow-hidden">
@@ -163,7 +163,7 @@ export default function SquadRegistryPage() {
                              </div>
                           </td>
                           <td className="px-8 py-6 text-right">
-                             <button className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] hover:text-white transition-colors border border-white/5 hover:border-white/10 px-6 py-3 rounded-lg bg-white/[0.01]">View Personnel File</button>
+                             <button className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] hover:text-white transition-colors border border-white/5 hover:border-white/10 px-6 py-3 rounded-lg bg-white/[0.01]">View Profile</button>
                           </td>
                        </tr>
                     ))}
@@ -176,7 +176,7 @@ export default function SquadRegistryPage() {
         <div className="mt-12 flex items-center justify-center">
            <div className="glass-card hud-border px-8 py-3 bg-white/[0.02] flex items-center gap-4">
               <FaFilter className="text-slate-700 text-[10px]" />
-              <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.5em]">Encryption_Level 0.8 // Tactical_Layer_Active</span>
+              <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.2em]">All data up to date // System Active</span>
            </div>
         </div>
       </div>

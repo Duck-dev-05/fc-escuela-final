@@ -95,6 +95,8 @@ model Match {
   awayPower       Int?     @default(75)
   homeLineup      String?
   awayLineup      String?
+  homeBench       String?
+  awayBench       String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   tickets         Ticket[]
@@ -107,6 +109,7 @@ model Ticket {
   userId       String?
   user         User?    @relation(fields: [userId], references: [id])
   quantity     Int
+  price        Float    @default(30)
   category     String
   purchaseDate DateTime @default(now())
   createdAt    DateTime @default(now())
@@ -142,8 +145,6 @@ model Membership {
   status                String   @default("active")
   startDate             DateTime @default(now())
   endDate               DateTime?
-  stripeCustomerId      String?
-  stripeSubscriptionId  String?
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

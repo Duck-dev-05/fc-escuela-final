@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcrypt'
+import { hash } from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -8,24 +8,54 @@ async function main() {
     console.log('--- INITIATING SYSTEM SEED: ELITE_HUB_V1.0 ---')
 
     // 1. CLEAR EXISTING DATA
-    console.log('RESETTING_DATABASE_LAYER...')
-    await prisma.ticket.deleteMany({})
-    await prisma.membership.deleteMany({})
-    await prisma.galleryImage.deleteMany({})
-    await prisma.news.deleteMany({})
-    await prisma.match.deleteMany({})
-    await prisma.teamMember.deleteMany({})
-    await prisma.account.deleteMany({})
-    await prisma.session.deleteMany({})
-    await prisma.user.deleteMany({})
+    // 1. CLEAR EXISTING DATA (DISABLED TO PREVENT DATA LOSS)
+    console.log('MAINTAINING_DATABASE_INTEGRITY...')
+    // await prisma.ticket.deleteMany({})
+    // await prisma.match.deleteMany({})
+    // await prisma.user.deleteMany({})
+    // await prisma.teamMember.deleteMany({})
+    // await prisma.news.deleteMany({})
+    // await prisma.membership.deleteMany({})
 
-    // 2. CRYPTO_PROTOCOL: HASH PASSWORDS
-    const commonPassword = await hash('fc123456', 10)
+    // 2. HASH PASSWORDS
+    const adminPassword = await hash('admin123', 10)
+    const userPassword = await hash('user123', 10)
 
-    // 3. OPERATIONAL_ACCOUNTS (Manual Registration Authorized)
-    console.log('USER_REGISTRY_READY: No mock accounts deployed.')
+    // 3. CREATE ACCOUNTS
+    console.log('DEPLOYING_OPERATIONAL_ACCOUNTS...')
+    const adminUser = await prisma.user.upsert({
+      where: { email: 'fcadmin@fcescuela.com' },
+      update: {},
+      create: {
+        email: 'fcadmin@fcescuela.com',
+        name: 'FC Admin',
+        password: adminPassword,
+        roles: 'admin',
+        username: 'admin',
+        isMember: true,
+        membershipType: 'premium',
+        memberSince: new Date(),
+      },
+    })
 
-    // 4. ELITE_EDITORIAL_NEWS_FEED (8 Articles)
+    const normalUser = await prisma.user.upsert({
+      where: { email: 'user@fcescuela.com' },
+      update: {},
+      create: {
+        email: 'user@fcescuela.com',
+        name: 'Standard User',
+        password: userPassword,
+        roles: 'user',
+        username: 'user',
+        isMember: false,
+        memberSince: new Date(),
+      },
+    })
+
+    console.log('Admin Account:', adminUser.email)
+    console.log('User Account:', normalUser.email)
+
+    // 4. ELITE_EDITORIAL_NEWS_FEED
     console.log('INITIALIZING_EDITORIAL_STREAM...')
     const newsArticles = [
       {
@@ -62,71 +92,147 @@ async function main() {
         imageUrl: '/images/z5973016052782_005_4ca298975090cb17a3c98db94c3bfd5f.jpg',
         author: 'Academy Lead',
         category: 'ACADEMY'
-      },
-      {
-        title: 'TICKETING: ELITE_PASS_ENCRYPTION',
-        content: 'Implementing new digital verification for all stadium access. Smart passes now feature end-to-end security to ensure seamless entry for authenticated members only.',
-        imageUrl: '/images/z5973016052782_010_7ed90876f2e0c1394b4810a0ceb81307.jpg',
-        author: 'Club Security',
-        category: 'LOGISTICS'
-      },
-      {
-        title: 'SQUAD_INTEL: STRIKER_MASTERY_REFINED',
-        content: 'Our flagship striker has achieved a 98% accuracy rating in the latest performance assessment. Readiness for the next elite circuit is confirmed.',
-        imageUrl: '/images/z6087575440824_ce9aa60662b8fbab6d628891c4e37629.jpg',
-        author: 'Performance Staff',
-        category: 'SQUAD_UPDATE'
-      },
-      {
-        title: 'TRANSFER_INTEL: SCOUTING_PROTOCOL_ACTIVE',
-        content: 'Our global scouting network has identified an exceptional offensive unit in the South American sector. Negotiations for a new signing have entered the final phase.',
-        imageUrl: '/images/468862554_563786026400921_5520598281853018968_n.jpg',
-        author: 'Scouting Unit',
-        category: 'TRANSFER'
       }
     ]
 
     for (const article of newsArticles) {
-      await prisma.news.create({ data: article })
+      const existing = await prisma.news.findFirst({ where: { title: article.title } });
+      if (!existing) {
+        await prisma.news.create({ data: article })
+      }
     }
 
-    // 5. OPERATIONAL_MATCH_SCHEDULE (12 Matches)
+    // 5. OPERATIONAL_MATCH_SCHEDULE
     console.log('CALIBRATING_MATCH_CALENDAR...')
-    const matches: any[] = []
+    const matches = [
+      {
+        id: 'cmnk36y460007ian54vrh0yl7', // Fixed ID from user navigation
+        homeTeam: 'Escuela FC',
+        awayTeam: 'Real Madrid Academy',
+        date: new Date('2026-04-15'),
+        time: '19:30',
+        venue: 'Escuela Stadium',
+        competition: 'Youth Champions League',
+        stadiumCapacity: 1000,
+      },
+      {
+        id: 'cmnk36y460007ian54vrh0yl8',
+        homeTeam: 'Barcelona Youth',
+        awayTeam: 'Escuela FC',
+        date: new Date('2026-04-22'),
+        time: '20:00',
+        venue: 'La Masia',
+        competition: 'Youth Champions League',
+        stadiumCapacity: 800,
+      },
+      {
+        id: 'cmnk36y460007ian54vrh0yl9',
+        homeTeam: 'Escuela FC',
+        awayTeam: 'Ajax Academy',
+        date: new Date('2026-05-05'),
+        time: '18:45',
+        venue: 'Escuela Stadium',
+        competition: 'International Youth Cup',
+        stadiumCapacity: 1000,
+      },
+      {
+        id: 'cmnk36y460007ian54vrh0yla',
+        homeTeam: 'Escuela FC',
+        awayTeam: 'Old Rivals',
+        date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30), // 30 days ago
+        time: '18:00',
+        venue: 'Escuela Stadium',
+        competition: 'Friendly',
+        stadiumCapacity: 500,
+        score: '2 - 1',
+        homeLineup: JSON.stringify([
+          { name: 'Nguyễn Thành Đạt', position: 'GK' },
+          { name: 'Lê Vũ Nhật Minh', position: 'CB' },
+          { name: 'Hoàng Đặng Việt Hùng', position: 'CDM' },
+          { name: 'Đỗ Quốc Khánh', position: 'AMF' },
+          { name: 'Phạm Anh Phương', position: 'LW' },
+          { name: 'Đặng Minh Việt', position: 'RW' },
+          { name: 'Trần Minh Đức', position: 'CF' },
+        ]),
+        homeBench: JSON.stringify([
+          { name: 'Nguyễn Đỗ Bảo Khánh', position: 'CB' },
+          { name: 'Phạm Công Toản', position: 'LB' },
+          { name: 'Nguyễn Đức Bảo Phong', position: 'CB' },
+        ]),
+        awayLineup: JSON.stringify([
+          { name: 'M. Sterling', position: 'GK' },
+          { name: 'A. Becker', position: 'CB' },
+          { name: 'J. Stones', position: 'CB' },
+          { name: 'Rodri', position: 'CDM' },
+          { name: 'J. Grealish', position: 'LW' },
+          { name: 'B. Silva', position: 'RW' },
+          { name: 'E. Haaland', position: 'CF' },
+        ]),
+        goalScorers: 'Duc 15\', Hung 68\' // Rival 42\'',
+        manOfTheMatch: 'Trần Minh Đức',
+        attendance: 420,
+        weather: 'Clear Sky // 24°C',
+        tvBroadcast: 'ESCUELA_LIVE',
+        referee: 'Official_X',
+        cards: '1 Yellow (Rival)',
+      },
+    ]
 
     const createdMatches = []
     for (const match of matches) {
-      const dbMatch = await prisma.match.create({ data: match })
-      createdMatches.push(dbMatch)
+      const m = await prisma.match.upsert({
+        where: { id: match.id },
+        update: {
+          homeLineup: (match as any).homeLineup,
+          homeBench: (match as any).homeBench,
+          awayLineup: (match as any).awayLineup,
+          score: match.score,
+        },
+        create: match
+      })
+      createdMatches.push(m)
     }
 
-    // 6. AUTHENTIC_SQUAD_REGISTRY
-    console.log('DEPLOYING_AUTHENTIC_SQUAD...')
-    const squad = [
-      { name: 'Nguyễn Thành Đạt', role: 'GK', order: 1, image: 'p1.jpg', bio: 'Elite First Team Guardian. Flagship reaction engine.', power: 88, captain: false },
-      { name: 'Lê Vũ Nhật Minh', role: 'CB', order: 2, image: 'p2.jpg', bio: 'Prestigious Defense Specialist. Unyielding flagship buffer.', power: 85, captain: false },
-      { name: 'Nguyễn Đỗ Bảo Khánh', role: 'CB', order: 3, image: 'p3.jpg', bio: 'Strategic Club Stopper. Precision intercept mastery.', power: 86, captain: false },
-      { name: 'Nguyễn Đức Bảo Phong', role: 'CB', order: 4, image: 'p4.jpg', bio: 'Flagship Defensive Node. Elite intercept specialist.', power: 84, captain: false },
-      { name: 'Vũ Nhật Ninh', role: 'RB', order: 5, image: 'p5.jpg', bio: 'Tactical Flank Controller. Sustainable elite endurance.', power: 85, captain: false },
-      { name: 'Phạm Công Toàn', role: 'LB', order: 6, image: 'p6.jpg', bio: 'Core Sector Anchor. Strategic flank mastery.', power: 89, captain: false },
-      { name: 'Hoàng Đặng Việt Hùng', role: 'CDM', order: 7, image: 'p7.jpg', bio: 'Club Midfield Architect. Complex role mastery.', power: 87, captain: true },
-      { name: 'Đỗ Quốc Khánh', role: 'AMF', order: 8, image: 'p8.jpg', bio: 'Operational Creative Hub. Elite playstyle designer.', power: 91, captain: false },
-      { name: 'Phạm Anh Phương', role: 'LW', order: 9, image: 'p9.jpg', bio: 'Elite Infiltrator Unit. Kinetic pressure specialist.', power: 88, captain: false },
-      { name: 'Nguyễn Quang Minh Thành', role: 'CF', order: 10, image: 'p10.jpg', bio: 'Vector Impact Unit. Precision scoring mastery.', power: 87, captain: false },
-      { name: 'Đặng Minh Việt', role: 'RW', order: 11, image: 'p11.jpg', bio: 'Prestigious Strike Operative. Direct impact mastery.', power: 92, captain: false },
-      { name: 'Trần Minh Đức', role: 'CF', order: 12, image: 'p12.jpg', bio: 'Elite Scoring Operative. Peak club scoring efficiency.', power: 94, captain: false }
+    // 6. SQUAD_REGISTRY
+    console.log('DEPLOYING_SQUAD_REGISTRY...')
+    const teamMembers = [
+      { name: 'Nguyễn Thành Đạt', role: 'GK', order: 1, image: 'Đạt.jfif', bio: 'Elite First Team Guardian.' },
+      { name: 'Lê Vũ Nhật Minh', role: 'CB', order: 2, image: '', bio: 'Defensive Anchor.' },
+      { name: 'Nguyễn Đỗ Bảo Khánh', role: 'CB', order: 3, image: 'BKhanh.jfif', bio: 'Strategic Club Stopper.' },
+      { name: 'Nguyễn Đức Bảo Phong', role: 'CB', order: 4, image: '', bio: 'Vanguard Defender.' },
+      { name: 'Vũ Nhật Ninh', role: 'RB', order: 5, image: '', bio: 'Lateral Operational Unit.' },
+      { name: 'Phạm Công Toản', role: 'LB', order: 6, image: '', bio: 'Defensive Flank Specialist.' },
+      { name: 'Hoàng Đặng Việt Hùng', role: 'CDM', order: 7, image: 'Hùng.png', bio: 'Midfield Engine.' },
+      { name: 'Đỗ Quốc Khánh', role: 'AMF', order: 8, image: '', bio: 'Tactical Playmaker.' },
+      { name: 'Phạm Anh Phương', role: 'LW', order: 9, image: '', bio: 'Elite Winger.' },
+      { name: 'Nguyễn Quang Minh Thành', role: 'CF', order: 10, image: '', bio: 'Primary Strike Unit.' },
+      { name: 'Đặng Minh Việt', role: 'RW', order: 11, image: '', bio: 'Offensive Flank Operative.' },
+      { name: 'Trần Minh Đức', role: 'CF', order: 12, image: 'Duc.JPG', bio: 'Elite Scoring Specialist.' },
     ]
 
-    for (const member of squad) {
-      await prisma.teamMember.create({ data: member })
+    for (const member of teamMembers) {
+      const existing = await prisma.teamMember.findFirst({ where: { name: member.name } });
+      if (!existing) {
+        await prisma.teamMember.create({ data: member })
+      }
     }
 
-    // 7. TICKETING_REGISTRY (Manual Allocation Required)
-    console.log('TICKET_REGISTRY_READY: No mock tickets generated.')
+    // 7. TICKETS & MEMBERSHIPS (MOCK DATA REMOVED AS REQUESTED)
+    console.log('RESERVING_METRICS_FOR_LIVE_DATA...')
+
+    await prisma.membership.create({
+      data: {
+        userId: adminUser.id,
+        planId: 'premium',
+        status: 'active',
+        startDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10),
+        endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 355),
+      },
+    })
 
     console.log('--- SYSTEM_SEED_COMPLETE: 100% OPERATIONAL ---')
   } catch (error) {
-    console.error('PROTOCOL_FAILED: SEEDING_ERROR', error)
+    console.error('Error seeding database:', error)
     throw error
   } finally {
     await prisma.$disconnect()
@@ -134,3 +240,7 @@ async function main() {
 }
 
 main()
+  .catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })

@@ -90,7 +90,7 @@ export default function ProfilePage() {
           <p className="text-slate-500 text-sm mb-8">Please sign in to view your profile.</p>
           <button
             onClick={() => router.push('/login')}
-            className="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors"
+            className="w-full py-3 px-4 bg-slate-950 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors"
           >
             Sign In
           </button>
@@ -105,7 +105,7 @@ export default function ProfilePage() {
     profile.language, profile.bio, profile.website, profile.occupation,
     profile.favoriteTeam,
   ].filter(Boolean).length / 13 * 100) : 0;
- 
+  
   const now = new Date();
 
   const displayName = session?.user?.name || profile?.name || 'Guest User';
@@ -115,7 +115,6 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen py-24 px-6 md:px-12 bg-slate-50 selection:bg-slate-200 selection:text-slate-900">
       <div className="max-w-6xl mx-auto z-10 relative">
-        {/* Header Section */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">
             Profile <span className="font-light text-slate-400">Hub</span>
@@ -124,9 +123,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content Area */}
           <div className="lg:col-span-3 space-y-8">
-            {/* Profile Header Card */}
             <div className="bg-white border border-slate-200 p-8 md:p-12 rounded-3xl shadow-sm flex flex-col md:flex-row items-center md:items-start gap-8">
               <div className="shrink-0 relative">
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-slate-100 rounded-full overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center">
@@ -135,7 +132,6 @@ export default function ProfilePage() {
                     name={displayName} 
                     size={160} 
                     className="w-full h-full object-cover"
-                    glow={false}
                   />
                 </div>
               </div>
@@ -183,11 +179,9 @@ export default function ProfilePage() {
               </Tab.List>
               
               <Tab.Panels className="focus:outline-none">
-                {/* Panel 1: Overview / Account */}
                 <Tab.Panel className="space-y-8 outline-none animate-fade-in">
                   {profile?.roles === 'admin' && (
                     <div className="space-y-8">
-                      {/* Philosophy Card */}
                       <div className="bg-white border border-slate-200 p-8 rounded-3xl shadow-sm relative overflow-hidden">
                          <div className="absolute top-8 right-8 text-slate-100">
                             <FaQuoteLeft className="text-6xl" />
@@ -201,20 +195,19 @@ export default function ProfilePage() {
                                <div>
                                   <span className="block text-slate-400 font-medium mb-1">System</span>
                                   <span className="font-bold text-slate-900">4-3-3 Attacking</span>
-                               </div>
+                                </div>
                                <div>
                                   <span className="block text-slate-400 font-medium mb-1">Tempo</span>
                                   <span className="font-bold text-slate-900">High</span>
-                               </div>
+                                </div>
                                <div>
                                   <span className="block text-slate-400 font-medium mb-1">Focus</span>
                                   <span className="font-bold text-slate-900">Verticality</span>
-                               </div>
+                                </div>
                             </div>
                          </div>
                       </div>
 
-                      {/* Honors Cabinet */}
                       <div className="bg-white border border-slate-200 p-8 rounded-3xl shadow-sm">
                          <div className="flex items-center justify-between mb-8">
                             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Recent Honors</h3>
@@ -238,7 +231,6 @@ export default function ProfilePage() {
                     </div>
                   )}
 
-                  {/* Personal Information Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       { label: 'Full Name', value: profile?.name, icon: FaUser },
@@ -264,7 +256,6 @@ export default function ProfilePage() {
                     ))}
                   </div>
 
-                  {/* Biography */}
                   <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
                     <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Biography</h3>
                     <p className="text-slate-700 leading-relaxed">
@@ -273,7 +264,6 @@ export default function ProfilePage() {
                   </div>
                 </Tab.Panel>
 
-                {/* Panel 2: Directory / Membership */}
                 <Tab.Panel className="outline-none animate-fade-in">
                   {profile?.roles === 'admin' ? (
                     <div className="bg-white border border-slate-200 p-10 rounded-3xl shadow-sm text-center">
@@ -297,7 +287,7 @@ export default function ProfilePage() {
                       </div>
                       <button 
                         onClick={() => router.push('/coaching/squad')} 
-                        className="py-3 px-8 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors"
+                        className="py-3 px-8 bg-slate-950 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors"
                       >
                         Manage Directory
                       </button>
@@ -309,7 +299,7 @@ export default function ProfilePage() {
                         const isExpired = latestMembership?.endDate && new Date(latestMembership.endDate) < now;
                         return (
                           <div className="relative z-10 w-full max-w-lg mx-auto">
-                            <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6 shadow-sm border ${isExpired ? 'bg-red-50 text-red-500 border-red-100' : 'bg-slate-900 text-white border-slate-800'}`}>
+                            <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6 shadow-sm border ${isExpired ? 'bg-red-50 text-red-500 border-red-100' : 'bg-slate-950 text-white border-slate-800'}`}>
                               {isExpired ? <FaExclamationTriangle className="text-3xl" /> : <FaStar className="text-3xl" />}
                             </div>
                             <h3 className={`text-3xl font-bold tracking-tight mb-2 ${isExpired ? 'text-red-600' : 'text-slate-900'}`}>
@@ -340,7 +330,7 @@ export default function ProfilePage() {
                           <p className="text-slate-500 mb-10">Upgrade to an elite membership to unlock priority access, exclusive content, and premium support.</p>
                           <button
                             onClick={() => router.push('/membership')}
-                            className="py-3 px-8 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors"
+                            className="py-3 px-8 bg-slate-950 hover:bg-slate-800 text-white font-semibold rounded-xl transition-colors"
                           >
                             Upgrade Membership
                           </button>
@@ -350,7 +340,6 @@ export default function ProfilePage() {
                   )}
                 </Tab.Panel>
 
-                {/* Panel 3: Settings */}
                 <Tab.Panel className="space-y-6 outline-none animate-fade-in">
                   <div className="bg-white border border-slate-200 p-8 rounded-3xl shadow-sm">
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-6 flex items-center gap-3">
@@ -400,7 +389,6 @@ export default function ProfilePage() {
             </Tab.Group>
           </div>
 
-          {/* Sidebar / Profile Metrics */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
               <h3 className="text-sm font-bold text-slate-900 mb-6 tracking-tight">Profile Completion</h3>
@@ -414,12 +402,12 @@ export default function ProfilePage() {
                     fill="transparent" 
                     strokeDasharray="351.85" 
                     strokeDashoffset={351.85 * (1 - profileCompletionFallback / 100)} 
-                    className="text-slate-900 transition-all duration-1000" 
+                    className="text-slate-950 transition-all duration-1000" 
                     strokeLinecap="round"
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-3xl font-black text-slate-900 tracking-tighter">{profileCompletionFallback}%</span>
+                  <span className="text-3xl font-black text-slate-950 tracking-tighter">{profileCompletionFallback}%</span>
                 </div>
               </div>
               <p className="text-center text-sm text-slate-500">
@@ -429,7 +417,7 @@ export default function ProfilePage() {
 
             <button 
               onClick={() => router.push('/profile/edit')}
-              className="w-full bg-slate-900 text-white p-6 rounded-3xl shadow-sm hover:bg-slate-800 transition-colors flex items-center justify-between group"
+              className="w-full bg-slate-950 text-white p-6 rounded-3xl shadow-sm hover:bg-slate-800 transition-colors flex items-center justify-between group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white">

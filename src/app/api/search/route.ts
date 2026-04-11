@@ -1,24 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCache, setCache } from '@/lib/redis';
-import { searchSchema } from '@/lib/validations';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const getSearchCacheKey = (query: string) => `search_${query}`;
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const queryParam = searchParams.get('query') || '';
-    
-    // Validate Input
-    const validated = searchSchema.safeParse({ query: queryParam });
-    if (!validated.success) {
-      return NextResponse.json({ error: 'Invalid search query' }, { status: 400 });
-    }
-    
-    const query = validated.data.query.toLowerCase();
+    const query = searchParams.get('query')?.toLowerCase() || '';
 
     if (!query) {
       return NextResponse.json({ news: [], team: [], matches: [] });
@@ -41,7 +32,6 @@ export async function GET(req: Request) {
       },
       select: { id: true, title: true, content: true, author: true, category: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
-      take: 20, // Limit results
     });
 
     // Search Team Members
@@ -55,7 +45,6 @@ export async function GET(req: Request) {
       },
       select: { id: true, name: true, role: true, bio: true, image: true },
       orderBy: { order: 'asc' },
-      take: 20,
     });
 
     // Search Matches
@@ -71,7 +60,6 @@ export async function GET(req: Request) {
       },
       select: { id: true, homeTeam: true, awayTeam: true, date: true, competition: true, description: true },
       orderBy: { date: 'desc' },
-      take: 20,
     });
 
     const results = { news, team, matches };
@@ -85,3 +73,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
+ 

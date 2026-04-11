@@ -2,21 +2,21 @@ import Redis from 'ioredis'
 
 const redisClientSingleton = () => {
   const client = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-    maxRetriesPerRequest: 1,
-    retryStrategy: (times) => {
-      if (times > 3) return null;
-      return Math.min(times * 50, 2000);
-    },
-  });
+    lazyConnect: true,
+    maxRetriesPerRequest: process.env.NODE_ENV === 'production' ? 1 : 0,
+    connectTimeout: 1000,
+  })
 
+  // Silence unhandled connection errors during build phase
   client.on('error', (err) => {
-    // Only log if not during build/static-gen to keep build logs clean
-    if (process.env.NEXT_PHASE !== 'phase-production-build') {
-      console.error('[REDIS] Connection error:', err);
-    }
+    // If we're in the build phase, stay silent as we expect Redis to be unreachable
+    if (process.env.NEXT_PHASE === 'phase-production-build') return;
+    
+    // In dev/prod runtime, log a warning but don't crash
+    console.warn('[REDIS] Connection Shield: Handled AggregateError:', err.message);
   });
 
-  return client;
+  return client
 }
 
 declare global {

@@ -112,13 +112,13 @@ export default function TacticalBoard() {
       // Mission Critical Feedback
       const btn = document.getElementById('deploy-btn');
       if (btn) {
-         btn.innerText = 'AUTHORIZING...';
-         setTimeout(() => {
-            btn.innerText = 'DEPLOY_SUCCESS // SYNC_LOCK';
-            setTimeout(() => {
-               btn.innerText = 'Deploy_Positioning';
-            }, 2000);
-         }, 1000);
+          btn.innerText = 'SAVING...';
+          setTimeout(() => {
+             btn.innerText = 'SAVE SUCCESSFUL';
+             setTimeout(() => {
+                btn.innerText = 'Save Tactics';
+             }, 2000);
+          }, 1000);
       }
       console.log('Tactical deployment authorized:', tokens);
    };
@@ -157,16 +157,16 @@ export default function TacticalBoard() {
                   <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-yellow-500" />
                </div>
                <div>
-                  <h1 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">Tactical <span className="text-yellow-500">Protocol</span></h1>
-                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.5em] mt-3">Personnel_Positioning_Matrix // v.4.0.1</p>
+                   <h1 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">Tactical <span className="text-yellow-500">Board</span></h1>
+                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mt-3">COACHING TOOLS // POSITION MANAGER</p>
                </div>
             </div>
             <div className="hidden lg:flex items-center gap-6">
                <div className="flex flex-col items-end">
-                  <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest mb-1.5">Active_Deployment</span>
-                  <div className="px-6 py-2 glass-card border-yellow-500/30 bg-yellow-500/5 rounded-full">
-                     <span className="text-[11px] text-yellow-500 font-black uppercase tracking-widest">{activeFormation} HUD_MOD</span>
-                  </div>
+                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest mb-1.5">Formation</span>
+                   <div className="px-6 py-2 glass-card border-yellow-500/30 bg-yellow-500/5 rounded-full">
+                      <span className="text-[11px] text-yellow-500 font-black uppercase tracking-widest">{activeFormation}</span>
+                   </div>
                </div>
             </div>
          </div>
@@ -230,14 +230,10 @@ export default function TacticalBoard() {
                   ))}
 
                   {/* Data Overlay Footer */}
-                  <div className="absolute bottom-8 left-10 text-[8px] text-slate-700 font-mono space-y-2 opacity-50 group-hover/pitch:opacity-100 transition-opacity">
-                     <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <p>SYNC_STATUS: OPTIMAL</p>
-                     </div>
-                     <p>PITCH_REF: [21.02, 105.85]</p>
-                     <p>TELEMETRY_LINK: CMN73-TK</p>
-                  </div>
+                      <div className="flex items-center gap-3">
+                         <div className="w-2 h-2 rounded-full bg-green-500" />
+                         <p>STATUS: READY</p>
+                      </div>
                </div>
             </div>
 
@@ -276,14 +272,14 @@ export default function TacticalBoard() {
                         onClick={() => setIsDrawing(!isDrawing)}
                         className={`w-full py-5 border transition-all text-[11px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-4 italic ${isDrawing ? 'bg-yellow-500 text-slate-950 border-yellow-500' : 'glass-card border-white/10 text-white hover:bg-white/10'}`}
                      >
-                        <FaPencilAlt /> {isDrawing ? 'Drawing_ON' : 'Pencil_Tool'}
-                     </button>
+                         <FaPencilAlt /> {isDrawing ? 'DRAWING MODE' : 'DRAW TOOL'}
+                      </button>
 
                      <button 
                         onClick={clearLayer}
                         className="w-full py-5 glass-card border-white/10 rounded-2xl text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] hover:text-red-500 hover:border-red-500/30 transition-all flex items-center justify-center gap-4 italic"
                      >
-                        <FaTrash /> Clear_Layer
+                        <FaTrash /> CLEAR BOARD
                      </button>
 
                      {/* DEPLOY_POSITIONING Button */}
@@ -293,7 +289,7 @@ export default function TacticalBoard() {
                         className="w-full py-5 bg-[#EAB308] text-slate-950 text-[11px] font-black uppercase tracking-[0.4em] hover:bg-yellow-400 transition-all flex items-center justify-center gap-4 shadow-[0_10px_40px_rgba(234,179,8,0.3)] hover:-translate-y-1 active:translate-y-0 relative overflow-hidden"
                      >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:animate-shimmer" />
-                        <FaArrowsAlt className="text-sm" /> Deploy_Positioning
+                        <FaArrowsAlt className="text-sm" /> Save Tactics
                      </button>
                   </div>
                </div>
@@ -302,13 +298,13 @@ export default function TacticalBoard() {
                <div className="glass-card hud-border p-10 bg-slate-950/20 border-white/5">
                   <div className="flex items-center gap-4 mb-10">
                      <FaProjectDiagram className="text-yellow-500/50" />
-                     <h3 className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">Operational_Intel</h3>
+                     <h3 className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Match Analytics</h3>
                   </div>
                   <div className="space-y-8">
                      {[
-                        { label: 'Defensive Elasticity', val: '72%', color: 'yellow-500' },
-                        { label: 'Offensive Overlap', val: '84%', color: 'yellow-500' },
-                        { label: 'Zonal Transition', val: 'HIGH', color: 'green-500' },
+                        { label: 'Defensive Width', val: '72%', color: 'yellow-500' },
+                        { label: 'Attacking Depth', val: '84%', color: 'yellow-500' },
+                        { label: 'Transition Speed', val: 'HIGH', color: 'green-500' },
                      ].map((item, idx) => (
                         <div key={idx} className="group/intel">
                            <div className="flex justify-between items-center mb-2 px-1">
@@ -326,7 +322,7 @@ export default function TacticalBoard() {
                   </div>
                   <div className="mt-10 p-6 border-l-2 border-yellow-500/20 bg-slate-900/40">
                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-loose italic">
-                        "Syncing formation {activeFormation} with active unit telemetry..."
+                        "Analysing formation {activeFormation} for match readiness..."
                      </p>
                   </div>
                </div>

@@ -69,7 +69,7 @@ function SearchPageInner() {
     <div className="min-h-screen bg-transparent py-20 px-4 relative overflow-hidden animate-scan">
       {/* Ghost Typography */}
       <div className="absolute top-10 left-10 select-none pointer-events-none opacity-5">
-        <span className="text-[15vw] ghost-text leading-none uppercase">RESEARCH</span>
+        <span className="text-[15vw] ghost-text leading-none uppercase">SEARCH</span>
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
@@ -79,8 +79,8 @@ function SearchPageInner() {
                  <FaSearch className="text-yellow-500 text-2xl" />
               </div>
               <div>
-                 <h1 className="text-4xl font-black text-white uppercase tracking-tighter">Research <span className="text-yellow-500">Terminal</span></h1>
-                 <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">Cross-Registry Query Analysis</p>
+                 <h1 className="text-4xl font-black text-white uppercase tracking-tighter">Search</h1>
+                 <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mt-1">FIND PAGES, NEWS, TEAM & MATCHES</p>
               </div>
            </div>
            
@@ -95,13 +95,13 @@ function SearchPageInner() {
         {loading ? (
             <div className="flex flex-col items-center gap-6 py-20 animate-pulse">
                <div className="w-16 h-16 border-t-2 border-l-2 border-yellow-500 hud-border rounded-full animate-spin"></div>
-               <p className="text-yellow-500 font-bold uppercase tracking-[0.3em] text-[10px]">Scanning Databases...</p>
+               <p className="text-yellow-500 font-bold uppercase tracking-[0.2em] text-[10px]">Searching...</p>
             </div>
         ) : !hasResults ? (
             <div className="glass-card hud-border p-20 text-center animate-slide-up">
                <FaBroadcastTower className="mx-auto h-16 w-16 text-slate-800 mb-6" />
-               <h3 className="text-xl font-black text-white uppercase tracking-tighter">No Correlation Found</h3>
-               <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Zero registry matches for the current query string.</p>
+               <h3 className="text-xl font-black text-white uppercase tracking-tighter">No Results Found</h3>
+               <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2">We couldn't find any matches for your query.</p>
             </div>
         ) : (
             <div className="space-y-12 animate-slide-up">
@@ -111,7 +111,7 @@ function SearchPageInner() {
                   <section>
                     <div className="flex items-center gap-3 mb-6">
                        <div className="w-2 h-2 rounded bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.35em]">Navigation Nodes</h2>
+                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Pages</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                        {pageResults.map((item, idx) => (
@@ -134,7 +134,7 @@ function SearchPageInner() {
                   <section>
                     <div className="flex items-center gap-3 mb-6">
                        <div className="w-2 h-2 rounded bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.35em]">Broadcast Records</h2>
+                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">News Articles</h2>
                     </div>
                     <div className="space-y-4">
                        {newsResults.map((item) => (
@@ -160,7 +160,7 @@ function SearchPageInner() {
                   <section>
                     <div className="flex items-center gap-3 mb-6">
                        <div className="w-2 h-2 rounded bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.35em]">Personnel Registry</h2>
+                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Team Members</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                        {teamResults.map((item) => (
@@ -189,7 +189,7 @@ function SearchPageInner() {
                   <section>
                     <div className="flex items-center gap-3 mb-6">
                        <div className="w-2 h-2 rounded bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.35em]">Deployment Logs</h2>
+                       <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Recent Matches</h2>
                     </div>
                     <div className="space-y-4">
                        {matchResults.map((item) => (
@@ -206,7 +206,7 @@ function SearchPageInner() {
                                    </div>
                                 </div>
                              </div>
-                             <div className="text-[9px] text-slate-600 font-mono hidden md:block">LOG_REF: {item.id}</div>
+
                           </Link>
                        ))}
                     </div>

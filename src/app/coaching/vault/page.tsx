@@ -9,9 +9,9 @@ export default function SecurityVault() {
   const [activeDossier, setActiveDossier] = useState<string | null>(null)
 
   const dossiers = [
-    { id: 'tactical-shadow', title: 'Tactical_Shadow', icon: VideoCameraIcon, count: 12, type: 'ULTRA_SECRET' },
-    { id: 'personnel', title: 'Personnel_Dossiers', icon: DocumentTextIcon, count: 24, type: 'RESTRICTED' },
-    { id: 'board-directives', title: 'Board_Directives', icon: ArchiveBoxIcon, count: 5, type: 'L3_CLEARANCE' }
+    { id: 'match-highlights', title: 'Match Highlights', icon: VideoCameraIcon, count: 12, type: 'TOP PRIORITY' },
+    { id: 'player-profiles', title: 'Player Profiles', icon: DocumentTextIcon, count: 24, type: 'MANAGEMENT' },
+    { id: 'coaching-directives', title: 'Coaching Directives', icon: ArchiveBoxIcon, count: 5, type: 'AUTHORIZED' }
   ]
 
   const handleScanTrigger = () => {
@@ -33,13 +33,13 @@ export default function SecurityVault() {
           <div>
             <h1 className="text-4xl font-black italic tracking-tighter uppercase mb-2 flex items-center gap-4">
               <ShieldCheckIcon className="w-10 h-10 text-yellow-500" />
-              Security_Vault <span className="text-yellow-500/50 text-xl font-mono not-italic tracking-normal">v.9.4.2</span>
+              Media Vault <span className="text-yellow-500/50 text-xl font-mono not-italic tracking-normal">v.9.4.2</span>
             </h1>
-            <p className="text-[10px] text-slate-500 font-mono tracking-[0.3em] uppercase">Deep_Layer // Encrypted_Repository</p>
+            <p className="text-[10px] text-slate-500 font-mono tracking-[0.2em] uppercase">Secure Media Repository</p>
           </div>
           <div className="text-right hidden md:block">
-            <div className="text-[10px] text-yellow-500/50 font-mono uppercase mb-1">Signal Status</div>
-            <div className="text-xs font-black uppercase tracking-widest text-[#00ffc3] animate-pulse">ENCRYPTED // STABLE</div>
+            <div className="text-[10px] text-yellow-500/50 font-mono uppercase mb-1">Status</div>
+            <div className="text-xs font-black uppercase tracking-widest text-[#00ffc3] animate-pulse">SECURE // ACTIVE</div>
           </div>
         </div>
 
@@ -72,12 +72,12 @@ export default function SecurityVault() {
                     {authState === 'locked' ? (
                       <>
                         <FingerPrintIcon className="w-20 h-20 text-yellow-500 mb-4 mx-auto group-hover:scale-110 transition-transform" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-yellow-500">Initialize_Scan</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-yellow-500">Unlock Vault</span>
                       </>
                     ) : (
                       <>
                         <EyeIcon className="w-20 h-20 text-yellow-500 mb-4 mx-auto animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-yellow-500 animate-pulse italic">Decrypting_Node...</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-yellow-500 animate-pulse italic">Authorizing...</span>
                       </>
                     )}
                   </div>
@@ -111,7 +111,7 @@ export default function SecurityVault() {
                      <h3 className="text-xl font-black italic uppercase tracking-tighter mb-2">{dossier.title}</h3>
                      <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-slate-500">
                         <span>Items: {dossier.count}</span>
-                        <span className="group-hover:text-yellow-500 transition-colors">Open_Dossier →</span>
+                        <span className="group-hover:text-yellow-500 transition-colors">Open File →</span>
                      </div>
                   </div>
                ))}

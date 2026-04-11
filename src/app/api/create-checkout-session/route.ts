@@ -1,106 +1,72 @@
-import { NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
-import Stripe from 'stripe';
-import type { Stripe as StripeType } from 'stripe';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-08-27.basil',
-});
-
-
-
-type TicketCategory = 'standard' | 'premium' | 'vip';
-
-const PRICE_MULTIPLIERS: Record<TicketCategory, number> = {
-  standard: 1,
-  premium: 1.5,
-  vip: 2
-};
-
-const TICKET_PRICE_IDS: Record<TicketCategory, string> = {
-  standard: 'price_1RKc8J09wIpZTJdbYYii8J4F', // Replace with your real Stripe Price ID
-  premium: 'price_1RKc8f09wIpZTJdbFdW5zhmW', // Replace with your real Stripe Price ID
-  vip: 'price_1RKc9109wIpZTJdbZpHS9fdt',     // Replace with your real Stripe Price ID
-};
-
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { matchId, quantity, category } = await request.json();
+    const { matchId, quantity, category } = await req.json();
 
-    // Validate category
-    if (!Object.keys(TICKET_PRICE_IDS).includes(category)) {
-      return NextResponse.json(
-        { error: 'Invalid ticket category' },
-        { status: 400 }
-      );
+    if (!matchId || !quantity || !category) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Validate the match exists and has capacity
+    // Fetch match data to verify existence and get base price (using hardcoded 30 as per current tickets API)
     const match = await prisma.match.findUnique({
       where: { id: matchId },
-      include: { tickets: true },
     });
 
     if (!match) {
-      return NextResponse.json(
-        { error: 'Match not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
-    if (match.stadiumCapacity && match.tickets.length + quantity > match.stadiumCapacity) {
-      return NextResponse.json(
-        { error: 'Not enough available seats' },
-        { status: 400 }
-      );
-    }
+    const basePrice = 30; // Using same base price as /api/tickets
+    const multiplier = {
+      standard: 1,
+      premium: 1.5,
+      vip: 2,
+    }[category as 'standard' | 'premium' | 'vip'] || 1;
 
-    const priceId = TICKET_PRICE_IDS[category as TicketCategory];
+    const unitAmount = Math.round(basePrice * multiplier * 100); // Amount in cents
 
-    // Create Checkout Session
-    const params: StripeType.Checkout.SessionCreateParams = {
-      mode: 'subscription',
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `${match.homeTeam} vs ${match.awayTeam}`,
+              description: `Category: ${category.toUpperCase()} | Quantity: ${quantity}`,
+            },
+            unit_amount: unitAmount,
+          },
           quantity: quantity,
         },
       ],
+      mode: 'payment',
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile/orders?success=1&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/tickets?canceled=true`,
+      customer_email: session.user.email,
       metadata: {
-        matchId: String(matchId ?? ''),
-        quantity: String(quantity ?? ''),
-        category: String(category ?? ''),
-        userId: String(session.user.id ?? ''),
-        email: String(session.user.email ?? ''),
-        name: String(session.user.name ?? ''),
-        image: String(session.user.image ?? ''),
+        type: 'ticket',
+        userId: session.user.id as string,
+        matchId,
+        quantity: quantity.toString(),
+        category,
       },
-      success_url: `${process.env.NEXTAUTH_URL}/tickets/confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/tickets`,
-    };
-    const checkoutSession = await stripe.checkout.sessions.create(params);
-
-    return NextResponse.json({
-      sessionId: checkoutSession.id,
     });
-  } catch (error) {
+
+    return NextResponse.json({ url: checkoutSession.url });
+  } catch (error: any) {
     console.error('Error creating checkout session:', error);
-    return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-} 
+}

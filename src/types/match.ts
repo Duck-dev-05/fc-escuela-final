@@ -20,6 +20,8 @@ export interface Match {
   notes?: string | null
   homeLineup?: { name: string; position: string }[] | null
   awayLineup?: { name: string; position: string }[] | null
+  homeBench?: { name: string; position: string }[] | null
+  awayBench?: { name: string; position: string }[] | null
   createdAt: Date
   updatedAt: Date
 } 

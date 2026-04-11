@@ -8,7 +8,7 @@ import {
   FaShieldAlt, FaArrowLeft, FaCrosshairs, FaCheckCircle, FaClock
 } from 'react-icons/fa';
 
-export default function UpcomingOperations() {
+export default function UpcomingMatches() {
   const { data: session } = useSession();
   const [matches, setMatches] = useState<any[]>([]);
   const [team, setTeam] = useState<any[]>([]);
@@ -95,7 +95,7 @@ export default function UpcomingOperations() {
       });
 
       if (res.ok) {
-        alert(`TACTICAL_DEPLOYMENT_AUTHORIZED: ${match.homeTeam} vs ${match.awayTeam}`);
+        alert(`LINEUP SAVED: ${match.homeTeam} vs ${match.awayTeam}`);
       }
     } catch (e) {
       console.error(e);
@@ -105,64 +105,58 @@ export default function UpcomingOperations() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-400 font-sans selection:bg-yellow-500 selection:text-slate-950 relative overflow-hidden">
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-yellow-500 selection:text-slate-950 relative overflow-hidden">
       {/* Immersive Background Vantage */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(234,179,8,0.05),transparent_70%)]" />
-        <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay" />
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:40px_40px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-transparent to-slate-950" />
+        <div className="absolute inset-x-0 top-0 h-screen bg-gradient-to-b from-yellow-500/[0.02] to-transparent" />
+        <div className="absolute inset-0 bg-noise opacity-[0.01]" />
       </div>
 
-      <div className="py-24 px-8 max-w-7xl mx-auto relative z-10">
-        <Link href="/coaching" className="flex items-center gap-3 text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-[0.4em] mb-16 group transition-all">
-          <FaArrowLeft className="group-hover:-translate-x-2 transition-transform text-yellow-500/50" />
-          Mission_Control // Return_Vantage
+      <div className="py-16 px-6 max-w-7xl mx-auto relative z-10 pt-24">
+        <Link href="/coaching" className="flex items-center gap-2 text-[8px] font-black text-slate-400 hover:text-slate-950 uppercase tracking-[0.4em] mb-12 group transition-all">
+          <FaArrowLeft className="group-hover:-translate-x-1 transition-transform text-yellow-500" />
+          COACH_PORTAL // BACK
         </Link>
 
-         <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-24 gap-12 animate-slide-up">
-            <div className="flex flex-col gap-6">
+         <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-16 gap-10 animate-slide-up">
+            <div className="flex flex-col gap-4">
                <div className="relative">
-                  <div className="flex items-center gap-3 text-[10px] text-yellow-500 font-black uppercase tracking-[0.6em] mb-4">
-                     <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                     Tactical_Overwatch
+                  <div className="flex items-center gap-2 text-[8px] text-yellow-600 font-black uppercase tracking-[0.2em] mb-3">
+                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+                     DEPLOYMENT_LIST
                   </div>
-                  <h1 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-[0.85] italic mb-2">
-                     Upcoming <br />
-                     <span className="text-yellow-500 not-italic">Operations</span>
-                  </h1>
-                  <p className="text-[9px] text-slate-700 font-mono uppercase tracking-[0.4em] ml-1">Registry_Sync: Active_Signals</p>
+                  <h1 className="text-4xl md:text-5xl font-black text-slate-950 uppercase tracking-tighter leading-none mb-2">
+                     Upcoming <span className="text-gradient-gold italic">Matches</span>
+                   </h1>
+                   <p className="text-[8px] text-slate-400 font-mono uppercase tracking-[0.4em] ml-0.5">Tactical Readiness: Phase 04</p>
                </div>
             </div>
             
-            {/* Squad_Health HUD 2.0 */}
-            <div className="flex flex-wrap gap-10 w-full lg:w-auto">
-              <div className="glass-card hud-border px-10 py-6 bg-slate-950/40 min-w-[240px] relative overflow-hidden">
-                 <div className="absolute top-0 left-0 w-[2px] h-full bg-green-500/40" />
-                 <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] mb-4 flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-                    Bio_Status: Available
-                 </div>
-                 <div className="flex items-end gap-4">
-                    <span className="text-5xl font-black text-white font-mono leading-none tracking-tighter italic">{team.filter(p => p.status === 'available').length}</span>
-                    <span className="text-slate-700 font-black font-mono text-base mb-1.5 uppercase tracking-widest">/ {team.length} Assets</span>
-                 </div>
+            {/* Squad_Health HUD 3.0 */}
+            <div className="flex flex-wrap gap-6 w-full lg:w-auto">
+              <div className="bg-white/80 backdrop-blur-2xl border border-slate-100 px-8 py-4 rounded-2xl min-w-[200px] shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-[2px] h-full bg-emerald-500/30" />
+                  <div className="text-[8px] text-slate-400 font-black uppercase tracking-[0.4em] mb-3 flex items-center gap-2">
+                     <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                     Personnel Active
+                  </div>
+                  <div className="flex items-end gap-3">
+                     <span className="text-3xl font-black text-slate-950 font-mono leading-none tracking-tighter italic">{team.filter(p => p.status === 'available').length}</span>
+                     <span className="text-slate-300 font-black font-mono text-[10px] mb-0.5 uppercase tracking-widest">/ {team.length} UNIT_CAP</span>
+                  </div>
               </div>
               
               {team.some(p => p.status !== 'available') && (
-                 <div className="glass-card hud-border px-10 py-6 bg-slate-950/40 border-red-500/20 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-[2px] h-full bg-red-500/40" />
-                    <div className="text-[10px] text-red-500/80 font-black uppercase tracking-[0.4em] mb-4 flex items-center gap-3 italic">
-                       <FaShieldAlt className="text-[10px] animate-pulse" /> Signal_Interference
+                 <div className="bg-white/80 backdrop-blur-2xl border border-slate-100 px-8 py-4 rounded-2xl shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-[2px] h-full bg-rose-500/30" />
+                    <div className="text-[8px] text-rose-500 font-black uppercase tracking-[0.4em] mb-3 flex items-center gap-2 italic">
+                       <FaShieldAlt className="text-[8px]" /> Medical Restriction
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2">
                        {team.filter(p => p.status !== 'available').map((p, i) => (
                           <div key={i} className="group relative">
-                             <div className="w-10 h-10 rounded border border-white/10 bg-slate-900 overflow-hidden grayscale hover:grayscale-0 transition-all shadow-inner">
-                                {p.image ? <img src={`/avatars/${p.image}`} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-700">?</div>}
-                             </div>
-                             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 px-4 py-1.5 bg-red-600 text-[8px] font-black text-white uppercase whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all pointer-events-none rounded-sm z-[100] shadow-2xl">
-                                {p.name}: {p.status.toUpperCase()}
+                             <div className="w-8 h-8 rounded border border-slate-100 bg-slate-50 overflow-hidden grayscale hover:grayscale-0 transition-all">
+                                {p.image ? <img src={`/avatars/${p.image}`} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-300">?</div>}
                              </div>
                           </div>
                        ))}
@@ -173,155 +167,116 @@ export default function UpcomingOperations() {
         </div>
 
         {loading ? (
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {[1, 2, 3, 4].map(i => <div key={i} className="h-80 glass-card animate-pulse bg-white/5 hud-border" />)}
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-slate-50/50 rounded-2xl animate-pulse" />)}
            </div>
         ) : matches.length > 0 ? (
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                {matches.map((match) => (
-                  <div key={match.id} className="glass-card hud-border p-12 bg-slate-950/60 border-white/5 relative overflow-hidden group hover:border-yellow-500/30 hover:bg-slate-900/40 transition-all duration-700 hover:shadow-[0_0_80px_rgba(0,0,0,0.5)] min-h-[580px] flex flex-col justify-between">
-                     {/* Neural Background */}
-                     <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
-                     <div className="absolute inset-0 bg-grid-white/[0.01] bg-[size:30px_30px] opacity-20 pointer-events-none" />
-                     <div className="absolute top-0 left-0 w-0 h-[2px] bg-yellow-500 group-hover:w-full transition-all duration-700" />
-                     
+                  <div key={match.id} className="group bg-white/80 backdrop-blur-2xl border border-slate-100 p-8 rounded-[2rem] shadow-sm hover:shadow-xl hover:border-yellow-500/20 transition-all duration-500 flex flex-col justify-between min-h-[480px]">
                      <div className="relative z-10">
                         {/* Match Telemetry Header */}
-                        <div className="flex items-center justify-between mb-16 pb-8 border-b border-white/5 relative">
-                           {/* HUD Bracket Ornamentation */}
-                           <div className="absolute -top-4 -right-4 w-4 h-4 border-t border-r border-yellow-500/20 group-hover:border-yellow-500/40 transition-colors" />
-                           
-                           <div className="flex flex-col gap-3">
-                              <div className="flex items-center gap-3">
-                                 <div className="px-3 py-1 bg-yellow-500/10 border border-yellow-500/30 rounded-sm skew-x-[-15deg]">
-                                    <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.4em] block skew-x-[15deg]">{match.competition}</span>
-                                 </div>
+                        <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50 relative">
+                           <div className="flex flex-col gap-2">
+                              <div className="flex items-center gap-2">
+                                 <span className="px-2 py-0.5 bg-slate-950 text-white text-[7px] font-black uppercase tracking-[0.4em] rounded">{match.competition}</span>
                               </div>
-                              <div className="flex items-center gap-4 text-[8px] text-slate-500 font-black tracking-[0.2em] pl-1">
-                                 <span className="flex items-center gap-2 group-hover:text-white transition-colors uppercase"><FaClock className="text-[8px] text-yellow-500/50" /> {match.time}</span>
-                                 <span className="text-slate-800 font-black">//</span>
-                                 <span className="flex items-center gap-2 group-hover:text-white transition-colors uppercase"><FaCalendarAlt className="text-[8px] text-yellow-500/50" /> {match.date.split('T')[0]}</span>
+                              <div className="flex items-center gap-3 text-[7px] text-slate-400 font-black tracking-[0.2em] pl-0.5">
+                                 <span className="flex items-center gap-1.5 uppercase hover:text-slate-950 transition-colors"><FaClock className="text-[7px] text-yellow-500" /> {match.time}</span>
+                                 <span className="flex items-center gap-1.5 uppercase hover:text-slate-950 transition-colors"><FaCalendarAlt className="text-[7px] text-yellow-500" /> {match.date.split('T')[0]}</span>
                               </div>
                            </div>
                            <div className="flex flex-col items-end">
-                              <span className="text-[7px] text-slate-600 font-black uppercase tracking-[0.4em] mb-1.5">BIO_SIGNAL_STATUS</span>
-                              <div className={`px-6 py-2 border text-[9px] font-black uppercase tracking-[0.4em] backdrop-blur-xl transition-all relative overflow-hidden ${match.homeLineup?.length > 0 ? 'border-green-500/30 text-green-500 bg-green-500/5 px-8' : 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5 animate-pulse'}`}>
-                                 <div className={`absolute left-0 top-0 w-[2px] h-full ${match.homeLineup?.length > 0 ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                                 {match.homeLineup?.length > 0 ? 'SIGNALS_LOCKED' : 'DEPLOY_PENDING'}
-                              </div>
+                                <span className="text-[6px] text-slate-300 font-black uppercase tracking-[0.4em] mb-1">ROSTER_STATUS</span>
+                                <div className={`px-4 py-1.5 border text-[8px] font-black uppercase tracking-[0.3em] rounded-lg transition-all ${match.homeLineup?.length > 0 ? 'border-emerald-100 text-emerald-600 bg-emerald-50/50' : 'border-yellow-100 text-yellow-600 bg-yellow-50/50'}`}>
+                                   {match.homeLineup?.length > 0 ? 'READY' : 'TBD'}
+                                </div>
                            </div>
                         </div>
 
-                        {/* Operational Teams - Cinematic Typography */}
-                        <div className="flex flex-col gap-10">
-                           <div className="flex items-center justify-between border-l-2 border-yellow-500/20 pl-6 group-hover:border-yellow-500 transition-colors">
-                              <div className="flex flex-col">
-                                 <span className="text-[8px] text-slate-600 font-black uppercase tracking-[0.4em] mb-2">HOME_ASSET</span>
-                                 <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter italic group-hover:text-yellow-500 transition-all leading-none">{match.homeTeam}</h3>
+                        {/* Teams - Editorial Spacing */}
+                        <div className="flex flex-col gap-8">
+                            <div className="flex items-center justify-between pl-4 border-l-2 border-slate-50 group-hover:border-yellow-500/30 transition-colors">
+                               <div className="flex flex-col">
+                                  <span className="text-[7px] text-slate-300 font-black uppercase tracking-[0.4em] mb-1">HOME</span>
+                                  <h3 className="text-3xl font-black text-slate-950 uppercase tracking-tighter italic leading-none">{match.homeTeam}</h3>
                               </div>
                                <div className="flex flex-col items-end">
-                                 <p className="text-[8px] text-slate-600 font-black uppercase tracking-[0.4em] mb-2">POWER_INDEX</p>
-                                 <div className="flex items-center gap-3">
-                                    <div className="w-16 h-1 bg-slate-900 rounded-full overflow-hidden border border-white/5">
-                                       <div className="h-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.4)] transition-all duration-1000" style={{ width: `${getPowerIndex(match, true)}%` }} />
-                                    </div>
-                                    <span className="text-sm font-black text-yellow-500 font-mono italic">{getPowerIndex(match, true)}%</span>
-                                 </div>
+                                  <div className="flex items-center gap-2">
+                                     <div className="w-12 h-[1px] bg-slate-100 rounded-full overflow-hidden">
+                                        <div className="h-full bg-yellow-500" style={{ width: `${getPowerIndex(match, true)}%` }} />
+                                     </div>
+                                     <span className="text-[9px] font-black text-slate-950 font-mono italic">{getPowerIndex(match, true)}%</span>
+                                  </div>
                               </div>
                            </div>
                            
-                           <div className="flex items-center gap-8 px-6">
-                              <div className="h-[1px] flex-1 bg-white/5" />
-                              <span className="text-slate-800 font-black italic text-sm tracking-[0.3em] uppercase">VERSUS</span>
-                              <div className="h-[1px] flex-1 bg-white/5" />
+                           <div className="flex items-center gap-4 px-4">
+                              <div className="h-[1px] flex-1 bg-slate-50" />
+                              <span className="text-slate-200 font-black italic text-[9px] tracking-[0.4em] uppercase">VS</span>
+                              <div className="h-[1px] flex-1 bg-slate-50" />
                            </div>
 
-                           <div className="flex items-center justify-between border-r-2 border-white/10 pr-6 text-right group-hover:border-white/20 transition-colors">
+                           <div className="flex items-center justify-between pr-4 text-right">
                                <div className="flex flex-col items-start">
-                                  <span className="text-[8px] text-slate-600 font-black uppercase tracking-[0.4em] mb-2">POWER_INDEX</span>
-                                  <div className="flex items-center gap-3">
-                                     <span className="text-sm font-black text-white/40 font-mono italic">{getPowerIndex(match, false)}%</span>
-                                     <div className="w-16 h-1 bg-slate-900 rounded-full overflow-hidden border border-white/5">
-                                        <div className="h-full bg-white/10 transition-all duration-1000" style={{ width: `${getPowerIndex(match, false)}%` }} />
+                                  <div className="flex items-center gap-2">
+                                     <span className="text-[9px] font-black text-slate-300 font-mono italic">{getPowerIndex(match, false)}%</span>
+                                     <div className="w-12 h-[1px] bg-slate-100 rounded-full">
+                                        <div className="h-full bg-slate-200" style={{ width: `${getPowerIndex(match, false)}%` }} />
                                      </div>
                                   </div>
                                </div>
                               <div className="flex flex-col">
-                                 <span className="text-[8px] text-slate-600 font-black uppercase tracking-[0.4em] mb-2 text-right">OPPOSITION_TARGET</span>
-                                 <h3 className="text-4xl md:text-5xl font-black text-white/30 uppercase tracking-tighter group-hover:text-white/60 transition-all leading-none">{match.awayTeam}</h3>
+                                 <span className="text-[7px] text-slate-300 font-black uppercase tracking-[0.4em] mb-1">AWAY</span>
+                                 <h3 className="text-3xl font-black text-slate-200 uppercase tracking-tighter leading-none">{match.awayTeam}</h3>
                               </div>
                            </div>
                         </div>
                      </div>
 
-                     {/* Quick Deployment Matrix */}
-                     <div className="mt-16 pt-12 border-t border-white/5 relative z-10 flex flex-col gap-10">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                           <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-3">
-                                 <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Auth: Deployment_Alpha</span>
-                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500/40 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                              </div>
-                              <p className="text-[8px] text-slate-700 font-mono italic tracking-widest uppercase ml-1">Sector: 7-A-SIDE // Formation: VANGUARD_231</p>
-                           </div>
-                           <div className="flex gap-4">
-                              <Link 
-                                 href={`/coaching/upcoming/${match.id}`}
-                                 className="px-8 py-3.5 border border-white/5 bg-slate-950/40 text-[9px] text-slate-400 hover:text-white hover:border-yellow-500/40 font-black uppercase tracking-[0.4em] transition-all flex items-center gap-3 group/btn hover:shadow-[0_0_30px_rgba(234,179,8,0.1)]"
-                              >
-                                 <FaCrosshairs className="text-[10px] text-yellow-500/50 group-hover/btn:rotate-90 transition-transform" />
-                                 Deep_Dive_Vantage
-                              </Link>
+                     {/* Action HUD */}
+                     <div className="mt-12 pt-8 border-t border-slate-50 flex flex-col gap-8">
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-1">
+                               <span className="text-[8px] font-black text-slate-950 uppercase tracking-[0.2em] ">Deployment Type</span>
+                               <p className="text-[7px] text-slate-400 font-mono italic tracking-widest uppercase">7-SIDE // PRECISION</p>
+                            </div>
+                           <div className="flex gap-3">
+                               <Link 
+                                  href={`/coaching/upcoming/${match.id}`}
+                                  className="px-5 py-2.5 bg-slate-50 text-[8px] text-slate-500 hover:text-slate-950 font-black uppercase tracking-[0.4em] rounded-xl transition-all border border-slate-100"
+                               >
+                                  Edit
+                               </Link>
                               <button 
                                  onClick={() => saveLineup(match)}
                                  disabled={saving === match.id}
-                                 className="px-10 py-3.5 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white shadow-[0_0_40px_rgba(234,179,8,0.2)] transition-all flex items-center gap-3 disabled:opacity-50 relative overflow-hidden group/gen"
+                                 className="px-6 py-2.5 bg-yellow-500 text-slate-950 text-[8px] font-black uppercase tracking-[0.4em] hover:bg-slate-950 hover:text-white rounded-xl transition-all shadow-lg flex items-center gap-2"
                               >
-                                 {saving === match.id ? (
-                                    <>
-                                       <div className="w-2 h-2 rounded-full bg-slate-950 animate-ping" />
-                                       SYNCING...
-                                    </>
-                                 ) : (
-                                    <>
-                                       <FaShieldAlt className="text-[10px]" />
-                                       Authorize_Sync
-                                    </>
-                                 )}
-                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/gen:translate-x-full transition-transform duration-1000" />
+                                 {saving === match.id ? "SYNCING" : "SAVE"}
                               </button>
                            </div>
                         </div>
                         
-                        {/* Rapid Personnel Selector */}
-                        <div className="grid grid-cols-7 gap-3">
+                        {/* Status Grid */}
+                        <div className="grid grid-cols-7 gap-1">
                            {slots.map((slot, i) => {
                               const currentPlayer = match.homeLineup?.[i]?.name || '';
                               return (
-                                 <div key={i} className="group/slot flex flex-col gap-2 items-center">
-                                    <div className={`w-full h-12 flex items-center justify-center bg-slate-950 border transition-all duration-500 relative overflow-hidden ${currentPlayer ? 'border-yellow-500 text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.1)]' : 'border-white/5 text-slate-800 group-hover/slot:border-white/20'}`}>
-                                       <div className="absolute inset-0 bg-noise opacity-[0.05] pointer-events-none" />
-                                       <span className="text-[9px] font-black italic relative z-10">{slot}</span>
-                                       {currentPlayer && <div className="absolute bottom-0 left-0 w-full h-[1px] bg-yellow-500 animate-pulse" />}
-                                    </div>
-                                    <div className={`w-full h-[3px] transition-all duration-700 ${currentPlayer ? 'bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.8)] scale-x-100' : 'bg-slate-900 scale-x-[0.2] opacity-20 group-hover/slot:scale-x-50'}`} />
+                                 <div key={i} className={`h-8 flex items-center justify-center border transition-all duration-300 rounded ${currentPlayer ? 'border-yellow-500 bg-yellow-50/50 text-yellow-700' : 'border-slate-50 bg-slate-50/30 text-slate-200'}`}>
+                                    <span className="text-[7px] font-black font-mono">{slot}</span>
                                  </div>
                               );
                            })}
                         </div>
                      </div>
-
-                     {/* Archive Identity HUD */}
-                     <div className="absolute -bottom-4 -left-4 text-[100px] font-black text-white/[0.01] select-none pointer-events-none tracking-tighter italic group-hover:text-white/[0.03] transition-colors duration-1000">
-                        {match.id.substring(0,8).toUpperCase()}
-                     </div>
                   </div>
                ))}
            </div>
         ) : (
-           <div className="h-[40vh] flex flex-col items-center justify-center opacity-30 text-center grayscale">
-              <FaCrosshairs className="text-6xl mb-6" />
-              <p className="text-xl font-black uppercase tracking-[0.5em]">No Upcoming Operations Detected</p>
+           <div className="py-24 text-center border-2 border-dashed border-slate-50 rounded-[2rem]">
+              <FaCrosshairs className="text-3xl text-slate-100 mx-auto mb-4" />
+               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-300">No Operations Pending</p>
            </div>
         )}
       </div>

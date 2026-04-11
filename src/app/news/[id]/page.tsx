@@ -1,332 +1,312 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useMemo } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { 
-  CalendarIcon, UserIcon, ArrowLeftIcon, 
-  TagIcon, ShareIcon, ClockIcon, 
-  ChartBarIcon, BoltIcon, GlobeAltIcon
-} from '@heroicons/react/24/outline';
-import Link from "next/link";
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState, useMemo } from 'react'
+import { useParams } from 'next/navigation'
+import { CalendarIcon, UserIcon, ArrowLeftIcon, ClockIcon, ShareIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { FaExclamationTriangle } from 'react-icons/fa'
+import { formatDisplayTitle, formatCategory } from '@/lib/utils'
 
 interface MatchDetails {
-  homeTeam: string;
-  awayTeam: string;
-  date: string;
-  time: string;
-  venue: string;
-  competition: string;
-  summary?: string;
+  homeTeam: string
+  awayTeam: string
+  date: string
+  time: string
+  venue: string
+  competition: string
+  summary?: string
 }
 
 interface NewsArticle {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl: string;
-  author: string;
-  createdAt: string;
-  updatedAt: string;
-  category: string;
-  intro?: string;
-  matchDetails?: MatchDetails;
+  id: string
+  title: string
+  content: string
+  imageUrl: string
+  author: string
+  createdAt: string
+  updatedAt: string
+  category: string
+  intro?: string
+  matchDetails?: MatchDetails
 }
 
 export default function NewsDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const [article, setArticle] = useState<NewsArticle | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [related, setRelated] = useState<NewsArticle[]>([]);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const { id } = useParams<{ id: string }>()
+  const [article, setArticle] = useState<NewsArticle | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [related, setRelated] = useState<NewsArticle[]>([])
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  useEffect(() => {
-    if (!id) return;
+    if (!id) return
     const fetchArticle = async () => {
       try {
-        const res = await fetch(`/api/news/${id}`);
-        if (!res.ok) throw new Error("Registry Access Denied.");
-        const data = await res.json();
-        setArticle(data);
-      } catch (err) {
-        setError("Telemetry Retrieval Failure.");
+        const res = await fetch(`/api/news/${id}`)
+        if (!res.ok) {
+          setError('This article could not be found.')
+          setArticle(null)
+          return
+        }
+        const data = await res.json()
+        setArticle(data)
+        setError(null)
+      } catch {
+        setError('Something went wrong loading this page.')
+        setArticle(null)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchArticle();
-  }, [id]);
+    }
+    fetchArticle()
+  }, [id])
 
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const res = await fetch(`/api/news`);
-        if (!res.ok) return;
-        const data: NewsArticle[] = await res.json();
-        setRelated(data.filter(a => a.id !== id).slice(0, 4));
-      } catch {}
-    };
-    fetchRelated();
-  }, [id]);
+        const res = await fetch(`/api/news`)
+        if (!res.ok) return
+        const data: NewsArticle[] = await res.json()
+        setRelated(data.filter((a) => a.id !== id).slice(0, 4))
+      } catch {
+        /* ignore */
+      }
+    }
+    fetchRelated()
+  }, [id])
 
   const readingTime = useMemo(() => {
-    if (!article) return 0;
-    const words = article.content.split(/\s+/).length;
-    return Math.ceil(words / 200);
-  }, [article]);
+    if (!article) return 0
+    const words = article.content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length
+    return Math.max(1, Math.ceil(words / 200))
+  }, [article])
+
+  const bodyHtml = useMemo(() => {
+    if (!article) return ''
+    const c = article.content
+    if (/<\/?[a-z][\s\S]*>/i.test(c)) return c
+    return `<p>${c.replace(/\n\n/g, '</p><p class="mt-6">').replace(/\n/g, '<br/>')}</p>`
+  }, [article])
+
+  const handleShare = async () => {
+    if (typeof window === 'undefined' || !article) return
+    const url = window.location.href
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: article.title, url })
+      } else {
+        await navigator.clipboard.writeText(url)
+      }
+    } catch {
+      /* user cancelled or clipboard denied */
+    }
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-6">
-          <div className="relative w-24 h-24">
-            <div className="absolute inset-0 border-t-2 border-l-2 border-yellow-500 rounded-full animate-spin-slow"></div>
-            <div className="absolute inset-4 border-b-2 border-r-2 border-slate-200 rounded-full animate-reverse-spin opacity-50"></div>
-          </div>
-          <p className="text-yellow-600 font-black uppercase tracking-[0.4em] text-[10px] animate-pulse">Syncing Intel Flow...</p>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500" />
+          <p className="text-sm font-medium text-slate-600">Loading article…</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (error || !article) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-        <div className="max-w-md w-full glass-card hud-border p-12 text-center relative z-10">
-          <div className="h-16 w-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-red-500/20">
-            <BoltIcon className="h-8 w-8 text-red-500" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+        <div className="max-w-md rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-700">
+            <FaExclamationTriangle className="text-xl" />
           </div>
-          <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter mb-4 italic">Protocol Violation</h2>
-          <p className="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-12">Registry unit {id?.slice(0, 8)} not found.</p>
-          <button
-            onClick={() => router.push('/news')}
-            className="btn-primary w-full"
+          <h1 className="text-xl font-black tracking-tight text-slate-900">Article unavailable</h1>
+          <p className="mt-3 text-sm text-slate-600">{error}</p>
+          <Link
+            href="/news"
+            className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition hover:bg-amber-500 hover:text-slate-950"
           >
-            Return to Core
-          </button>
+            <ArrowLeftIcon className="h-4 w-4" />
+            All news
+          </Link>
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="min-h-screen py-24 px-4 md:px-8 relative overflow-hidden bg-slate-50 selection:bg-yellow-500 selection:text-slate-950">
-       {/* Background Dynamics */}
-       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <motion.div 
-             className="absolute w-[1200px] h-[1200px] rounded-full bg-yellow-500/[0.03] blur-[150px] z-0"
-             animate={{ 
-                left: `${mousePos.x}%`, 
-                top: `${mousePos.y}%`, 
-             }}
-             transition={{ type: 'spring', damping: 30, stiffness: 50 }}
-          />
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] z-10" />
-          <div className="absolute inset-x-0 top-0 h-screen bg-gradient-to-b from-yellow-500/[0.04] via-transparent to-transparent z-10" />
-          
-          <div className="absolute top-40 left-1/2 -track-x-1/2 select-none pointer-events-none opacity-[0.015] whitespace-nowrap z-0">
-             <span className="text-[25vw] font-black ghost-text leading-none uppercase italic tracking-tighter shadow-2xl">ESCUELA NEWS</span>
-          </div>
-       </div>
+    <div className="min-h-screen bg-slate-50 pb-20 text-slate-900">
+      <article className="container-custom px-4 pt-28 md:pt-32">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+          <Link
+            href="/news"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-slate-600 transition hover:text-amber-700"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+            All news
+          </Link>
+        </motion.div>
 
-       <div className="max-w-[1400px] mx-auto relative z-20">
-          {/* Navigation & Status Command Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-24 gap-8">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-              <Link href="/news" className="group inline-flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 hover:text-slate-900 transition-all">
-                 <div className="w-12 h-12 rounded-xl border border-slate-200 bg-white/50 flex items-center justify-center group-hover:border-slate-900 group-hover:bg-slate-50 transition-all shadow-sm">
-                    <ArrowLeftIcon className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-                 </div>
-                 <span className="italic">Back to news hub</span>
-              </Link>
+        <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:gap-14">
+          <div className="lg:col-span-8">
+            <motion.header
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-6"
+            >
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="rounded-full bg-amber-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-950">
+                  {formatCategory(article.category)}
+                </span>
+                <span className="flex items-center gap-1.5 text-sm text-slate-500">
+                  <CalendarIcon className="h-4 w-4 text-amber-600" />
+                  {new Date(article.createdAt).toLocaleDateString(undefined, {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
+
+              <h1 className="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
+                {formatDisplayTitle(article.title)}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-6 border-b border-slate-200 pb-6 text-sm text-slate-600">
+                <span className="flex items-center gap-2 font-medium">
+                  <UserIcon className="h-4 w-4 text-slate-400" />
+                  {article.author}
+                </span>
+                <span className="flex items-center gap-2 font-medium">
+                  <ClockIcon className="h-4 w-4 text-slate-400" />
+                  {readingTime} min read
+                </span>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="ml-auto inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-700 transition hover:border-amber-300 hover:bg-amber-50"
+                >
+                  <ShareIcon className="h-4 w-4" />
+                  Share
+                </button>
+              </div>
+            </motion.header>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.05 }}
+              className="relative mt-8 aspect-[21/9] min-h-[200px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-sm sm:min-h-[280px]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={article.imageUrl} alt={article.title} className="h-full w-full object-cover" />
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-10 lg:p-12"
+            >
+              <div
+                className="prose prose-slate max-w-none prose-headings:font-bold prose-p:text-slate-700 prose-p:leading-relaxed prose-a:text-amber-700"
+                dangerouslySetInnerHTML={{ __html: bodyHtml }}
+              />
+
+              <div className="mt-10 flex flex-col gap-4 border-t border-slate-100 pt-8 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-slate-500">Official FC Escuela communication.</p>
+                <Link
+                  href="/news"
+                  className="inline-flex w-fit items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-amber-500 hover:text-slate-950"
+                >
+                  Back to news
+                </Link>
+              </div>
+            </motion.div>
+
+            {article.matchDetails && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mt-10 rounded-3xl border border-slate-200 bg-slate-100/80 p-6 md:p-8"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-800">Match context</p>
+                <div className="mt-6 grid gap-8 md:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Fixture</p>
+                    <p className="mt-2 text-lg font-black text-slate-900">
+                      {article.matchDetails.homeTeam}{' '}
+                      <span className="font-bold text-slate-400">vs</span> {article.matchDetails.awayTeam}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-600">{article.matchDetails.competition}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">When & where</p>
+                    <p className="mt-2 text-lg font-bold text-slate-900">{article.matchDetails.venue}</p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      {article.matchDetails.date} · {article.matchDetails.time}
+                    </p>
+                  </div>
+                  {(article.matchDetails.summary || '').trim() !== '' && (
+                    <div className="md:col-span-2 border-t border-slate-200 pt-6">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Summary</p>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">{article.matchDetails.summary}</p>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-             {/* Content Mainframe */}
-             <div className="lg:col-span-8 space-y-16">
-                <motion.header 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-10"
-                >
-                  <div className="flex items-center gap-6">
-                    <span className="px-5 py-2 bg-yellow-500 text-slate-950 text-[10px] font-black uppercase tracking-widest skew-x-[-15deg] shadow-xl">
-                      <span className="block skew-x-[15deg]">{article.category}</span>
-                    </span>
-                    <div className="h-[2px] w-12 bg-slate-200" />
-                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em]">PUBLISHED ON {new Date(article.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                  </div>
-
-                  <h1 className="text-6xl md:text-8xl font-black text-slate-900 uppercase tracking-tighter leading-[0.85] italic transition-transform duration-700">
-                    {article.title}
-                  </h1>
-
-                  <div className="flex flex-wrap items-center gap-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
-                    <span className="flex items-center gap-3">
-                       <UserIcon className="h-4 w-4 text-slate-900" />
-                       BY {article.author.toUpperCase()}
-                    </span>
-                    <span className="flex items-center gap-3">
-                       <ClockIcon className="h-4 w-4 text-slate-900" />
-                       READING TIME: {readingTime} MINS
-                    </span>
-                    <div className="flex gap-4">
-                      <button className="p-2 border border-slate-200 rounded-lg hover:border-yellow-500/50 hover:bg-yellow-500/5 transition-colors"><ShareIcon className="h-4 w-4" /></button>
-                    </div>
-                  </div>
-                </motion.header>
-
-                {/* Hero Asset HUD */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="relative aspect-[21/9] w-full overflow-hidden rounded-3xl bg-slate-100 border border-slate-200 shadow-2xl group"
-                >
-                   <img
-                     src={article.imageUrl}
-                     alt={article.title}
-                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s] linear"
-                   />
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent opacity-60" />
-                </motion.div>
-
-                <motion.div 
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="glass-card shadow-2xl p-12 md:p-20 relative overflow-hidden bg-white/70 backdrop-blur-2xl border-slate-200/60"
-                >
-                   <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none italic font-black text-9xl">INTEL</div>
-                   
-                   <div className="prose prose-slate max-w-none prose-yellow">
-                     <div 
-                       className="text-slate-600 font-medium uppercase tracking-wider leading-loose text-sm italic space-y-8"
-                       dangerouslySetInnerHTML={{ __html: article.content.replace(/\n\n/g, '</div><div class="mb-10 lg:pl-12 border-l border-slate-100 italic font-bold text-slate-800">').replace(/\n/g, '<br/>') }}
-                     />
-                   </div>
-
-                   {/* Footer Artifact Verification */}
-                   <div className="mt-16 pt-12 border-t border-slate-100/60 flex flex-col md:flex-row justify-between items-center gap-8">
-                     <div className="flex items-center gap-4">
-                       <GlobeAltIcon className="h-6 w-6 text-yellow-500/50" />
-                       <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em]">Broadcast_Source: Vanguard_Core</span>
-                     </div>
-                     <Link href="/news" className="px-10 py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-yellow-500 hover:text-slate-950 transition-all group overflow-hidden relative">
-                        <span className="relative z-10">End_Intel_Registry</span>
-                        <div className="absolute inset-0 bg-yellow-500 -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-                     </Link>
-                   </div>
-                </motion.div>
-
-                {/* Match Supplement */}
-                {article.matchDetails && (
-                   <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="glass-card p-12 bg-yellow-500/[0.02] border-yellow-500/10 relative overflow-hidden"
-                   >
-                      <div className="absolute top-0 left-0 px-6 py-1.5 bg-yellow-500 text-[9px] font-black text-slate-950 uppercase tracking-widest skew-x-[-15deg]">
-                         TACTICAL_ADVISORY
-                      </div>
-                      
-                      <div className="grid md:grid-cols-2 gap-12 pt-8">
-                        <div>
-                          <h4 className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.4em] mb-4">Location_Telemetry</h4>
-                          <p className="text-xl font-black text-slate-900 uppercase tracking-tight italic">{article.matchDetails.venue}</p>
+          <aside className="lg:col-span-4">
+            <div className="lg:sticky lg:top-28">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+                <h2 className="border-b border-slate-100 pb-4 text-sm font-black tracking-tight text-slate-900">
+                  More stories
+                </h2>
+                <ul className="mt-6 space-y-6">
+                  {related.map((r, i) => (
+                    <motion.li
+                      key={r.id}
+                      initial={{ opacity: 0, x: 8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 * i }}
+                    >
+                      <Link href={`/news/${r.id}`} className="group flex gap-4">
+                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-slate-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={r.imageUrl} alt={r.title} className="h-full w-full object-cover transition group-hover:scale-105" />
                         </div>
-                        <div>
-                          <h4 className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.4em] mb-4">Sync_Timeline</h4>
-                          <p className="text-xl font-black text-slate-900 uppercase tracking-tight italic">{article.matchDetails.date} // {article.matchDetails.time}</p>
-                        </div>
-                        <div className="md:col-span-2 pt-6 border-t border-yellow-500/5">
-                          <h4 className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.4em] mb-4">Analysis_Summary</h4>
-                          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed italic">
-                            {article.matchDetails.summary || "Tactical debriefing process finalized. Structural integrity optimized for sector traversal."}
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
+                            {formatCategory(r.category)}
+                          </p>
+                          <p className="mt-1 line-clamp-2 text-sm font-bold leading-snug text-slate-900 transition group-hover:text-amber-700">
+                            {formatDisplayTitle(r.title)}
                           </p>
                         </div>
-                      </div>
-                   </motion.div>
-                )}
-             </div>
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+                {related.length === 0 && <p className="text-sm text-slate-500">No other articles yet.</p>}
 
-             {/* Sidebar: Strategic Linkage */}
-             <div className="lg:col-span-4 space-y-10">
-                <section className="glass-card p-10 bg-white shadow-xl shadow-slate-200/40 border-slate-200/60 sticky top-32">
-                   <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100">
-                     <ChartBarIcon className="h-5 w-5 text-yellow-500" />
-                     <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.4em]">Sector_Related</h3>
-                   </div>
-
-                   <div className="space-y-10">
-                      {related.map((r, i) => (
-                         <motion.div 
-                          key={r.id}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * i }}
-                         >
-                            <Link href={`/news/${r.id}`} className="group block">
-                               <div className="flex gap-6">
-                                  <div className="w-20 h-20 rounded-xl overflow-hidden glass-card border-slate-200 shrink-0 bg-slate-50">
-                                     <img src={r.imageUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                  </div>
-                                  <div className="space-y-2">
-                                     <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">{r.category}</span>
-                                     <h4 className="text-xs font-black text-slate-900 uppercase tracking-tight line-clamp-2 leading-tight group-hover:text-yellow-600 transition-colors duration-300">
-                                        {r.title}
-                                     </h4>
-                                  </div>
-                               </div>
-                            </Link>
-                         </motion.div>
-                      ))}
-                   </div>
-
-                   <div className="mt-16 pt-10 border-t border-slate-100">
-                      <div className="flex items-center gap-4 mb-8">
-                        <TagIcon className="h-4 w-4 text-yellow-500" />
-                        <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Access_Tags</h3>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                         {['INTEL_PRIORITY', 'TACTICAL_SYNC', 'REGISTRY_LOG', 'TECHNO_CORE'].map(tag => (
-                            <span key={tag} className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] transition-all hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500 cursor-default">
-                               #{tag}
-                            </span>
-                         ))}
-                      </div>
-                   </div>
-
-                   <div className="mt-12 p-6 rounded-xl bg-slate-950 text-white flex flex-col gap-4 text-center group active:scale-95 transition-transform cursor-pointer">
-                      <ShareIcon className="h-6 w-6 text-yellow-500 mx-auto" />
-                      <span className="text-[9px] font-black uppercase tracking-[0.5em] group-hover:text-yellow-400 transition-colors">Broadcast_Intel</span>
-                   </div>
-                </section>
-             </div>
-          </div>
-       </div>
-
-       <style jsx global>{`
-        .hud-border-thick {
-          border: 2px solid rgba(226, 232, 240, 1);
-          box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-        }
-       `}</style>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 text-xs font-bold uppercase tracking-[0.12em] text-slate-800 transition hover:bg-slate-50"
+                >
+                  <ShareIcon className="h-4 w-4" />
+                  Share this article
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </article>
     </div>
-  );
+  )
 }

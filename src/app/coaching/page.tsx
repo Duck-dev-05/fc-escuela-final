@@ -5,11 +5,10 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
    FaUserTie, FaUsers, FaChartLine, FaClipboardList,
-   FaShieldAlt, FaArrowRight, FaCrosshairs, FaCalendarAlt, FaHeartbeat, FaVectorSquare, FaPowerOff
+   FaShieldAlt, FaArrowRight, FaCrosshairs, FaCalendarAlt, FaHeartbeat, FaVectorSquare
 } from 'react-icons/fa';
-import NeuralBackdrop from "@/components/NeuralBackdrop";
 
-export default function CoachingMissionControl() {
+export default function CoachingDashboard() {
    const { data: session } = useSession();
    const [players, setPlayers] = useState<any[]>([]);
    const [playerCount, setPlayerCount] = useState(0);
@@ -76,34 +75,34 @@ export default function CoachingMissionControl() {
 
    const hubs = [
       {
-         title: 'Upcoming Ops',
-         desc: 'Match deployment & lineup authorization',
+         title: 'Upcoming Matches',
+         desc: 'Manage lineups and match prep',
          href: '/coaching/upcoming',
          icon: FaCalendarAlt,
-         meta: 'MISSION_READY',
+         meta: 'READY',
          priority: true
       },
       {
-         title: 'Squad Registry',
-         desc: 'Personnel deployment & asset management',
+         title: 'Squad List',
+         desc: 'Manage players and status',
          href: '/coaching/squad',
          icon: FaUsers,
-         meta: `${playerCount - restrictedCount} ACTIVE // ${restrictedCount} RESTRICTED`
+         meta: `${playerCount - restrictedCount} AVAILABLE // ${restrictedCount} INJURED`
       },
       {
-         title: 'Medical Hub',
-         desc: 'Health telemetry & recovery protocols',
+         title: 'Medical Centre',
+         desc: 'Injury tracking and recovery',
          href: '/coaching/medical',
          icon: FaHeartbeat,
-         meta: `${restrictedCount} RESTRICTED ASSETS`,
+         meta: `${restrictedCount} INJURED PLAYERS`,
          priority: restrictedCount > 0
       },
       {
-         title: 'Intelligence',
-         desc: 'Performance analytics & post-op metrics',
+         title: 'Analytics',
+         desc: 'Match performance and statistics',
          href: '/coaching/analysis',
          icon: FaChartLine,
-         meta: 'SIGNAL: STABLE'
+         meta: 'DATA SYNCED'
       },
       {
          title: 'Tactical Board',
@@ -113,34 +112,46 @@ export default function CoachingMissionControl() {
          meta: 'v.4.0.1 // ACTIVE'
       },
       {
-         title: 'Security Vault',
-         desc: 'Encrypted archives & restricted dossiers',
+         title: 'Media Vault',
+         desc: 'Access match photos and videos',
          href: '/coaching/vault',
          icon: FaShieldAlt,
-         meta: 'R2: SECURE'
+         meta: 'SECURE'
       },
    ];
 
    return (
       <div className="min-h-screen py-20 px-4 md:px-8 relative overflow-hidden bg-[#020202] selection:bg-yellow-500 selection:text-slate-950">
-         <NeuralBackdrop ghostText="COMMAND_UNIT" />
+         {/* Neural_Orb & Cinematic Background */}
+         <div className="absolute inset-0 pointer-events-none">
+            <div
+               className="absolute w-[800px] h-[800px] rounded-full bg-yellow-500/[0.03] blur-[120px] transition-all duration-1000 ease-out z-0"
+               style={{
+                  left: `${mousePos.x}%`,
+                  top: `${mousePos.y}%`,
+                  transform: 'translate(-50%, -50%)'
+               }}
+            />
+            <div className="noise-layer opacity-[0.15] brightness-50" />
+            <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px] z-10" />
+         </div>
 
          <div className="max-w-[1600px] mx-auto relative z-20">
             {/* Maximum Impact Operational Header */}
             <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-28 gap-16 animate-slide-up">
                <div className="flex flex-col gap-10">
                   <div className="flex items-center gap-6">
-                     <div className="flex items-center gap-3 text-[9px] text-yellow-500 font-black uppercase tracking-[0.6em]">
+                     <div className="flex items-center gap-3 text-[9px] text-yellow-500 font-black uppercase tracking-[0.2em]">
                         <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                        Tactical_Vantage
+                        Coach Dashboard
                      </div>
                   </div>
 
                   <div className="relative group/header text-left">
                      <div className="absolute -top-6 -left-6 w-8 h-8 border-t-2 border-l-2 border-yellow-500/20 group-hover/header:border-yellow-500 transition-colors" />
                      <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.85] italic">
-                        Mission <br />
-                        <span className="text-7xl md:text-9xl not-italic text-slate-800 tracking-[-0.05em] group-hover:text-white transition-colors">Control</span>
+                        Coach <br />
+                        <span className="text-7xl md:text-9xl not-italic text-slate-800 tracking-[-0.05em] group-hover:text-white transition-colors">Dashboard</span>
                      </h1>
                   </div>
                </div>
@@ -153,9 +164,9 @@ export default function CoachingMissionControl() {
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                      {[
                         { label: 'Personnel', val: playerCount, unit: 'TTL', color: 'text-white' },
-                        { label: 'Health', val: playerCount - restrictedCount, unit: 'RDY', color: 'text-yellow-500' },
-                        { label: 'Restricted', val: restrictedCount, unit: 'LOCKED', color: 'text-red-500' },
-                        { label: 'Ops_Live', val: matches.filter(m => m.status === 'Scheduled').length, unit: 'SYNC', color: 'text-white' },
+                        { label: 'Fitness', val: playerCount - restrictedCount, unit: 'RDY', color: 'text-yellow-500' },
+                        { label: 'Injured', val: restrictedCount, unit: 'LOCKED', color: 'text-red-500' },
+                        { label: 'Matches', val: matches.filter(m => m.status === 'Scheduled').length, unit: 'SYNC', color: 'text-white' },
                      ].map((stat, i) => (
                         <div key={i} className="group p-8 glass-card border-white/5 bg-slate-950/20 hover:border-yellow-500/20 transition-all relative overflow-hidden">
                            <span className="text-[7px] text-slate-600 font-black uppercase tracking-[0.4em] group-hover:text-yellow-500 transition-colors block text-left">{stat.label}</span>
@@ -184,18 +195,13 @@ export default function CoachingMissionControl() {
                         <p className="text-[12px] text-slate-600 font-mono leading-relaxed mb-12 text-center uppercase tracking-[0.05em] font-bold italic">{hub.desc}</p>
                      </div>
                      <div className="space-y-10">
-                         <Link
-                            href={hub.href}
-                            className={`w-full py-4 border text-[10px] font-black uppercase tracking-[0.5em] flex items-center justify-center gap-4 transition-all italic relative overflow-hidden group/btn ${
-                               hub.priority 
-                               ? 'bg-yellow-500 text-slate-950 border-yellow-500' 
-                               : 'bg-white/[0.02] border-white/10 text-slate-400 hover:bg-yellow-500 hover:text-slate-950 hover:border-yellow-500'
-                            }`}
-                         >
-                            <span className="relative z-10">{hub.priority ? 'AUTHORIZE_DEPLOYMENT' : 'ACCESS_PROTOCOL'}</span>
-                            <FaArrowRight className="relative z-10 transition-transform group-hover:translate-x-3" />
-                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform" />
-                         </Link>
+                        <Link
+                           href={hub.href}
+                           className="w-full py-4 bg-yellow-500/5 border border-yellow-500/10 text-yellow-500 hover:bg-yellow-500 hover:text-slate-950 text-[10px] font-black uppercase tracking-[0.5em] flex items-center justify-center gap-4 transition-all italic relative overflow-hidden group/btn"
+                        >
+                           <span className="relative z-10">VIEW SECTION</span>
+                           <FaArrowRight className="relative z-10 transition-transform group-hover:translate-x-3" />
+                        </Link>
                      </div>
                   </div>
                ))}
@@ -210,15 +216,15 @@ export default function CoachingMissionControl() {
                      <div className="absolute top-0 right-0 p-4">
                         <div className="flex items-center gap-2">
                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                           <span className="text-[8px] font-black text-yellow-500 uppercase tracking-widest">Priority_Ops</span>
+                           <span className="text-[8px] font-black text-yellow-500 uppercase tracking-widest">Next Match</span>
                         </div>
                      </div>
-
+ 
                      <div className="mb-10 relative z-10 text-left">
                         <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic leading-none mb-3">
-                           Strategic <span className="text-yellow-500">Vanguard</span>
+                           Match <span className="text-yellow-500">Preparation</span>
                         </h3>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic leading-relaxed">High-frequency match preparation & formation sync.</p>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic leading-relaxed">Match preparation and lineup selection.</p>
                      </div>
 
                      {matches.filter(m => m.status === 'Scheduled').length > 0 ? (
@@ -236,7 +242,7 @@ export default function CoachingMissionControl() {
                                     </div>
                                  </div>
                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <button className="px-6 py-4 bg-yellow-500 text-slate-950 text-[9px] uppercase tracking-widest font-black italic hover:bg-white transition-all">Authorize Lineup</button>
+                                    <button className="px-6 py-4 bg-yellow-500 text-slate-950 text-[9px] uppercase tracking-widest font-black italic hover:bg-white transition-all">Prepare Lineup</button>
                                     <Link href="/coaching/tactics" className="flex items-center justify-center p-4 glass-card border-white/10 hover:border-yellow-500/40 text-[9px] uppercase font-black text-slate-400 hover:text-white transition-all italic">Tactical Board</Link>
                                  </div>
                               </div>
@@ -245,7 +251,7 @@ export default function CoachingMissionControl() {
                      ) : (
                         <div className="py-12 text-center border border-dashed border-white/5 rounded-sm opacity-30">
                            <FaCrosshairs className="text-3xl mx-auto mb-3 text-slate-800" />
-                           <p className="text-[8px] font-black uppercase tracking-[0.6em] text-slate-600">Standby_For_Orders</p>
+                           <p className="text-[8px] font-black uppercase tracking-[0.6em] text-slate-600">No Upcoming Matches</p>
                         </div>
                      )}
                   </section>
@@ -255,9 +261,9 @@ export default function CoachingMissionControl() {
                      <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/5 relative z-10">
                         <div className="flex items-center gap-3">
                            <FaUsers className="text-yellow-500 text-xs" />
-                           <h3 className="text-[11px] font-black text-white uppercase tracking-[0.6em]">Personnel_Command</h3>
+                           <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">Squad Status</h3>
                         </div>
-                        <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase italic">DIRECT_STATUS_LINK</span>
+                        <span className="text-[7px] text-slate-700 font-mono tracking-widest uppercase italic">LIVE STATUS</span>
                      </div>
 
                      <div className="space-y-4 relative z-10 max-h-[420px] overflow-y-auto custom-scrollbar pr-2">
@@ -275,31 +281,13 @@ export default function CoachingMissionControl() {
                                     <p className="text-[7px] text-slate-600 font-black uppercase tracking-widest">{player.role}</p>
                                  </div>
                               </div>
-                               <button
-                                  onClick={() => togglePlayerStatus(player.id, player.status)}
-                                  disabled={updatingId === player.id}
-                                  className={`relative group/toggle w-24 h-8 rounded-full border transition-all flex items-center px-1 overflow-hidden ${
-                                     player.status === 'available' 
-                                     ? 'border-green-500/30 hover:border-green-500/50 bg-green-500/5' 
-                                     : 'border-red-500/30 hover:border-red-500/50 bg-red-500/5'
-                                  }`}
-                               >
-                                  <div className={`h-6 w-10 rounded-full transition-all flex items-center justify-center ${
-                                     player.status === 'available' 
-                                     ? 'translate-x-0 bg-green-500' 
-                                     : 'translate-x-12 bg-red-500'
-                                  }`}>
-                                     {updatingId === player.id 
-                                        ? <div className="w-2 h-2 border-t-2 border-white rounded-full animate-spin" />
-                                        : <FaPowerOff className="text-[8px] text-white" />
-                                     }
-                                  </div>
-                                  <span className={`absolute text-[7px] font-black uppercase tracking-tighter transition-all ${
-                                     player.status === 'available' ? 'right-3 text-green-500' : 'left-3 text-red-500'
-                                  }`}>
-                                     {player.status === 'available' ? 'ON' : 'OFF'}
-                                  </span>
-                               </button>
+                              <button
+                                 onClick={() => togglePlayerStatus(player.id, player.status)}
+                                 disabled={updatingId === player.id}
+                                 className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${updatingId === player.id ? 'opacity-20 cursor-wait' : ''} ${player.status === 'available' ? 'border-red-500/20 text-red-500/80 hover:bg-red-500 hover:text-white' : 'border-green-500/20 text-green-500/80 hover:bg-green-500 hover:text-white'}`}
+                              >
+                                 {updatingId === player.id ? 'SYNCING...' : player.status === 'available' ? 'MARK INJURED' : 'MARK AVAILABLE'}
+                              </button>
                            </div>
                         ))}
                      </div>
@@ -321,7 +309,7 @@ export default function CoachingMissionControl() {
                               <div className="w-12 h-12 glass-card border-yellow-500/30 flex items-center justify-center bg-yellow-500/5">
                                  <FaChartLine className="text-yellow-500 text-xl" />
                               </div>
-                              <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter italic">Neural<span className="text-slate-800 ml-4 group-hover:text-yellow-500 transition-colors">Feed</span></h3>
+                              <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter italic">Recent<span className="text-slate-800 ml-4 group-hover:text-yellow-500 transition-colors">Matches</span></h3>
                            </div>
                         </div>
                      </div>
@@ -332,7 +320,7 @@ export default function CoachingMissionControl() {
                         ) : matches.slice(0, 10).map((match, i) => (
                            <div key={i} className="flex flex-col sm:flex-row items-center gap-10 p-10 glass-card border-white/5 bg-slate-950/20 hover:border-yellow-500/30 transition-all duration-700 relative overflow-hidden group/feed">
                               <div className="shrink-0 w-24 h-24 glass-card border-white/5 flex flex-col items-center justify-center bg-slate-950 group-hover/feed:border-yellow-500/40 relative">
-                                 <p className="text-[7px] text-slate-700 font-black uppercase tracking-[0.3em] mb-2">{match.status === 'Finished' ? 'POST_OP' : 'PRE_OP'}</p>
+                                 <p className="text-[7px] text-slate-700 font-black uppercase tracking-[0.3em] mb-2">{match.status === 'Finished' ? 'FINAL' : 'UPCOMING'}</p>
                                  <p className="text-2xl font-black text-white font-mono tracking-tighter group-hover/feed:text-yellow-500 italic leading-none">{match.score || 'VS'}</p>
                               </div>
                               <div className="flex-1 overflow-hidden text-left">
@@ -347,7 +335,7 @@ export default function CoachingMissionControl() {
                                     href={match.status === 'Finished' ? "/coaching/analysis" : "/coaching/upcoming"}
                                     className="px-10 py-4 border border-white/5 bg-white/[0.02] text-[10px] text-slate-600 group-hover/feed:text-slate-950 group-hover/feed:bg-yellow-500 hover:border-yellow-500 font-black uppercase tracking-[0.4em] transition-all italic block text-center"
                                  >
-                                    {match.status === 'Finished' ? 'ANALYSIS' : 'DEACTIVATE'}
+                                    {match.status === 'Finished' ? 'ANALYSIS' : 'MANAGE'}
                                  </Link>
                               </div>
                            </div>
@@ -357,8 +345,8 @@ export default function CoachingMissionControl() {
                      <div className="mt-16 pt-12 border-t border-white/5 relative z-10">
                         <Link href="/coaching/analysis" className="group flex flex-col sm:flex-row items-center justify-between p-12 glass-card border-yellow-500/5 hover:border-yellow-500/40 bg-yellow-500/[0.01] transition-all duration-700 relative overflow-hidden">
                            <div className="relative z-10 text-left">
-                              <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-4 italic group-hover:text-yellow-500 transition-colors">TACTICAL_ADVISORY_NETWORK</h4>
-                              <p className="text-[11px] text-slate-600 font-bold uppercase tracking-[0.4em] italic">Decrypt deep mission data for strategic optimizations</p>
+                              <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-4 italic group-hover:text-yellow-500 transition-colors">PERFORMANCE ANALYTICS</h4>
+                              <p className="text-[11px] text-slate-600 font-bold uppercase tracking-[0.2em] italic">View detailed match statistics and strategic optimizations</p>
                            </div>
                            <FaArrowRight className="text-2xl text-slate-700 group-hover:text-yellow-500 group-hover:translate-x-3 transition-all mt-8 sm:mt-0" />
                         </Link>
