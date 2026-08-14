@@ -1,0 +1,13 @@
+services:
+  # Standalone Redis Caching Service for Local Development
+  redis:
+    image: redis:alpine
+    container_name: fc-escuela-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
