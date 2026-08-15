@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { CalendarIcon, UserIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaNewspaper } from 'react-icons/fa'
+import { FaNewspaper, FaTag } from 'react-icons/fa'
 import { adminService } from '@/services/local-api'
 import { formatDisplayTitle, formatCategory } from '@/lib/utils'
 
@@ -75,10 +75,10 @@ export default function NewsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-[#080808] px-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500" />
-          <p className="text-sm font-medium text-slate-600">Loading news…</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-red-500" />
+          <p className="text-sm font-medium text-slate-500">Loading news…</p>
         </div>
       </div>
     )
@@ -86,14 +86,17 @@ export default function NewsPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-        <div className="max-w-md rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-          <h2 className="text-xl font-black uppercase tracking-tight text-slate-900">Something went wrong</h2>
-          <p className="mt-3 text-sm text-slate-600">{error}</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#080808] px-4">
+        <div className="max-w-md w-full glass-card p-10 text-center">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            <FaNewspaper className="text-xl" />
+          </div>
+          <h2 className="font-display text-2xl uppercase tracking-wide text-white">Something went wrong</h2>
+          <p className="mt-3 text-sm text-slate-500">{error}</p>
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="mt-8 rounded-xl bg-slate-900 px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition hover:bg-amber-500 hover:text-slate-950"
+            className="mt-8 rounded-xl bg-red-600 px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition hover:bg-red-500"
           >
             Retry
           </button>
@@ -103,114 +106,137 @@ export default function NewsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <section className="relative isolate overflow-hidden border-b border-slate-200/80 pt-28 pb-12 md:pt-32 md:pb-16">
+    <div className="min-h-screen bg-[#080808] text-slate-200">
+
+      {/* ── HERO ──────────────────────────────────────────────────────────── */}
+      <section className="relative isolate overflow-hidden border-b border-white/5 pt-36 pb-16 md:pt-40 md:pb-20">
+        {/* Background */}
         <div className="absolute inset-0 -z-20">
           <Image
             src="/images/hero_final.jpg"
             alt=""
             fill
             priority
-            className="object-cover opacity-15"
+            className="object-cover opacity-12"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-slate-50/95 to-slate-50" />
+          <div className="absolute inset-0 hero-overlay" />
         </div>
-        <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-amber-400/15 blur-3xl -z-10" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl -z-10" />
+
+        {/* Red glows */}
+        <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-red-700/10 blur-[80px] -z-10" />
+        <div className="absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-red-900/6 blur-[80px] -z-10" />
+
+        {/* Top club stripe */}
+        <div className="club-top-stripe" />
 
         <div className="container-custom">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.5 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-white/90 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-800">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              From the academy
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-red-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              From the Academy
             </p>
-            <h1 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
+            <h1 className="font-display text-7xl sm:text-8xl md:text-9xl uppercase tracking-wide text-white">
               Latest{' '}
-              <span className="bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 bg-clip-text text-transparent">
-                news
-              </span>
+              <span className="text-gradient-red">News</span>
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-600 md:text-base">
-              Announcements, match stories, and updates from FC Escuela—readable and easy to scan.
+            <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-slate-400 md:text-base">
+              Announcements, match stories, and updates from FC Escuela — readable and easy to scan.
             </p>
           </motion.div>
         </div>
       </section>
 
-      <div className="container-custom py-12 md:py-16">
-        {featuredArticle && selectedCategory === 'ALL' && (
-          <section className="mb-14 md:mb-16">
-            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md md:grid md:grid-cols-2 md:gap-0">
-              <Link
-                href={`/news/${featuredArticle.id}`}
-                className="relative block aspect-[4/3] min-h-[240px] md:aspect-auto md:min-h-[360px]"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={featuredArticle.imageUrl}
-                  alt={featuredArticle.title}
-                  className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-[1.02]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent md:bg-gradient-to-r md:from-transparent md:via-slate-950/20 md:to-slate-950/70" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                  <span className="inline-block rounded-full bg-amber-500 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-950">
-                    Featured
-                  </span>
-                  <span className="ml-2 text-[11px] font-semibold uppercase tracking-wider text-white/80">
-                    {formatCategory(featuredArticle.category)}
-                  </span>
-                  <h2 className="mt-4 text-2xl font-black leading-tight tracking-tight text-white md:text-3xl lg:text-4xl">
-                    {formatDisplayTitle(featuredArticle.title)}
-                  </h2>
-                  <span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-amber-300">
-                    Read story <ArrowRightIcon className="h-4 w-4" />
-                  </span>
-                </div>
-              </Link>
+      {/* ── CONTENT ───────────────────────────────────────────────────────── */}
+      <div className="container-custom py-14 md:py-20">
 
-              <div className="flex flex-col justify-center border-t border-slate-100 p-6 md:border-t-0 md:border-l md:p-10">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Spotlight</p>
-                <p className="mt-3 text-base leading-relaxed text-slate-600 md:text-lg">
-                  {excerpt(featuredArticle.content, 280)}
-                </p>
-                <div className="mt-8 flex flex-wrap gap-8 border-t border-slate-100 pt-6 text-sm">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Author</p>
-                    <p className="mt-1 font-semibold text-slate-900">{featuredArticle.author}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Published</p>
-                    <p className="mt-1 font-semibold text-slate-900">
-                      {new Date(featuredArticle.createdAt).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </p>
+        {/* Featured article */}
+        {featuredArticle && selectedCategory === 'ALL' && (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+            className="mb-16"
+          >
+            <div className="mb-6 flex items-center gap-3">
+              <span className="label-eyebrow">
+                <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                Featured Story
+              </span>
+              <div className="flex-1 section-stripe-red" />
+            </div>
+
+            <Link href={`/news/${featuredArticle.id}`} className="group block">
+              <div className="match-card overflow-hidden md:grid md:grid-cols-2">
+                {/* Image */}
+                <div className="relative aspect-[4/3] min-h-[240px] overflow-hidden md:aspect-auto md:min-h-[380px]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={featuredArticle.imageUrl}
+                    alt={featuredArticle.title}
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/90 via-[#080808]/30 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                      <FaTag className="text-[8px]" /> Featured
+                    </span>
+                    <span className="ml-2 text-[11px] font-semibold uppercase tracking-wider text-white/70">
+                      {formatCategory(featuredArticle.category)}
+                    </span>
+                    <h2 className="mt-4 font-display text-3xl md:text-4xl lg:text-5xl uppercase tracking-wide text-white">
+                      {formatDisplayTitle(featuredArticle.title)}
+                    </h2>
+                    <span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-red-400">
+                      Read story <ArrowRightIcon className="h-4 w-4" />
+                    </span>
                   </div>
                 </div>
-                <Link
-                  href={`/news/${featuredArticle.id}`}
-                  className="mt-8 inline-flex w-fit items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-amber-500 hover:text-slate-950"
-                >
-                  Read full article <ArrowRightIcon className="h-4 w-4" />
-                </Link>
+
+                {/* Text side */}
+                <div className="flex flex-col justify-center border-t border-white/5 p-7 md:border-t-0 md:border-l md:border-l-white/5 md:p-10">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-red-500 mb-4">Spotlight</p>
+                  <p className="text-base leading-relaxed text-slate-400 md:text-lg">
+                    {excerpt(featuredArticle.content, 280)}
+                  </p>
+                  <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/5 pt-6">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Author</p>
+                      <p className="font-semibold text-slate-300 text-sm">{featuredArticle.author}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Published</p>
+                      <p className="font-semibold text-slate-300 text-sm">
+                        {new Date(featuredArticle.createdAt).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-8">
+                    <span className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition group-hover:bg-red-500">
+                      Read Full Article <ArrowRightIcon className="h-4 w-4" />
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </section>
+            </Link>
+          </motion.section>
         )}
 
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Category filters + All articles */}
+        <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Browse</p>
-            <h2 className="text-xl font-black tracking-tight text-slate-900 md:text-2xl">All articles</h2>
+            <p className="label-eyebrow mb-1">Browse</p>
+            <h2 className="text-2xl font-black uppercase tracking-tight text-white md:text-3xl">All Articles</h2>
           </div>
-          <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
+          <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -218,8 +244,8 @@ export default function NewsPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`rounded-xl px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
                   selectedCategory === cat
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-red-600 text-white shadow-sm shadow-red-900/30'
+                    : 'glass-card text-slate-500 hover:text-slate-200 hover:bg-white/10'
                 }`}
               >
                 {formatCategory(cat)}
@@ -228,6 +254,10 @@ export default function NewsPage() {
           </div>
         </div>
 
+        {/* Red divider */}
+        <div className="divider-red mb-10" />
+
+        {/* Articles grid */}
         <motion.ul layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <AnimatePresence mode="popLayout">
             {remainingArticles.map((article, idx) => (
@@ -240,22 +270,24 @@ export default function NewsPage() {
                 transition={{ delay: idx * 0.04 }}
               >
                 <Link href={`/news/${article.id}`} className="group block h-full">
-                  <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                  <article className="fc-card flex h-full flex-col overflow-hidden">
+                    <div className="relative aspect-[16/10] overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={article.imageUrl}
                         alt={article.title}
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
-                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-800 shadow-sm backdrop-blur-sm">
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#05080f]/70 to-transparent opacity-60" />
+                      <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-[#080808]/80 border border-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-300 backdrop-blur-sm">
+                        <FaTag className="text-[8px] text-red-500" />
                         {formatCategory(article.category)}
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-5">
                       <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
                         <span className="flex items-center gap-1.5 font-medium">
-                          <CalendarIcon className="h-4 w-4 text-amber-600" />
+                          <CalendarIcon className="h-3.5 w-3.5 text-red-500/70" />
                           {new Date(article.createdAt).toLocaleDateString(undefined, {
                             month: 'short',
                             day: 'numeric',
@@ -263,18 +295,18 @@ export default function NewsPage() {
                           })}
                         </span>
                         <span className="flex items-center gap-1.5 font-medium">
-                          <UserIcon className="h-4 w-4 text-slate-400" />
+                          <UserIcon className="h-3.5 w-3.5 text-slate-600" />
                           {article.author.split(' ')[0]}
                         </span>
                       </div>
-                      <h3 className="text-lg font-black leading-snug tracking-tight text-slate-900 transition group-hover:text-amber-700 md:text-xl">
+                      <h3 className="font-display text-xl uppercase tracking-wide text-white transition group-hover:text-red-400 md:text-2xl">
                         {formatDisplayTitle(article.title)}
                       </h3>
-                      <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                      <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-500 line-clamp-3">
                         {excerpt(article.content, 140)}
                       </p>
-                      <span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-700 transition group-hover:text-amber-600">
-                        Read article <ArrowRightIcon className="h-4 w-4" />
+                      <span className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500 transition group-hover:text-red-400">
+                        Read article <ArrowRightIcon className="h-3.5 w-3.5" />
                       </span>
                     </div>
                   </article>
@@ -285,19 +317,19 @@ export default function NewsPage() {
         </motion.ul>
 
         {remainingArticles.length === 0 && !loading && (
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-8 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+          <div className="glass-card px-8 py-20 text-center">
+            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-slate-600">
               <FaNewspaper className="text-xl" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">No articles here</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-600">
+            <h3 className="text-lg font-black uppercase tracking-tight text-white">No articles here</h3>
+            <p className="mx-auto mt-3 max-w-sm text-sm text-slate-500">
               Try another category or check back when new posts are published.
             </p>
             {selectedCategory !== 'ALL' && (
               <button
                 type="button"
                 onClick={() => setSelectedCategory('ALL')}
-                className="mt-6 rounded-xl bg-slate-900 px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-amber-500 hover:text-slate-950"
+                className="mt-6 rounded-xl bg-red-600 px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-red-500"
               >
                 Show all
               </button>

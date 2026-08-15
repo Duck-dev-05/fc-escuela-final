@@ -50,7 +50,7 @@ export default function MatchPage() {
   }, [params?.id])
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 pt-28 text-slate-900 md:pt-32">
+    <div className="min-h-screen bg-[#080808] pb-20 pt-28 text-slate-200 md:pt-32">
       <AnimatePresence mode="wait">
         {loading ? (
           <motion.div
@@ -60,8 +60,8 @@ export default function MatchPage() {
             exit={{ opacity: 0 }}
             className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4"
           >
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500" />
-            <p className="text-sm font-medium text-slate-600">Loading match…</p>
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-red-600" />
+            <p className="text-sm font-medium text-slate-500">Loading match…</p>
           </motion.div>
         ) : error || !match ? (
           <motion.div
@@ -70,17 +70,17 @@ export default function MatchPage() {
             animate={{ opacity: 1, y: 0 }}
             className="container-custom px-4"
           >
-            <div className="mx-auto max-w-lg rounded-3xl border border-slate-200 bg-white px-8 py-12 text-center shadow-sm md:py-14">
-              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-700">
+            <div className="mx-auto max-w-lg rounded-3xl border border-white/10 bg-[#0e0e0e] px-8 py-12 text-center shadow-2xl md:py-14">
+              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-400 border border-red-500/20">
                 <FaExclamationTriangle className="text-xl" />
               </div>
-              <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900 md:text-3xl">
+              <h1 className="font-display text-3xl uppercase tracking-wide text-white">
                 Match unavailable
               </h1>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">{error}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-400">{error}</p>
               <Link
                 href="/matches"
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition hover:bg-amber-500 hover:text-slate-950"
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition hover:bg-red-500"
               >
                 <FaArrowLeft className="text-[10px]" />
                 All matches
@@ -98,7 +98,7 @@ export default function MatchPage() {
             <div className="mb-8">
               <Link
                 href="/matches"
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-slate-600 transition hover:text-amber-700"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition hover:text-red-400"
               >
                 <FaArrowLeft className="text-[10px]" />
                 All matches

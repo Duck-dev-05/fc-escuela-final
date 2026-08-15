@@ -86,29 +86,11 @@ function OrdersContent() {
   }, [session]);
 
   useEffect(() => {
-    const sessionId = searchParams.get("session_id");
-    if (searchParams.get("success") === "1" && sessionId) {
-      const verify = async () => {
-        setIsVerifying(true);
-        try {
-          const res = await fetch("/api/verify-session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sessionId }),
-          });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Verification failed");
-          if (data.ok) {
-            const r2 = await fetch("/api/orders");
-            if (r2.ok) { const d2 = await r2.json(); setOrders(d2.orders || []); }
-          }
-        } catch (err: any) {
-          setVerifError(err.message || "Failed to verify. Your order may still be processing.");
-        } finally {
-          setIsVerifying(false);
-        }
-      };
-      verify();
+    if (searchParams.get("success") === "1") {
+      fetch("/api/orders")
+        .then((r) => r.ok ? r.json() : null)
+        .then((d) => { if (d?.orders) setOrders(d.orders); })
+        .catch(() => {});
     }
   }, [searchParams]);
 
@@ -203,7 +185,7 @@ function OrdersContent() {
             animate={{ opacity: 1 }}
             className="glass-card px-8 py-20 text-center"
           >
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/8 text-slate-600">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-slate-600">
               <ArchiveBoxIcon className="h-6 w-6" />
             </div>
             <h3 className="text-xl font-black text-white">No orders yet</h3>
@@ -323,7 +305,7 @@ function TicketSection({
                 {/* Content */}
                 <div className="flex flex-1 flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${isPast ? "bg-white/5 border border-white/8 text-slate-600" : "bg-amber-500/10 border border-amber-500/20 text-amber-400"}`}>
+                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${isPast ? "bg-white/5 border border-white/10 text-slate-600" : "bg-amber-500/10 border border-amber-500/20 text-amber-400"}`}>
                       <TicketIcon className="h-5 w-5" />
                     </div>
                     <div>
@@ -355,7 +337,7 @@ function TicketSection({
 
                   <div className="flex items-center gap-4">
                     {order.details.quantity && (
-                      <span className="rounded-xl bg-white/5 border border-white/8 px-3 py-1 text-xs font-bold text-slate-400">
+                      <span className="rounded-xl bg-white/5 border border-white/10 px-3 py-1 text-xs font-bold text-slate-400">
                         ×{order.details.quantity} {order.details.category}
                       </span>
                     )}

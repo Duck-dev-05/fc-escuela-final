@@ -104,61 +104,174 @@ async function main() {
 
     // 5. OPERATIONAL_MATCH_SCHEDULE
     console.log('CALIBRATING_MATCH_CALENDAR...')
+    
+    const fceLineup = JSON.stringify([
+      { name: 'Nguyễn Thành Đạt', position: 'GK' },
+      { name: 'Lê Vũ Nhật Minh', position: 'CB' },
+      { name: 'Hoàng Đặng Việt Hùng', position: 'CDM' },
+      { name: 'Đỗ Quốc Khánh', position: 'AMF' },
+      { name: 'Phạm Anh Phương', position: 'LW' },
+      { name: 'Đặng Minh Việt', position: 'RW' },
+      { name: 'Trần Minh Đức', position: 'CF' },
+    ])
+
+    const fceBench = JSON.stringify([
+      { name: 'Nguyễn Đỗ Bảo Khánh', position: 'CB' },
+      { name: 'Nguyễn Đức Bảo Phong', position: 'CB' },
+      { name: 'Vũ Nhật Ninh', position: 'RB' },
+      { name: 'Phạm Công Toản', position: 'LB' },
+      { name: 'Nguyễn Quang Minh Thành', position: 'CF' },
+    ])
+
+    const rmLineup = JSON.stringify([
+      { name: 'Fran Gonzalez', position: 'GK' },
+      { name: 'Jacobo Ramon', position: 'CB' },
+      { name: 'Joan Martinez', position: 'CB' },
+      { name: 'David Jimenez', position: 'RB' },
+      { name: 'Yusi', position: 'LB' },
+      { name: 'Chema Andres', position: 'CDM' },
+      { name: 'Manuel Angel', position: 'CM' },
+      { name: 'Nico Paz', position: 'CAM' },
+      { name: 'Hugo de Llanos', position: 'LW' },
+      { name: 'Gonzalo Garcia', position: 'RW' },
+      { name: 'Iker Bravo', position: 'CF' },
+    ])
+
+    const rmBench = JSON.stringify([
+      { name: 'Quetglas', position: 'GK' },
+      { name: 'Manu Serrano', position: 'CB' },
+      { name: 'Lorenzo', position: 'CF' }
+    ])
+
+    const barcaLineup = JSON.stringify([
+      { name: 'Ander Astralaga', position: 'GK' },
+      { name: 'Pau Cubarsi', position: 'CB' },
+      { name: 'Mikayil Faye', position: 'CB' },
+      { name: 'Hector Fort', position: 'RB' },
+      { name: 'Alex Valle', position: 'LB' },
+      { name: 'Marc Bernal', position: 'CDM' },
+      { name: 'Unai Hernandez', position: 'CM' },
+      { name: 'Noah Darvich', position: 'CAM' },
+      { name: 'Dani Rodriguez', position: 'LW' },
+      { name: 'Lamine Yamal', position: 'RW' },
+      { name: 'Marc Guiu', position: 'CF' },
+    ])
+
+    const barcaBench = JSON.stringify([
+      { name: 'Kochen', position: 'GK' },
+      { name: 'Sergi Dominguez', position: 'CB' },
+      { name: 'Pau Prim', position: 'CDM' }
+    ])
+
+    const ajaxLineup = JSON.stringify([
+      { name: 'Charlie Setford', position: 'GK' },
+      { name: 'Olivier Aertssen', position: 'CB' },
+      { name: 'Tristan Gooijer', position: 'CB' },
+      { name: 'Diyae Jermoumi', position: 'RB' },
+      { name: 'Mateja Milovanovic', position: 'LB' },
+      { name: 'Silvano Vos', position: 'CDM' },
+      { name: 'Kristian Fitz-Jim', position: 'CM' },
+      { name: 'Gabriel Misehouy', position: 'CAM' },
+      { name: 'Jaydon Banel', position: 'LW' },
+      { name: 'Amourricho van Axel Dongen', position: 'RW' },
+      { name: 'Julian Rijkhoff', position: 'CF' },
+    ])
+
+    const ajaxBench = JSON.stringify([
+      { name: 'Tommy Setford', position: 'GK' },
+      { name: 'Oualid Agougil', position: 'LB' },
+      { name: 'David Kalokoh', position: 'LW' }
+    ])
+
+    const chelseaLineup = JSON.stringify([
+      { name: 'Ted Curd', position: 'GK' },
+      { name: 'Alfie Gilchrist', position: 'CB' },
+      { name: 'Travis Akomeah', position: 'CB' },
+      { name: 'Josh Acheampong', position: 'RB' },
+      { name: 'Somto Boniface', position: 'LB' },
+      { name: 'Kiano Dyer', position: 'CDM' },
+      { name: 'Jimi Tauriainen', position: 'CM' },
+      { name: 'Michael Golding', position: 'CAM' },
+      { name: 'Tyrique George', position: 'LW' },
+      { name: 'Zain Silcott-Duberry', position: 'RW' },
+      { name: 'Ronnie Stutter', position: 'CF' },
+    ])
+
+    const chelseaBench = JSON.stringify([
+      { name: 'Max Merrick', position: 'GK' },
+      { name: 'Harrison Murray-Campbell', position: 'CB' },
+      { name: 'Donnell McNeilly', position: 'CF' }
+    ])
+
     const matches = [
       {
-        id: 'cmnk36y460007ian54vrh0yl7', // Fixed ID from user navigation
+        id: 'cmnk36y460007ian54vrh0yl7',
         homeTeam: 'Escuela FC',
         awayTeam: 'Real Madrid Academy',
-        date: new Date('2026-04-15'),
+        date: new Date('2026-08-25T19:30:00Z'),
         time: '19:30',
         venue: 'Escuela Stadium',
         competition: 'Youth Champions League',
         stadiumCapacity: 1000,
+        homeLineup: fceLineup,
+        homeBench: fceBench,
+        awayLineup: rmLineup,
+        awayBench: rmBench,
       },
       {
         id: 'cmnk36y460007ian54vrh0yl8',
         homeTeam: 'Barcelona Youth',
         awayTeam: 'Escuela FC',
-        date: new Date('2026-04-22'),
+        date: new Date('2026-09-02T20:00:00Z'),
         time: '20:00',
         venue: 'La Masia',
         competition: 'Youth Champions League',
         stadiumCapacity: 800,
+        homeLineup: barcaLineup,
+        homeBench: barcaBench,
+        awayLineup: fceLineup,
+        awayBench: fceBench,
       },
       {
         id: 'cmnk36y460007ian54vrh0yl9',
         homeTeam: 'Escuela FC',
         awayTeam: 'Ajax Academy',
-        date: new Date('2026-05-05'),
+        date: new Date('2026-09-12T18:45:00Z'),
         time: '18:45',
         venue: 'Escuela Stadium',
         competition: 'International Youth Cup',
         stadiumCapacity: 1000,
+        homeLineup: fceLineup,
+        homeBench: fceBench,
+        awayLineup: ajaxLineup,
+        awayBench: ajaxBench,
+      },
+      {
+        id: 'cmnk36y460007ian54vrh0ylb',
+        homeTeam: 'Escuela FC',
+        awayTeam: 'Chelsea Academy',
+        date: new Date('2026-09-22T19:00:00Z'),
+        time: '19:00',
+        venue: 'Escuela Stadium',
+        competition: 'International Youth Cup',
+        stadiumCapacity: 1200,
+        homeLineup: fceLineup,
+        homeBench: fceBench,
+        awayLineup: chelseaLineup,
+        awayBench: chelseaBench,
       },
       {
         id: 'cmnk36y460007ian54vrh0yla',
         homeTeam: 'Escuela FC',
         awayTeam: 'Old Rivals',
-        date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30), // 30 days ago
+        date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14), // 14 days ago (finished)
         time: '18:00',
         venue: 'Escuela Stadium',
-        competition: 'Friendly',
+        competition: 'Friendly Match',
         stadiumCapacity: 500,
         score: '2 - 1',
-        homeLineup: JSON.stringify([
-          { name: 'Nguyễn Thành Đạt', position: 'GK' },
-          { name: 'Lê Vũ Nhật Minh', position: 'CB' },
-          { name: 'Hoàng Đặng Việt Hùng', position: 'CDM' },
-          { name: 'Đỗ Quốc Khánh', position: 'AMF' },
-          { name: 'Phạm Anh Phương', position: 'LW' },
-          { name: 'Đặng Minh Việt', position: 'RW' },
-          { name: 'Trần Minh Đức', position: 'CF' },
-        ]),
-        homeBench: JSON.stringify([
-          { name: 'Nguyễn Đỗ Bảo Khánh', position: 'CB' },
-          { name: 'Phạm Công Toản', position: 'LB' },
-          { name: 'Nguyễn Đức Bảo Phong', position: 'CB' },
-        ]),
+        homeLineup: fceLineup,
+        homeBench: fceBench,
         awayLineup: JSON.stringify([
           { name: 'M. Sterling', position: 'GK' },
           { name: 'A. Becker', position: 'CB' },
@@ -168,6 +281,7 @@ async function main() {
           { name: 'B. Silva', position: 'RW' },
           { name: 'E. Haaland', position: 'CF' },
         ]),
+        awayBench: JSON.stringify([]),
         goalScorers: 'Duc 15\', Hung 68\' // Rival 42\'',
         manOfTheMatch: 'Trần Minh Đức',
         attendance: 420,
@@ -183,10 +297,25 @@ async function main() {
       const m = await prisma.match.upsert({
         where: { id: match.id },
         update: {
+          homeTeam: match.homeTeam,
+          awayTeam: match.awayTeam,
+          date: match.date,
+          time: match.time,
+          venue: match.venue,
+          competition: match.competition,
+          stadiumCapacity: match.stadiumCapacity,
+          score: match.score || null,
           homeLineup: (match as any).homeLineup,
           homeBench: (match as any).homeBench,
           awayLineup: (match as any).awayLineup,
-          score: match.score,
+          awayBench: (match as any).awayBench,
+          goalScorers: (match as any).goalScorers || null,
+          manOfTheMatch: (match as any).manOfTheMatch || null,
+          attendance: (match as any).attendance || null,
+          weather: (match as any).weather || null,
+          tvBroadcast: (match as any).tvBroadcast || null,
+          referee: (match as any).referee || null,
+          cards: (match as any).cards || null,
         },
         create: match
       })

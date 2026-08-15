@@ -48,13 +48,13 @@ export default function SquadFormation({ match }: SquadFormationProps) {
     <div className="space-y-10 py-4 md:space-y-12">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-900 shadow-sm">
-            <FaUsers className="text-lg text-amber-400" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-red-500/20 bg-red-600/10 shadow-sm">
+            <FaUsers className="text-lg text-red-500" />
           </div>
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Squads</p>
-            <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900">Lineups</h3>
-            <p className="mt-1 text-sm text-slate-600">Starting players and substitutes when published.</p>
+            <h3 className="font-display text-3xl uppercase tracking-wide text-white">Lineups</h3>
+            <p className="mt-1 text-sm text-slate-500">Starting players and substitutes when published.</p>
           </div>
         </div>
       </div>
@@ -109,20 +109,20 @@ function TeamHeader({ name, isOfficial, isMock }: { name: string; isOfficial: bo
     <div className="flex items-center justify-between px-2">
       <div className="flex items-center gap-3">
         <div className={cn(
-          "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest",
-          isMock ? "bg-slate-100 text-slate-400 border border-slate-200" : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+          "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border",
+          isMock ? "bg-white/5 text-slate-400 border-white/10" : "bg-red-500/10 text-red-400 border-red-500/20"
         )}>
           {name}
         </div>
         {isMock && (
-          <span className="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-800">
+          <span className="flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-red-400">
             <FaInfoCircle className="text-[9px]" /> Illustrative
           </span>
         )}
       </div>
       <div className="flex items-center gap-2">
-        <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isOfficial ? "bg-emerald-500" : "bg-yellow-500")} />
-        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+        <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isOfficial ? "bg-red-500" : "bg-yellow-500")} />
+        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
           {isOfficial ? 'Validated' : 'Pending'}
         </span>
       </div>
@@ -147,8 +147,8 @@ function TeamListView({ lineup, bench, isFce, teamName }: any) {
       {/* Starting XI Section */}
       <div className="space-y-6">
         <div className="flex items-center gap-4 mb-2 px-2">
-           <div className="w-1.5 h-6 bg-yellow-500 rounded-full" />
-           <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">Starting lineup</h4>
+           <div className="w-1.5 h-6 bg-red-600 rounded-full" />
+           <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Starting lineup</h4>
         </div>
         
         <div className="grid grid-cols-1 gap-3">
@@ -158,25 +158,25 @@ function TeamListView({ lineup, bench, isFce, teamName }: any) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
               key={idx} 
-              className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-yellow-500/30 transition-all group"
+              className="flex items-center justify-between p-4 bg-[#0e0e0e] border border-white/10 rounded-2xl shadow-xl hover:border-red-500/30 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center border-2 transition-all",
-                  isFce ? "bg-slate-900 border-slate-800 text-yellow-500" : "bg-white border-slate-100 text-slate-400 group-hover:border-yellow-500 group-hover:text-slate-950"
+                  "w-10 h-10 rounded-xl flex items-center justify-center border transition-all",
+                  isFce ? "bg-[#141414] border-white/10 text-red-400" : "bg-white/5 border-white/5 text-slate-400 group-hover:border-red-500 group-hover:text-white"
                 )}>
                   <span className="text-[10px] font-black">{player.position}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-black text-slate-950 uppercase tracking-tight">{player.name}</span>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">
+                  <span className="text-xs font-black text-white uppercase tracking-tight">{player.name}</span>
+                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest italic">
                     {POSITION_LABELS[player.position] || 'Active Personnel'}
                   </span>
                 </div>
               </div>
               <FaCheckCircle className={cn(
                 "text-xs transition-colors",
-                isFce ? "text-emerald-500" : "text-slate-100 group-hover:text-emerald-500"
+                isFce ? "text-red-500" : "text-slate-800 group-hover:text-red-500"
               )} />
             </motion.div>
           ))}
@@ -184,43 +184,41 @@ function TeamListView({ lineup, bench, isFce, teamName }: any) {
       </div>
 
       {/* Bench Personnel Section */}
-      <div className="space-y-6">
-        <div className="flex items-center gap-4 mb-2 px-2">
-           <div className="w-1.5 h-6 bg-slate-300 rounded-full" />
-           <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Substitutes</h4>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-3">
-          {safeBench.map((player: any, idx: number) => (
-            <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-yellow-500/20 transition-all">
-              <div className="w-6 h-6 rounded-md bg-white flex items-center justify-center border border-slate-100">
-                <span className="text-[8px] font-black text-slate-400">{idx + 1}</span>
+      {safeBench.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 mb-2 px-2">
+             <div className="w-1.5 h-6 bg-slate-700 rounded-full" />
+             <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Substitutes</h4>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            {safeBench.map((player: any, idx: number) => (
+              <div key={idx} className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 hover:border-red-500/20 transition-all">
+                <div className="w-6 h-6 rounded-md bg-[#141414] flex items-center justify-center border border-white/10">
+                  <span className="text-[8px] font-black text-slate-400">{idx + 1}</span>
+                </div>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-[9px] font-black text-white uppercase tracking-tighter truncate">{player.name}</span>
+                  <span className="text-[7px] font-bold text-slate-500 uppercase tracking-widest">{player.position}</span>
+                </div>
               </div>
-              <div className="flex flex-col overflow-hidden">
-                <span className="text-[9px] font-black text-slate-950 uppercase tracking-tighter truncate">{player.name}</span>
-                <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">{player.position}</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Team Intelligence Brief */}
       <div className={cn(
-        "p-6 rounded-[2rem] relative overflow-hidden transition-all duration-500",
-        isFce ? "bg-slate-950 text-white" : "bg-white border border-slate-200 text-slate-900"
+        "p-6 rounded-[2rem] relative overflow-hidden transition-all duration-500 border border-white/10 bg-[#0e0e0e]"
       )}>
         <div className="absolute top-0 right-0 p-4 opacity-5">
            <FaInfoCircle className="text-3xl" />
         </div>
         <div className="relative z-10 flex flex-col gap-2">
-           <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-600">
+           <span className="text-[10px] font-semibold uppercase tracking-wider text-red-400">
               {isFce ? 'Official lineup' : 'Opponent note'}
            </span>
-           <p className={cn(
-             'text-xs leading-relaxed',
-             isFce ? 'text-slate-300' : 'text-slate-600'
-           )}>
+           <p className="text-xs leading-relaxed text-slate-400">
               {isFce
                 ? 'Published by coaching staff. Changes may apply up to kickoff.'
                 : `Placeholder lineup for ${teamName || 'opponent'} when real data is not available.`}
@@ -237,20 +235,20 @@ function EmbargoPlaceholder() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className="flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 px-8 py-12 text-center"
+      className="flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-white/10 bg-[#0e0e0e] px-8 py-12 text-center shadow-2xl"
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-        <FaBroadcastTower className="text-xl text-amber-500" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/5 shadow-sm border border-white/10">
+        <FaBroadcastTower className="text-xl text-red-500 animate-pulse" />
       </div>
       <div className="space-y-2">
-        <h2 className="text-xl font-black uppercase tracking-tight text-slate-900 md:text-2xl">Lineup not published</h2>
-        <p className="mx-auto max-w-sm text-sm leading-relaxed text-slate-600">
+        <h2 className="font-display text-2xl uppercase tracking-wide text-white">Lineup not published</h2>
+        <p className="mx-auto max-w-sm text-sm leading-relaxed text-slate-500">
           Starting eleven and bench usually appear closer to kickoff. Check back later or contact the club if you need
           confirmation.
         </p>
       </div>
-      <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-semibold text-slate-500">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-amber-500" />
+      <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-semibold text-slate-400">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
         Pending release
       </div>
     </motion.div>

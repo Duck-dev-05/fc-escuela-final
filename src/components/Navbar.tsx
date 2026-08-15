@@ -17,14 +17,25 @@ import {
   ShieldCheckIcon,
   IdentificationIcon,
   ChevronRightIcon,
+  CalendarIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'About',   href: '/about' },
+  { name: 'About', href: '/about' },
   { name: 'Matches', href: '/matches' },
-  { name: 'News',    href: '/news' },
-  { name: 'Team',    href: '/team' },
+  { name: 'News', href: '/news' },
+  { name: 'Team', href: '/team' },
   { name: 'Gallery', href: '/gallery' },
+]
+
+const tickerItems = [
+  '⚽ FC Escuela — Building Champions Since 2023',
+  '🏆 Next Match: Check the Fixtures Page',
+  '📰 Latest News & Academy Updates',
+  '🎯 Enrollment Now Open — Register Today',
+  '💪 Train. Compete. Excel. FC Escuela Academy',
+  '🔴 Follow Us on Social Media for Live Updates',
 ]
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -37,17 +48,17 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen]           = useState(false)
-  const [accountOpen, setAccountOpen]     = useState(false)
-  const [search, setSearch]               = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [accountOpen, setAccountOpen] = useState(false)
+  const [search, setSearch] = useState('')
   const [searchResults, setSearchResults] = useState<any>(null)
-  const [showDropdown, setShowDropdown]   = useState(false)
-  const [scrolled, setScrolled]           = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
 
-  const pathname  = usePathname()
-  const router    = useRouter()
-  const menuRef   = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+  const router = useRouter()
+  const menuRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLDivElement>(null)
 
   const debouncedSearch = useDebounce(search, 300)
@@ -65,7 +76,7 @@ export default function Navbar() {
       fetch(`/api/search?query=${encodeURIComponent(debouncedSearch)}`)
         .then(r => r.ok ? r.json() : null)
         .then(data => { if (data) { setSearchResults(data); setShowDropdown(true) } })
-        .catch(() => {})
+        .catch(() => { })
     } else {
       setSearchResults(null)
       setShowDropdown(false)
@@ -104,23 +115,47 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Bar ─────────────────────────────────────────────────────────────── */}
+      {/* ── Club Red Top Stripe ─────────────────────────────────────────────── */}
+      <div className="fixed top-0 left-0 right-0 z-[102] h-[3px]"
+        style={{ background: 'linear-gradient(to right, #991b1b, #ef4444, #ffffff, #ef4444, #991b1b)' }}
+      />
+
+      {/* ── News Ticker ─────────────────────────────────────────────────────── */}
+      <div className="fixed top-[3px] left-0 right-0 z-[101] ticker-bar h-[26px] flex items-center">
+        {/* FC Badge label */}
+        <div className="shrink-0 flex items-center gap-2 px-4 bg-[#991b1b] h-full border-r border-red-900/50">
+          <span className="text-[9px] font-black tracking-[0.3em] text-white/90 uppercase">FC News</span>
+        </div>
+        {/* Scrolling text */}
+        <div className="flex-1 overflow-hidden relative">
+          <div className="ticker-scroll">
+            {/* Doubled for seamless loop */}
+            {[...tickerItems, ...tickerItems].map((item, i) => (
+              <span key={i} className="inline-flex items-center gap-6 px-8 text-[11px] tracking-wide text-white/90">
+                {item}
+                <span className="w-1 h-1 rounded-full bg-white/40" />
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Nav Bar ─────────────────────────────────────────────────────────── */}
       <nav
-        className={`fixed left-0 right-0 top-0 z-[100] transition-all duration-500 ${
-          scrolled
-            ? 'mx-3 mt-3 md:mx-6 rounded-2xl border border-white/10 bg-slate-950/90 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-2xl'
-            : 'border-b border-white/5 bg-slate-950/70 backdrop-blur-xl'
-        }`}
+        className={`fixed left-0 right-0 top-[29px] z-[100] transition-all duration-500 ${scrolled
+            ? 'mx-3 mt-2 md:mx-6 rounded-2xl border border-white/10 bg-[#080808]/97 shadow-[0_8px_40px_rgba(0,0,0,0.7)] backdrop-blur-2xl'
+            : 'border-b border-white/5 bg-[#080808]/88 backdrop-blur-xl'
+          }`}
       >
         <div className="mx-auto max-w-[1600px] px-4 md:px-8">
-          <div className={`flex items-center justify-between gap-4 transition-all duration-500 ${scrolled ? 'h-[58px]' : 'h-[70px]'}`}>
+          <div className={`flex items-center justify-between gap-4 transition-all duration-500 ${scrolled ? 'h-[56px]' : 'h-[68px]'}`}>
 
             {/* ── Logo ── */}
             <Link
               href="/"
-              className="flex shrink-0 items-center gap-2.5 group select-none"
+              className="flex shrink-0 items-center gap-3 group select-none"
             >
-              <div className={`relative flex items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all duration-300 group-hover:border-amber-500/50 group-hover:bg-amber-500/5 ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}>
+              <div className={`relative flex items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all duration-300 group-hover:border-red-500/50 group-hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}>
                 <Image
                   src="/images/logo.jpg"
                   alt="FC Escuela"
@@ -129,33 +164,41 @@ export default function Navbar() {
                   className="rounded-lg object-cover"
                 />
               </div>
-              <span className={`hidden font-black tracking-tight text-white transition-all duration-300 sm:block ${scrolled ? 'text-lg' : 'text-xl'}`}>
-                FC <span className="text-amber-500">Escuela</span>
-              </span>
+              <div className="hidden sm:flex flex-col leading-none">
+                <span className={`font-display font-black tracking-widest text-white transition-all duration-300 group-hover:text-red-400 ${scrolled ? 'text-xl' : 'text-2xl'}`}>
+                  FC ESCUELA
+                </span>
+                <span className="text-[8px] font-bold tracking-[0.4em] text-red-500/80 uppercase">Academy</span>
+              </div>
             </Link>
 
             {/* ── Desktop Nav ── */}
-            <div className="hidden xl:flex items-center gap-1">
+            <div className="hidden xl:flex items-center gap-0.5">
               {navigation.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`relative rounded-xl px-4 py-2 text-xs font-bold tracking-wide transition-all duration-200 ${
-                      active
-                        ? 'text-amber-400 bg-amber-500/10'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
-                    }`}
+                    className={`group relative px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-200 ${active
+                        ? 'text-white'
+                        : 'text-slate-400 hover:text-slate-100'
+                      }`}
                   >
-                    {item.name}
-                    {active && (
-                      <motion.div
-                        layoutId="nav-indicator"
-                        className="absolute bottom-1 left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-amber-500"
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      />
-                    )}
+                    <span className="relative">
+                      {item.name}
+                      {active && (
+                        <motion.div
+                          layoutId="nav-indicator"
+                          className="absolute -bottom-1.5 left-0 right-0 h-[2px] rounded-full bg-red-500"
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                      {/* Hover underline */}
+                      {!active && (
+                        <span className="absolute -bottom-1.5 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-full bg-red-500/50 transition-all duration-300 group-hover:w-full" />
+                      )}
+                    </span>
                   </Link>
                 )
               })}
@@ -167,12 +210,11 @@ export default function Navbar() {
               {/* Search */}
               <div ref={searchRef} className="relative hidden lg:block">
                 <form onSubmit={handleSearch}>
-                  <div className={`flex items-center gap-2 rounded-xl border bg-white/5 px-3 transition-all duration-300 ${
-                    searchFocused
-                      ? 'w-56 border-amber-500/50 bg-white/8 shadow-[0_0_0_1px_rgba(245,158,11,0.2)]'
+                  <div className={`flex items-center gap-2 rounded-xl border bg-white/5 px-3 transition-all duration-300 ${searchFocused
+                      ? 'w-56 border-red-500/50 bg-white/10 shadow-[0_0_0_1px_rgba(239,68,68,0.15)]'
                       : 'w-36 border-white/10 hover:border-white/20'
-                  } ${scrolled ? 'h-9' : 'h-10'}`}>
-                    <MagnifyingGlassIcon className={`h-4 w-4 shrink-0 transition-colors ${searchFocused ? 'text-amber-500' : 'text-slate-500'}`} />
+                    } ${scrolled ? 'h-9' : 'h-10'}`}>
+                    <MagnifyingGlassIcon className={`h-4 w-4 shrink-0 transition-colors ${searchFocused ? 'text-red-500' : 'text-slate-500'}`} />
                     <input
                       type="text"
                       placeholder="Search…"
@@ -198,17 +240,17 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-white/10 bg-slate-900/95 p-2 shadow-[0_16px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-white/10 bg-[#0e0e0e]/98 p-2 shadow-[0_16px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl"
                     >
                       {searchResults.news?.length > 0 && (
                         <div className="mb-1">
-                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">News</p>
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-600">News</p>
                           {searchResults.news.slice(0, 3).map((item: any) => (
                             <Link
                               key={item.id}
                               href={`/news/${item.id}`}
                               onClick={() => setShowDropdown(false)}
-                              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-amber-400 transition-colors"
+                              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors"
                             >
                               <span className="line-clamp-1">{item.title}</span>
                               <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600" />
@@ -218,13 +260,13 @@ export default function Navbar() {
                       )}
                       {searchResults.matches?.length > 0 && (
                         <div>
-                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">Matches</p>
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-600">Matches</p>
                           {searchResults.matches.slice(0, 3).map((item: any) => (
                             <Link
                               key={item.id}
                               href={`/matches/${item.id}`}
                               onClick={() => setShowDropdown(false)}
-                              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-amber-400 transition-colors"
+                              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors"
                             >
                               <span className="line-clamp-1">{item.homeTeam} vs {item.awayTeam}</span>
                               <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600" />
@@ -249,11 +291,11 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMenuOpen(v => !v)}
-                className={`xl:hidden flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}
+                className={`xl:hidden flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white hover:border-red-500/30 ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}
                 aria-label="Toggle menu"
               >
                 {menuOpen
-                  ? <XMarkIcon className="h-4 w-4 text-amber-500" />
+                  ? <XMarkIcon className="h-4 w-4 text-red-400" />
                   : <Bars3Icon className="h-4 w-4" />
                 }
               </button>
@@ -273,7 +315,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[90] bg-slate-950/60 backdrop-blur-md xl:hidden"
+              className="fixed inset-0 z-[90] bg-[#080808]/75 backdrop-blur-md xl:hidden"
               onClick={() => setMenuOpen(false)}
             />
 
@@ -284,20 +326,28 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 bottom-0 z-[95] flex w-72 flex-col bg-slate-950 border-l border-white/8 shadow-2xl xl:hidden"
+              className="fixed right-0 top-0 bottom-0 z-[95] flex w-72 flex-col bg-[#0a0a0a] border-l border-white/10 shadow-2xl xl:hidden"
             >
+              {/* Red accent line on left edge */}
+              <div className="absolute left-0 top-0 bottom-0 w-[3px]"
+                style={{ background: 'linear-gradient(to bottom, #ef4444, #b91c1c, rgba(185,28,28,0.2), transparent)' }}
+              />
+
               {/* Drawer header */}
-              <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
-                <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2">
+              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5">
                   <div className="overflow-hidden rounded-lg border border-white/10">
                     <Image src="/images/logo.jpg" alt="FC Escuela" width={32} height={32} className="rounded-lg" />
                   </div>
-                  <span className="font-black text-white">FC <span className="text-amber-500">Escuela</span></span>
+                  <div className="flex flex-col leading-none">
+                    <span className="font-display font-black text-white tracking-widest text-xl">FC ESCUELA</span>
+                    <span className="text-[8px] font-bold tracking-[0.35em] text-red-500/80 uppercase">Academy</span>
+                  </div>
                 </Link>
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"
                 >
                   <XMarkIcon className="h-4 w-4" />
                 </button>
@@ -318,14 +368,13 @@ export default function Navbar() {
                         <Link
                           href={item.href}
                           onClick={() => setMenuOpen(false)}
-                          className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold transition ${
-                            active
-                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                          className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold tracking-wider uppercase transition ${active
+                              ? 'bg-red-600/15 text-red-400 border border-red-500/25'
                               : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
-                          }`}
+                            }`}
                         >
                           {item.name}
-                          <ChevronRightIcon className={`h-4 w-4 ${active ? 'text-amber-500' : 'text-slate-600'}`} />
+                          <ChevronRightIcon className={`h-4 w-4 ${active ? 'text-red-500' : 'text-slate-600'}`} />
                         </Link>
                       </motion.div>
                     )
@@ -333,7 +382,7 @@ export default function Navbar() {
                 </nav>
 
                 {/* Divider */}
-                <div className="my-4 h-px bg-white/5" />
+                <div className="my-4 divider-red" />
 
                 {/* Mobile search */}
                 <form onSubmit={handleSearch}>
@@ -351,7 +400,7 @@ export default function Navbar() {
               </div>
 
               {/* Drawer footer */}
-              <div className="border-t border-white/8 px-4 py-4">
+              <div className="border-t border-white/10 px-4 py-4">
                 <MobileAuthSection onClose={() => setMenuOpen(false)} />
               </div>
             </motion.div>
@@ -377,14 +426,14 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
       <div className="hidden items-center gap-2 sm:flex">
         <Link
           href="/login"
-          className={`flex items-center justify-center rounded-xl bg-white/5 border border-white/10 font-bold text-xs tracking-wide text-slate-300 transition hover:bg-white/10 hover:text-white ${scrolled ? 'h-9 px-4' : 'h-10 px-5'}`}
+          className={`flex items-center justify-center rounded-xl bg-white/5 border border-white/10 font-bold text-xs tracking-widest uppercase text-slate-300 transition hover:bg-white/10 hover:text-white hover:border-white/20 ${scrolled ? 'h-9 px-4' : 'h-10 px-5'}`}
         >
           Log in
         </Link>
         <Link
           href="/register"
-          className={`hidden items-center justify-center rounded-xl bg-amber-500 font-bold text-xs tracking-wide text-slate-950 transition hover:bg-amber-400 md:flex ${scrolled ? 'h-9 px-4' : 'h-10 px-5'}`}
-          style={{ boxShadow: '0 0 16px rgba(245,158,11,0.3)' }}
+          className={`hidden items-center justify-center rounded-xl bg-red-600 font-bold text-xs tracking-widest uppercase text-white transition hover:bg-red-500 md:flex ${scrolled ? 'h-9 px-4' : 'h-10 px-5'}`}
+          style={{ boxShadow: '0 0 20px rgba(220,38,38,0.30)' }}
         >
           Register
         </Link>
@@ -397,7 +446,7 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
       <button
         type="button"
         onClick={() => setAccountOpen(!accountOpen)}
-        className={`flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 pl-1.5 pr-3 transition hover:bg-white/10 hover:border-white/20 ${scrolled ? 'h-9' : 'h-10'}`}
+        className={`flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 pl-1.5 pr-3 transition hover:bg-white/10 hover:border-red-500/30 ${scrolled ? 'h-9' : 'h-10'}`}
       >
         <div className="relative">
           <ProfileImage
@@ -406,7 +455,7 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
             size={scrolled ? 28 : 32}
             className="rounded-lg"
           />
-          <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-slate-950 bg-emerald-500" />
+          <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-[#080808] bg-red-500" />
         </div>
         <span className="hidden text-xs font-bold text-slate-200 md:block">
           {session.user?.name?.split(' ')[0]}
@@ -420,7 +469,7 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-white/10 bg-slate-900/95 p-2 shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+            className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-white/10 bg-[#0e0e0e]/98 p-2 shadow-[0_16px_48px_rgba(0,0,0,0.7)] backdrop-blur-xl"
           >
             {/* User header */}
             <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3 mb-2">
@@ -434,23 +483,23 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
             {/* Menu items */}
             <div className="space-y-0.5">
               {[
-                { name: 'Profile',      href: '/profile',            icon: UserCircleIcon },
-                { name: 'Coaching Hub', href: '/coaching',          icon: ShieldCheckIcon },
-                { name: 'Membership',   href: '/profile/membership', icon: IdentificationIcon },
-                { name: 'Support',      href: '/support',            icon: LifebuoyIcon },
+                { name: 'Profile', href: '/profile', icon: UserCircleIcon },
+                { name: 'Matches', href: '/matches', icon: CalendarIcon },
+                { name: 'About', href: '/about', icon: InformationCircleIcon },
+                { name: 'Support', href: '/support', icon: LifebuoyIcon },
               ].map(item => (
                 <Link
                   key={item.name}
                   href={item.href}
                   className="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-400 transition hover:bg-white/5 hover:text-slate-100"
                 >
-                  <item.icon className="h-4 w-4 shrink-0 text-slate-600 transition group-hover:text-amber-500" />
+                  <item.icon className="h-4 w-4 shrink-0 text-slate-600 transition group-hover:text-red-500" />
                   {item.name}
                 </Link>
               ))}
             </div>
 
-            <div className="mt-2 border-t border-white/8 pt-2">
+            <div className="mt-2 border-t border-white/10 pt-2">
               <button
                 onClick={() => signOut()}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-rose-400 transition hover:bg-rose-500/10"
@@ -472,7 +521,7 @@ function MobileAuthSection({ onClose }: { onClose: () => void }) {
   if (session) {
     return (
       <div className="space-y-2">
-        <div className="flex items-center gap-3 rounded-xl bg-white/5 border border-white/8 p-3">
+        <div className="flex items-center gap-3 rounded-xl bg-white/5 border border-white/10 p-3">
           <ProfileImage src={session.user?.image} name={session.user?.name} size={32} className="rounded-lg" />
           <div className="min-w-0">
             <p className="truncate text-sm font-bold text-slate-100">{session.user?.name}</p>
@@ -497,14 +546,15 @@ function MobileAuthSection({ onClose }: { onClose: () => void }) {
       <Link
         href="/login"
         onClick={onClose}
-        className="flex w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-bold text-slate-200 transition hover:bg-white/10 hover:text-white"
+        className="flex w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-bold uppercase tracking-widest text-slate-200 transition hover:bg-white/10 hover:text-white"
       >
         Log in
       </Link>
       <Link
         href="/register"
         onClick={onClose}
-        className="flex w-full items-center justify-center rounded-xl bg-amber-500 py-3 text-sm font-bold text-slate-950 transition hover:bg-amber-400"
+        className="flex w-full items-center justify-center rounded-xl bg-red-600 py-3 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-red-500"
+        style={{ boxShadow: '0 0 20px rgba(220,38,38,0.25)' }}
       >
         Register
       </Link>

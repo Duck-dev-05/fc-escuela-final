@@ -71,9 +71,9 @@ export default function MatchesPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#020617] px-4">
+      <div className="flex min-h-screen items-center justify-center bg-[#080808] px-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-amber-500" />
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-red-500" />
           <p className="text-sm font-medium text-slate-500">Loading matches…</p>
         </div>
       </div>
@@ -84,23 +84,25 @@ export default function MatchesPage() {
   const finished  = matches.filter((m) => m.status === 'Finished')
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200">
+    <div className="min-h-screen bg-[#080808] text-slate-200">
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="relative isolate overflow-hidden border-b border-white/5 pt-28 pb-14 md:pt-32 md:pb-18">
+      <section className="relative isolate overflow-hidden border-b border-white/5 pt-36 pb-16 md:pt-40 md:pb-20">
         <div className="absolute inset-0 -z-20">
           <Image
             src="/images/hero_final.jpg"
             alt=""
             fill
             priority
-            className="object-cover opacity-15"
+            className="object-cover opacity-10"
           />
           <div className="absolute inset-0 hero-overlay" />
         </div>
-        {/* Glows */}
-        <div className="absolute -left-24 top-16 h-64 w-64 rounded-full bg-amber-500/10 blur-[80px] -z-10" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-emerald-400/6 blur-[80px] -z-10" />
+        {/* Club stripe */}
+        <div className="club-top-stripe" />
+        {/* Red glows */}
+        <div className="absolute -left-24 top-16 h-64 w-64 rounded-full bg-red-700/10 blur-[80px] -z-10" />
+        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-red-900/8 blur-[80px] -z-10" />
 
         <div className="container-custom">
           <motion.div
@@ -109,10 +111,10 @@ export default function MatchesPage() {
             transition={{ duration: 0.5 }}
           >
             <p className="label-eyebrow mb-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-              Academy fixtures
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              Academy Fixtures
             </p>
-            <h1 className="text-5xl font-black uppercase tracking-tight text-white md:text-6xl">
+            <h1 className="font-display text-7xl md:text-8xl uppercase tracking-wide text-white">
               Matches
             </h1>
             <p className="mt-4 max-w-xl text-sm text-slate-500 md:text-base">
@@ -132,19 +134,21 @@ export default function MatchesPage() {
             transition={{ duration: 0.4, delay: 0.05 }}
             className="mb-16 md:mb-24"
           >
-            <div className="mb-8 flex flex-col gap-2 pb-6 md:flex-row md:items-end md:justify-between">
+            <div className="mb-8 flex flex-col gap-2 pb-3 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="label-eyebrow mb-1">Next up</p>
-                <h2 className="text-2xl font-black uppercase tracking-tight text-white md:text-3xl">
+                <p className="label-eyebrow mb-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                  Next up
+                </p>
+                <h2 className="font-display text-4xl md:text-5xl uppercase tracking-wide text-white">
                   Upcoming Fixtures
                 </h2>
               </div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-red-500">
                 {scheduled.length} scheduled
               </span>
             </div>
-            {/* Divider */}
-            <div className="divider-gold mb-8" />
+            <div className="divider-red mb-8" />
             <MatchList matches={scheduled} />
           </motion.section>
         )}
@@ -156,18 +160,18 @@ export default function MatchesPage() {
             transition={{ duration: 0.4, delay: 0.1 }}
             className="mb-14"
           >
-            <div className="mb-8 flex flex-col gap-2 pb-6 md:flex-row md:items-end md:justify-between">
+            <div className="mb-8 flex flex-col gap-2 pb-3 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="label-eyebrow mb-1 text-slate-500">Archive</p>
-                <h2 className="text-2xl font-black uppercase tracking-tight text-white md:text-3xl">
+                <p className="label-eyebrow-gold mb-1">Archive</p>
+                <h2 className="font-display text-4xl md:text-5xl uppercase tracking-wide text-white">
                   Past Results
                 </h2>
               </div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">
                 {finished.length} matches
               </span>
             </div>
-            <div className="divider-gold mb-8" />
+            <div className="divider-white mb-8" />
             <MatchList matches={finished} />
           </motion.section>
         )}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { adminService, AdminGalleryImage } from "@/services/local-api";
 
-// ── Static Asset Arrays ───────────────────────────────────────────────────────
+// —— Static Asset Arrays ———————————————————————————————————————————————————————
 const galleryImages = [
   "/Team.jpg",
   "/images/Team.jpg",
@@ -165,10 +165,10 @@ const galleryVideos = [
   "/images/6087596098604.mp4",
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// —— Helpers ———————————————————————————————————————————————————————————————————
 const isVideo = (path: string) => path.endsWith(".mp4");
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// —— Component —————————————————————————————————————————————————————————————————
 export default function GalleryPage() {
   const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState(0);
@@ -273,23 +273,23 @@ export default function GalleryPage() {
     }
   };
 
-  // ── Loading ──────────────────────────────────────────────────────────────────
+  // —— Loading ——————————————————————————————————————————————————————————————————
   if (status === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500" />
-          <p className="text-sm font-medium text-slate-600">Loading gallery…</p>
+          <p className="text-sm font-medium text-slate-600">Loading gallery...</p>
         </div>
       </div>
     );
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // —— Render ———————————————————————————————————————————————————————————————————
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
 
-      {/* ── Hero ── */}
+      {/* —— Hero —— */}
       <section className="relative isolate overflow-hidden border-b border-slate-200/80 pt-28 pb-12 md:pt-32 md:pb-16">
         <div className="absolute inset-0 -z-20">
           <Image
@@ -344,7 +344,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* ── Toolbar ── */}
+      {/* —— Toolbar —— */}
       <div className="container-custom py-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
@@ -389,10 +389,10 @@ export default function GalleryPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-amber-500 hover:text-slate-950 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-amber-500 hover:text-white disabled:opacity-50"
               >
                 <ArrowUpTrayIcon className="h-4 w-4" />
-                {uploading ? "Uploading…" : "Upload"}
+                {uploading ? "Uploading..." : "Upload"}
               </button>
               <input
                 type="file"
@@ -418,7 +418,7 @@ export default function GalleryPage() {
         )}
       </div>
 
-      {/* ── Masonry Grid ── */}
+      {/* —— Masonry Grid —— */}
       <div className="container-custom pb-20">
         <AnimatePresence mode="popLayout">
           <motion.div
@@ -492,7 +492,7 @@ export default function GalleryPage() {
         )}
       </div>
 
-      {/* ── Lightbox ── */}
+      {/* —— Lightbox —— */}
       <AnimatePresence>
         {modalOpen && modalAsset && (
           <motion.div
@@ -510,7 +510,7 @@ export default function GalleryPage() {
             >
               <div>
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  {isVideo(modalAsset) ? "Video" : "Photo"} · {modalIdx + 1} / {assets.length}
+                  {isVideo(modalAsset) ? "Video" : "Photo"} Â· {modalIdx + 1} / {assets.length}
                 </p>
               </div>
               <button

@@ -15,35 +15,8 @@ function SuccessContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const sessionId = searchParams.get("session_id");
-    if (!sessionId) {
-      setVerifying(false);
-      return;
-    }
-
-    async function verifyTransaction() {
-      try {
-        const res = await fetch("/api/membership/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId })
-        });
-
-        if (res.ok) {
-          // Force NextAuth to refresh the JWT session token with the new DB role
-          await update();
-        } else {
-          console.error("Verification callback failed.");
-        }
-      } catch (err) {
-        console.error("Network error during verification:", err);
-      } finally {
-        setVerifying(false);
-      }
-    }
-
-    verifyTransaction();
-  }, [searchParams, update]);
+    setVerifying(false);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6">

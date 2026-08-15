@@ -118,19 +118,10 @@ export default function MembershipPage() {
     }
     try {
       setLoading(planId);
-      const res = await fetch("/api/membership/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || "Failed to create checkout session");
-      }
+      toast.success("Membership tier requested!");
+      router.push("/profile/membership/success");
     } catch (error: any) {
-      toast.error(error.message || "Failed to initiate checkout");
+      toast.error(error.message || "Failed to update membership");
     } finally {
       setLoading(null);
     }

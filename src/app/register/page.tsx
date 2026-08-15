@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -180,16 +180,16 @@ export default function RegisterPage() {
           {success ? (
             <div className="flex flex-col items-center text-center py-10 gap-4">
               <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center">
-                <FaCheckCircle className="text-emerald-500 text-2xl" />
+                <FaCheckCircle className="text-red-500 text-2xl" />
               </div>
               <h2 className="text-2xl font-black text-slate-900">You're in!</h2>
               <p className="text-slate-500 text-sm">{success}</p>
-              <p className="text-xs text-slate-400">Redirecting to login…</p>
+              <p className="text-xs text-slate-400">Redirecting to login...</p>
             </div>
           ) : (
             <>
               <div className="mb-8">
-                <h2 className="text-3xl font-black text-slate-950 tracking-tight">
+                <h2 className="text-3xl font-black text-white tracking-tight">
                   Create account
                 </h2>
                 <p className="text-slate-500 text-sm mt-1">
@@ -270,7 +270,7 @@ export default function RegisterPage() {
                           ? "text-amber-500"
                           : strength.score === 3
                           ? "text-blue-500"
-                          : "text-emerald-500"
+                          : "text-red-500"
                       }`}>
                         {strength.label}
                       </p>
@@ -325,12 +325,12 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-slate-950 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
+                  className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-white rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
                 >
                   {loading ? (
                     <>
                       <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                      <span>Creating account…</span>
+                      <span>Creating account...</span>
                     </>
                   ) : (
                     "Create Account"
@@ -354,3 +354,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

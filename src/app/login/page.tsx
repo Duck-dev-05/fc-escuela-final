@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 export const dynamic = "force-dynamic";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -144,7 +144,7 @@ function SignInPageInner() {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-slate-950 tracking-tight">Sign in</h2>
+            <h2 className="text-3xl font-black text-white tracking-tight">Sign in</h2>
             <p className="text-slate-500 text-sm mt-1">Enter your credentials to continue</p>
           </div>
 
@@ -210,12 +210,12 @@ function SignInPageInner() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-slate-950 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
+              className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-white rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
             >
               {loading ? (
                 <>
                   <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  <span>Signing in…</span>
+                  <span>Signing in...</span>
                 </>
               ) : (
                 "Sign In"
@@ -256,7 +256,7 @@ export default function SignInPage() {
         <div className="min-h-screen flex items-center justify-center bg-white">
           <div className="flex flex-col items-center gap-4">
             <div className="h-10 w-10 rounded-full border-2 border-slate-200 border-t-amber-500 animate-spin" />
-            <p className="text-slate-400 text-sm font-medium">Loading…</p>
+            <p className="text-slate-400 text-sm font-medium">Loading...</p>
           </div>
         </div>
       }

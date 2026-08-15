@@ -210,7 +210,7 @@ export default function ProfilePage() {
                           <p className="text-xl font-bold text-slate-200 tracking-tight leading-tight mb-8 max-w-2xl">
                             &ldquo;Aggression is the primary directive. We dominate the pitch through high-frequency transitions and relentless spatial control.&rdquo;
                           </p>
-                          <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/8 text-sm">
+                          <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/10 text-sm">
                             {[
                               { label: 'System', value: '4-3-3 Attacking' },
                               { label: 'Tempo',  value: 'High' },
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                             { title: 'Vanguard Series', year: '2024', icon: FaStar },
                             { title: 'Regional Master', year: '2023', icon: FaShieldAlt }
                           ].map((medal, i) => (
-                            <div key={i} className="p-5 bg-white/[0.03] border border-white/8 rounded-2xl flex flex-col items-center text-center transition-all hover:-translate-y-1 hover:border-amber-500/20">
+                            <div key={i} className="p-5 bg-white/[0.03] border border-white/10 rounded-2xl flex flex-col items-center text-center transition-all hover:-translate-y-1 hover:border-amber-500/20">
                               <medal.icon className="text-2xl text-amber-500/60 mb-3" />
                               <h4 className="text-xs font-bold text-slate-300 tracking-tight mb-1">{medal.title}</h4>
                               <span className="text-[11px] text-slate-600 font-medium">{medal.year}</span>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                       { label: 'Language',     value: profile?.language,     icon: FaEnvelope },
                     ].map((item, idx) => (
                       <div key={idx} className="glass-card-hover p-5 flex items-start gap-4">
-                        <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                           <item.icon className="text-slate-600 text-sm" />
                         </div>
                         <div className="min-w-0">
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                 <Tab.Panel className="outline-none animate-fade-in pt-2">
                   {profile?.roles === 'admin' ? (
                     <div className="glass-card p-10 text-center">
-                      <div className="w-16 h-16 bg-white/5 border border-white/8 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                      <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
                         <FaUsers className="text-2xl text-slate-500" />
                       </div>
                       <h3 className="text-2xl font-black text-white mb-3 tracking-tight">Team Directory</h3>
@@ -296,11 +296,11 @@ export default function ProfilePage() {
                         Manage and view all registered personnel within your organization.
                       </p>
                       <div className="flex justify-center gap-5 mb-8">
-                        <div className="bg-white/[0.03] border border-white/8 px-8 py-5 rounded-2xl text-center">
+                        <div className="bg-white/[0.03] border border-white/10 px-8 py-5 rounded-2xl text-center">
                           <span className="block text-2xl font-black text-white">12</span>
                           <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mt-1 block">Active Members</span>
                         </div>
-                        <div className="bg-white/[0.03] border border-white/8 px-8 py-5 rounded-2xl text-center">
+                        <div className="bg-white/[0.03] border border-white/10 px-8 py-5 rounded-2xl text-center">
                           <span className="block text-2xl font-black text-white">All</span>
                           <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mt-1 block">Verified</span>
                         </div>
@@ -331,11 +331,11 @@ export default function ProfilePage() {
                               {isExpired ? 'Your membership has lapsed. Renew to regain access.' : 'You have an active club membership.'}
                             </p>
                             <div className="flex justify-center gap-4 text-left">
-                              <div className="bg-white/[0.03] border border-white/8 p-5 rounded-2xl flex-1">
+                              <div className="bg-white/[0.03] border border-white/10 p-5 rounded-2xl flex-1">
                                 <span className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-2">Member Since</span>
                                 <span className="text-slate-300 font-semibold text-sm">{profile.memberSince ? format(new Date(profile.memberSince), 'MMM d, yyyy') : 'N/A'}</span>
                               </div>
-                              <div className="bg-white/[0.03] border border-white/8 p-5 rounded-2xl flex-1">
+                              <div className="bg-white/[0.03] border border-white/10 p-5 rounded-2xl flex-1">
                                 <span className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-2">Plan</span>
                                 <span className="text-slate-300 font-semibold text-sm">{profile.membershipType || 'Standard'}</span>
                               </div>
@@ -344,7 +344,7 @@ export default function ProfilePage() {
                         );
                       })() : (
                         <div className="relative z-10 w-full max-w-lg mx-auto py-8">
-                          <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mx-auto mb-6">
+                          <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
                             <FaUserCircle className="text-4xl text-slate-600" />
                           </div>
                           <h3 className="text-3xl font-black text-white tracking-tight mb-3">Standard Account</h3>
@@ -375,9 +375,9 @@ export default function ProfilePage() {
                         { label: 'Active Sessions', status: '1 Current Instance', action: 'Manage', danger: false, icon: FaUsers },
                         { label: 'Primary Location', status: 'Unknown', action: 'Update', danger: false, icon: FaMapMarkerAlt },
                       ].map((sec, i) => (
-                        <div key={i} className="flex justify-between items-center p-4 bg-white/[0.03] border border-white/8 rounded-2xl">
+                        <div key={i} className="flex justify-between items-center p-4 bg-white/[0.03] border border-white/10 rounded-2xl">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-white/5 border border-white/8 rounded-xl flex items-center justify-center text-slate-500">
+                            <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-500">
                               <sec.icon className="text-sm" />
                             </div>
                             <div>

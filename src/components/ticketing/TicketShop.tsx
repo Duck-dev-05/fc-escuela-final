@@ -8,7 +8,6 @@ import { toast } from 'react-hot-toast'
 import { CalendarIcon, MapPinIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
 import { FaLock, FaTicketAlt, FaArrowRight } from 'react-icons/fa'
-import { SiStripe } from 'react-icons/si'
 
 export interface TicketRow {
   id: string
@@ -135,7 +134,7 @@ export default function TicketShop({ variant }: TicketShopProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!session) {
-      toast.error('Please sign in to purchase tickets')
+      toast.error('Please sign in to reserve tickets')
       return
     }
     const t = selectedTicket
@@ -146,7 +145,7 @@ export default function TicketShop({ variant }: TicketShopProps) {
 
     try {
       setProcessing(true)
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch('/api/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -156,10 +155,11 @@ export default function TicketShop({ variant }: TicketShopProps) {
         }),
       })
       const data = await response.json()
-      if (data.url) {
-        window.location.href = data.url
+      if (response.ok) {
+        toast.success('Ticket reserved successfully!')
+        router.push('/profile/orders')
       } else {
-        throw new Error(data.error || 'Could not start checkout')
+        throw new Error(data.error || 'Could not reserve ticket')
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Something went wrong')
@@ -432,7 +432,6 @@ export default function TicketShop({ variant }: TicketShopProps) {
                         <span>
                           {formData.quantity} ticket{formData.quantity !== 1 ? 's' : ''}
                         </span>
-                        <SiStripe className="text-lg text-slate-300" aria-hidden />
                       </div>
                       <div className="mb-6 flex items-end justify-between gap-4">
                         <span className="text-sm font-semibold text-slate-500">Total</span>
@@ -456,13 +455,13 @@ export default function TicketShop({ variant }: TicketShopProps) {
                         ) : (
                           <>
                             <FaLock className="text-[10px]" />
-                            Continue to checkout
+                            Confirm Reservation
                             <FaArrowRight className="text-[10px]" />
                           </>
                         )}
                       </button>
                       <p className="mt-4 text-center text-[11px] text-slate-500">
-                        Secure payment via Stripe. Cards accepted.
+                        Instant reservation via official academy portal.
                       </p>
                     </div>
                   </form>
