@@ -1,2 +1,0 @@
-// Route disabled.
-export {};
