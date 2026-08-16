@@ -3,40 +3,22 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function checkMatches() {
-  console.log('--- Matches and Ticket Counts ---');
-  const matches = await prisma.match.findMany({
-    include: {
-      _count: {
-        select: { tickets: true }
-      }
-    }
-  });
+  console.log('--- Matches ---');
+  const matches = await prisma.match.findMany();
   
   for (const match of matches) {
-    console.log(`${match.homeTeam} vs ${match.awayTeam}: ${match._count.tickets} orders (ID: ${match.id})`);
+    console.log(`${match.homeTeam} vs ${match.awayTeam} (ID: ${match.id})`);
   }
 }
 
 async function checkTickets() {
-  console.log('--- FC Escuela Tickets ---');
-  const tickets = await prisma.ticket.findMany({
-    include: {
-      match: true,
-      user: {
-        select: {
-          email: true,
-          name: true
-        }
-      }
-    }
-  });
-  console.log(JSON.stringify(tickets, null, 2));
-  console.log(`Total Tickets: ${tickets.length}`);
+  console.log('--- Ticket functionality has been removed ---');
+  console.log('Tickets are no longer supported in this application.');
 }
 
 async function clearTickets() {
-  const result = await prisma.ticket.deleteMany();
-  console.log('Escuela Tickets Cleared:', result);
+  console.log('--- Ticket functionality has been removed ---');
+  console.log('Tickets are no longer supported in this application.');
 }
 
 async function checkDb() {
@@ -78,9 +60,9 @@ async function main() {
 Usage: npx tsx scripts/db-utils.ts <command> [args]
 
 Commands:
-  check-matches        Show all matches and their ticket counts
-  check-tickets        List all purchased tickets in JSON format
-  clear-tickets        Delete all tickets from the database
+  check-matches        Show all matches
+  check-tickets        (Disabled - tickets no longer supported)
+  clear-tickets        (Disabled - tickets no longer supported)
   check-db             Display raw match data from the database
   set-captain <name>   Set a team member as captain by name or ID
 `);
