@@ -14,7 +14,6 @@ import {
   MagnifyingGlassIcon,
   XMarkIcon,
   Bars3Icon,
-  IdentificationIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/outline'
 
@@ -434,7 +433,6 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
             <div className="space-y-0.5">
               {[
                 { name: 'Profile',      href: '/profile',            icon: UserCircleIcon },
-                { name: 'Membership',   href: '/profile/membership', icon: IdentificationIcon },
                 { name: 'Support',      href: '/support',            icon: LifebuoyIcon },
               ].map(item => (
                 <Link

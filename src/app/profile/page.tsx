@@ -32,8 +32,6 @@ interface Profile {
   memberSince?: string;
   role?: string;
   accounts?: any[];
-  isMember?: boolean;
-  membershipType?: string;
 }
 
 export default function ProfilePage() {
@@ -43,7 +41,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const tabs = ['Account', 'Membership', 'Settings'];
+  const tabs = ['Account', 'Settings'];
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
@@ -223,55 +221,6 @@ export default function ProfilePage() {
                       {profile?.bio || <span className="text-slate-700 italic">No biography provided.</span>}
                     </p>
                   </div>
-                </Tab.Panel>
-
-                {/* ── Membership Tab ── */}
-                <Tab.Panel className="outline-none animate-fade-in pt-2">
-                    <div className="glass-card p-10 text-center relative overflow-hidden">
-                      {profile?.isMember ? (() => {
-                        const latestMembership = (profile as any).memberships?.[0];
-                        const isExpired = latestMembership?.endDate && new Date(latestMembership.endDate) < now;
-                        return (
-                          <div className="relative z-10 w-full max-w-lg mx-auto">
-                            <div className={`w-20 h-20 rounded-2xl mx-auto flex items-center justify-center mb-6 border ${isExpired ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}
-                              style={isExpired ? {} : { boxShadow: '0 0 24px rgba(245,158,11,0.2)' }}>
-                              {isExpired ? <FaExclamationTriangle className="text-3xl" /> : <FaStar className="text-3xl" />}
-                            </div>
-                            <h3 className={`text-3xl font-black tracking-tight mb-2 ${isExpired ? 'text-rose-400' : 'text-white'}`}>
-                              {isExpired ? 'Membership Expired' : 'Elite Member'}
-                            </h3>
-                            <p className="text-slate-500 mb-8 text-sm">
-                              {isExpired ? 'Your membership has lapsed. Renew to regain access.' : 'You have an active club membership.'}
-                            </p>
-                            <div className="flex justify-center gap-4 text-left">
-                              <div className="bg-white/[0.03] border border-white/8 p-5 rounded-2xl flex-1">
-                                <span className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-2">Member Since</span>
-                                <span className="text-slate-300 font-semibold text-sm">{profile.memberSince ? format(new Date(profile.memberSince), 'MMM d, yyyy') : 'N/A'}</span>
-                              </div>
-                              <div className="bg-white/[0.03] border border-white/8 p-5 rounded-2xl flex-1">
-                                <span className="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-2">Plan</span>
-                                <span className="text-slate-300 font-semibold text-sm">{profile.membershipType || 'Standard'}</span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })() : (
-                        <div className="relative z-10 w-full max-w-lg mx-auto py-8">
-                          <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mx-auto mb-6">
-                            <FaUserCircle className="text-4xl text-slate-600" />
-                          </div>
-                          <h3 className="text-3xl font-black text-white tracking-tight mb-3">Standard Account</h3>
-                          <p className="text-slate-500 mb-10 text-sm">Upgrade to an elite membership to unlock priority access, exclusive content, and premium support.</p>
-                          <button
-                            onClick={() => router.push('/membership')}
-                            className="py-3 px-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition-colors"
-                            style={{ boxShadow: '0 0 20px rgba(245,158,11,0.25)' }}
-                          >
-                            Upgrade Membership
-                          </button>
-                        </div>
-                      )}
-                    </div>
                 </Tab.Panel>
 
                 {/* ── Settings Tab ── */}

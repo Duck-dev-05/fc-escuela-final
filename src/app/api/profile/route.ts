@@ -63,15 +63,7 @@ export async function GET(req: NextRequest) {
         website: true,
         occupation: true,
         favoriteTeam: true,
-        isMember: true,
-        membershipType: true,
         memberSince: true,
-        memberships: {
-          orderBy: {
-            startDate: 'desc'
-          },
-          take: 1
-        },
         emailVerified: true,
       },
     });
