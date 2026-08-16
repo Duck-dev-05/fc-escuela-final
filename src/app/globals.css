@@ -237,7 +237,7 @@
 
   /* Gallery card */
   .gallery-card {
-    @apply relative overflow-hidden rounded-xl border border-white/8 bg-white/[0.03] cursor-pointer
+    @apply relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] cursor-pointer
            transition-all duration-300;
   }
   .gallery-card:hover {
