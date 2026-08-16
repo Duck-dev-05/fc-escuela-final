@@ -1,3 +1,2 @@
-// External admin client disabled for personal website.
+// Disabled.
 export const adminClient = null;
-

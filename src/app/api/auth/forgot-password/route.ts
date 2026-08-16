@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
-import { sendMail } from '@/lib/mailer';
+import { sendMail } from '@/lib/email';
 
 const prisma = new PrismaClient();
 

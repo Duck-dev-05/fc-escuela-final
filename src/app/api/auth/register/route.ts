@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { sendMail } from '@/lib/mailer';
+import { sendMail } from '@/lib/email';
 import { registerSchema } from '@/lib/validations';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { sanitizePayload } from '@/lib/sanitizer';

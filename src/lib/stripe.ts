@@ -1,2 +1,2 @@
-// Stripe dependency removed.
+// Disabled.
 export {};
