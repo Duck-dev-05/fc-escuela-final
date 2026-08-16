@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
@@ -276,10 +276,12 @@ export default function GalleryPage() {
   // —— Loading ——————————————————————————————————————————————————————————————————
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center" style={{ background: "rgb(8,8,8)" }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500" />
-          <p className="text-sm font-medium text-slate-600">Loading gallery...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-2"
+            style={{ borderColor: "rgba(239,68,68,0.2)", borderTopColor: "rgb(239,68,68)" }}
+          />
+          <p className="text-sm font-medium" style={{ color: "rgb(100,116,139)" }}>Loading gallery...</p>
         </div>
       </div>
     );
@@ -287,54 +289,68 @@ export default function GalleryPage() {
 
   // —— Render ———————————————————————————————————————————————————————————————————
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen" style={{ background: "rgb(8,8,8)", color: "rgb(203,213,225)" }}>
 
       {/* —— Hero —— */}
-      <section className="relative isolate overflow-hidden border-b border-slate-200/80 pt-28 pb-12 md:pt-32 md:pb-16">
+      <section className="relative isolate overflow-hidden pt-28 pb-12 md:pt-32 md:pb-16">
+        {/* Background image */}
         <div className="absolute inset-0 -z-20">
-          <Image
-            src="/images/hero_final.jpg"
-            alt=""
-            fill
-            priority
-            className="object-cover opacity-10"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-slate-50/95 to-slate-50" />
+          <Image src="/images/hero_final.jpg" alt="" fill priority className="object-cover opacity-[0.07]" />
+          <div className="absolute inset-0 hero-overlay" />
         </div>
-        <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-amber-400/15 blur-3xl -z-10" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-clubRed-400/10 blur-3xl -z-10" />
+        {/* Red radial glow */}
+        <div className="absolute inset-0 -z-10"
+          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, rgba(239,68,68,0.10) 0%, transparent 55%), radial-gradient(circle at 80% 20%, rgba(239,68,68,0.05) 0%, transparent 50%)" }}
+        />
+        {/* Kit diagonal stripes */}
+        <div className="absolute inset-0 -z-10 opacity-[0.025]"
+          style={{ backgroundImage: "repeating-linear-gradient(-45deg, rgba(239,68,68,1) 0px, rgba(239,68,68,1) 2px, transparent 2px, transparent 28px)" }}
+        />
+        {/* Club top stripe */}
+        <div className="club-top-stripe" />
 
         <div className="container-custom">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.5 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-white/90 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-800">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              FC Escuela Visual Archive
-            </p>
-            <h1 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
-              Media{" "}
-              <span className="bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 bg-clip-text text-transparent">
-                Gallery
+            {/* Eyebrow label */}
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
+              style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.20)" }}
+            >
+              <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "rgb(239,68,68)" }} />
+              <span className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: "rgb(239,68,68)" }}>
+                FC Escuela Visual Archive
               </span>
+            </div>
+
+            <h1 className="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl"
+              style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.04em", color: "#f8f8f8" }}
+            >
+              Media{" "}
+              <span className="text-gradient-red">Gallery</span>
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-600 md:text-base">
+            <p className="mx-auto mt-4 max-w-xl text-sm md:text-base" style={{ color: "rgb(100,116,139)" }}>
               Match day highlights, training sessions, and academy events — all in one place.
             </p>
 
             {/* Stats row */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-8 md:gap-14">
               {[
                 { label: "Photos", value: galleryImages.length + afterMatchImages.length + eventsImages.length },
                 { label: "Videos", value: galleryVideos.length },
                 { label: "Total Assets", value: tabs[0].assets.length },
-              ].map((s) => (
-                <div key={s.label} className="text-center">
-                  <p className="text-2xl font-black text-slate-900 md:text-3xl">{s.value}</p>
-                  <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              ].map((s, i) => (
+                <div key={s.label} className="text-center relative">
+                  {i > 0 && (
+                    <div className="absolute -left-4 md:-left-7 top-1/2 -translate-y-1/2 w-px h-8"
+                      style={{ background: "rgba(255,255,255,0.08)" }}
+                    />
+                  )}
+                  <p className="text-3xl font-black md:text-4xl" style={{ color: "#f8f8f8" }}>{s.value}</p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-widest" style={{ color: "rgb(71,85,105)" }}>
                     {s.label}
                   </p>
                 </div>
@@ -342,6 +358,9 @@ export default function GalleryPage() {
             </div>
           </motion.div>
         </div>
+
+        {/* Bottom divider */}
+        <div className="divider-red mt-12 opacity-40" />
       </section>
 
       {/* —— Toolbar —— */}
@@ -355,55 +374,60 @@ export default function GalleryPage() {
                 key={tab.label}
                 type="button"
                 onClick={() => setActiveTab(idx)}
-                className={`rounded-xl px-5 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
-                  activeTab === idx
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                }`}
+                className="rounded-xl px-5 py-2 text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                style={activeTab === idx ? {
+                  background: "rgb(220,38,38)",
+                  color: "#fff",
+                  boxShadow: "0 0 18px rgba(220,38,38,0.35)",
+                } : {
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  color: "rgb(100,116,139)",
+                }}
               >
                 {tab.label}
-                <span className="ml-2 opacity-60">{tab.assets.length}</span>
+                <span className="ml-2 opacity-50">{tab.assets.length}</span>
               </button>
             ))}
           </div>
 
           {/* Upload (logged-in only) */}
           {session ? (
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-              <div className="hidden border-r border-slate-100 px-3 sm:block">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+            <div className="flex items-center gap-3 rounded-2xl p-2"
+              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <div className="hidden border-r px-3 sm:block" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "rgb(71,85,105)" }}>
                   Your uploads
                 </p>
-                <p className="mt-0.5 text-sm font-black text-slate-900">{uploadCount}</p>
+                <p className="mt-0.5 text-sm font-black" style={{ color: "#f8f8f8" }}>{uploadCount}</p>
               </div>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-transparent text-[11px] font-semibold text-slate-600 outline-none focus:ring-0 border-none cursor-pointer"
+                className="bg-transparent text-[11px] font-semibold outline-none focus:ring-0 border-none cursor-pointer"
+                style={{ color: "rgb(148,163,184)" }}
               >
-                <option value="general">General</option>
-                <option value="after-match">Matches</option>
-                <option value="events">Events</option>
+                <option value="general" className="bg-slate-900">General</option>
+                <option value="after-match" className="bg-slate-900">Matches</option>
+                <option value="events" className="bg-slate-900">Events</option>
               </select>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-amber-500 hover:text-white disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition-all duration-200 disabled:opacity-50"
+                style={{ background: "rgb(220,38,38)", boxShadow: "0 0 16px rgba(220,38,38,0.25)" }}
               >
                 <ArrowUpTrayIcon className="h-4 w-4" />
                 {uploading ? "Uploading..." : "Upload"}
               </button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept="image/*,video/*"
-                className="hidden"
-              />
+              <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*,video/*" className="hidden" />
             </div>
           ) : (
-            <div className="inline-flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-2 text-[11px] font-semibold text-amber-700">
+            <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[11px] font-semibold"
+              style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.18)", color: "rgb(248,113,113)" }}
+            >
               <PhotoIcon className="h-4 w-4" />
               Sign in to upload photos
             </div>
@@ -412,14 +436,16 @@ export default function GalleryPage() {
 
         {/* Upload error */}
         {uploadError && (
-          <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
+          <p className="mt-3 rounded-xl px-4 py-2 text-sm"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgb(248,113,113)" }}
+          >
             {uploadError}
           </p>
         )}
       </div>
 
       {/* —— Masonry Grid —— */}
-      <div className="container-custom pb-20">
+      <div className="container-custom pb-24">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={activeTab}
@@ -427,7 +453,7 @@ export default function GalleryPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="columns-1 gap-4 space-y-4 sm:columns-2 lg:columns-3 xl:columns-4"
+            className="columns-1 gap-3 space-y-3 sm:columns-2 lg:columns-3 xl:columns-4"
           >
             {assets.map((src, idx) => (
               <motion.div
@@ -439,21 +465,38 @@ export default function GalleryPage() {
                 className="break-inside-avoid"
               >
                 <div
-                  className="group relative cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group relative cursor-pointer overflow-hidden rounded-xl transition-all duration-300"
+                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
                   onClick={() => openModal(src, idx)}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.30)";
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 40px rgba(0,0,0,0.6), 0 0 24px rgba(239,68,68,0.08)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)";
+                    (e.currentTarget as HTMLElement).style.transform = "";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "";
+                  }}
                 >
                   {isVideo(src) ? (
-                    <div className="relative aspect-video bg-slate-900">
-                      <video className="h-full w-full object-cover opacity-90">
+                    <div className="relative aspect-video" style={{ background: "rgb(14,14,14)" }}>
+                      <video className="h-full w-full object-cover opacity-80">
                         <source src={src} type="video/mp4" />
                       </video>
                       {/* Play overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-slate-950/30 transition group-hover:bg-slate-950/50">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition group-hover:scale-110">
-                          <PlayIcon className="h-5 w-5 translate-x-0.5 text-slate-900" />
+                      <div className="absolute inset-0 flex items-center justify-center transition duration-300"
+                        style={{ background: "rgba(0,0,0,0.35)" }}
+                      >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full transition duration-300 group-hover:scale-110"
+                          style={{ background: "rgba(220,38,38,0.90)", boxShadow: "0 0 24px rgba(220,38,38,0.5)" }}
+                        >
+                          <PlayIcon className="h-5 w-5 translate-x-0.5 text-white" />
                         </div>
                       </div>
-                      <span className="absolute bottom-2 left-2 rounded-full bg-slate-900/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                      <span className="absolute bottom-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white"
+                        style={{ background: "rgba(220,38,38,0.80)", backdropFilter: "blur(8px)" }}
+                      >
                         Video
                       </span>
                     </div>
@@ -466,9 +509,11 @@ export default function GalleryPage() {
                         loading="lazy"
                       />
                       {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-slate-950/0 transition duration-300 group-hover:bg-slate-950/20 flex items-center justify-center">
-                        <div className="scale-75 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm">
-                          <PhotoIcon className="h-4 w-4 text-slate-900" />
+                      <div className="absolute inset-0 transition duration-300 group-hover:bg-black/30 flex items-center justify-center">
+                        <div className="scale-75 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 flex h-10 w-10 items-center justify-center rounded-full"
+                          style={{ background: "rgba(220,38,38,0.85)", backdropFilter: "blur(8px)" }}
+                        >
+                          <PhotoIcon className="h-4 w-4 text-white" />
                         </div>
                       </div>
                     </div>
@@ -480,12 +525,18 @@ export default function GalleryPage() {
         </AnimatePresence>
 
         {assets.length === 0 && (
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-8 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
-              <PhotoIcon className="h-6 w-6" />
+          <div className="rounded-3xl px-8 py-20 text-center"
+            style={{ border: "1px dashed rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.02)" }}
+          >
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl"
+              style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.20)" }}
+            >
+              <PhotoIcon className="h-7 w-7" style={{ color: "rgb(239,68,68)" }} />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">No media here</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-600">
+            <h3 className="text-xl font-black" style={{ color: "#f8f8f8", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.04em" }}>
+              No media here
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm" style={{ color: "rgb(71,85,105)" }}>
               Nothing has been added to this collection yet.
             </p>
           </div>
@@ -500,39 +551,45 @@ export default function GalleryPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] flex flex-col bg-slate-950/95 backdrop-blur-xl"
+            className="fixed inset-0 z-[9999] flex flex-col backdrop-blur-xl"
+            style={{ background: "rgba(8,8,8,0.97)" }}
             onClick={() => setModalOpen(false)}
           >
+            {/* Club top stripe in modal */}
+            <div className="club-top-stripe" />
+
             {/* Header */}
-            <div
-              className="flex items-center justify-between px-6 py-4"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="flex items-center justify-between px-6 py-4" onClick={(e) => e.stopPropagation()}>
               <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  {isVideo(modalAsset) ? "Video" : "Photo"} Â· {modalIdx + 1} / {assets.length}
+                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "rgb(71,85,105)" }}>
+                  {isVideo(modalAsset) ? "Video" : "Photo"}{" "}
+                  <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>{" "}
+                  <span style={{ color: "rgb(100,116,139)" }}>{modalIdx + 1} / {assets.length}</span>
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/10 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full transition-all"
+                style={{ border: "1px solid rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.5)" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.15)"; (e.currentTarget as HTMLElement).style.color = "rgb(248,113,113)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.30)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.10)"; }}
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
 
             {/* Main viewer */}
-            <div
-              className="relative flex flex-1 items-center justify-center px-4 md:px-16"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="relative flex flex-1 items-center justify-center px-4 md:px-16" onClick={(e) => e.stopPropagation()}>
               {/* Prev */}
               <button
                 type="button"
                 onClick={showPrev}
                 disabled={modalIdx === 0}
-                className="absolute left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/15 hover:text-white disabled:opacity-20 md:left-6"
+                className="absolute left-4 z-10 flex h-11 w-11 items-center justify-center rounded-full transition-all disabled:opacity-20 md:left-6"
+                style={{ border: "1px solid rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.15)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.30)"; (e.currentTarget as HTMLElement).style.color = "rgb(248,113,113)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.10)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)"; }}
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button>
@@ -547,11 +604,9 @@ export default function GalleryPage() {
                   className="relative flex max-h-[75vh] w-full max-w-5xl items-center justify-center"
                 >
                   {isVideo(modalAsset) ? (
-                    <video
-                      key={modalAsset}
-                      controls
-                      autoPlay
+                    <video key={modalAsset} controls autoPlay
                       className="max-h-[75vh] w-full rounded-xl object-contain shadow-2xl"
+                      style={{ boxShadow: "0 25px 60px rgba(0,0,0,0.8)" }}
                     >
                       <source src={modalAsset} type="video/mp4" />
                     </video>
@@ -562,7 +617,8 @@ export default function GalleryPage() {
                         alt={`Gallery item ${modalIdx + 1}`}
                         width={1400}
                         height={900}
-                        className="max-h-[75vh] w-auto mx-auto rounded-xl object-contain shadow-2xl"
+                        className="max-h-[75vh] w-auto mx-auto rounded-xl object-contain"
+                        style={{ boxShadow: "0 25px 60px rgba(0,0,0,0.8)" }}
                         priority
                       />
                     </div>
@@ -575,44 +631,40 @@ export default function GalleryPage() {
                 type="button"
                 onClick={showNext}
                 disabled={modalIdx === assets.length - 1}
-                className="absolute right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/15 hover:text-white disabled:opacity-20 md:right-6"
+                className="absolute right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full transition-all disabled:opacity-20 md:right-6"
+                style={{ border: "1px solid rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.15)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(239,68,68,0.30)"; (e.currentTarget as HTMLElement).style.color = "rgb(248,113,113)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.10)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)"; }}
               >
                 <ChevronRightIcon className="h-5 w-5" />
               </button>
             </div>
 
             {/* Filmstrip */}
-            <div
-              className="mx-auto mt-4 w-full max-w-4xl overflow-x-auto px-4 pb-6 custom-scrollbar"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="mx-auto mt-4 w-full max-w-4xl overflow-x-auto px-4 pb-6 custom-scrollbar" onClick={(e) => e.stopPropagation()}>
               <div className="flex gap-2 py-2">
                 {assets.map((asset, i) => (
                   <button
                     key={i}
                     type="button"
-                    onClick={() => {
-                      setModalAsset(asset);
-                      setModalIdx(i);
+                    onClick={() => { setModalAsset(asset); setModalIdx(i); }}
+                    className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-300"
+                    style={i === modalIdx ? {
+                      borderColor: "rgb(220,38,38)",
+                      opacity: 1,
+                      transform: "scale(1.07)",
+                      boxShadow: "0 0 14px rgba(220,38,38,0.50)",
+                    } : {
+                      borderColor: "rgba(255,255,255,0.08)",
+                      opacity: 0.4,
                     }}
-                    className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-300 ${
-                      i === modalIdx
-                        ? "border-amber-500 opacity-100 scale-105"
-                        : "border-white/10 opacity-40 hover:opacity-80"
-                    }`}
                   >
                     {isVideo(asset) ? (
-                      <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                        <PlayIcon className="h-4 w-4 text-white/60" />
+                      <div className="flex h-full w-full items-center justify-center" style={{ background: "rgb(20,20,20)" }}>
+                        <PlayIcon className="h-4 w-4" style={{ color: "rgba(255,255,255,0.5)" }} />
                       </div>
                     ) : (
-                      <Image
-                        src={asset}
-                        alt={`Thumbnail ${i + 1}`}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
+                      <Image src={asset} alt={`Thumbnail ${i + 1}`} fill className="object-cover" sizes="80px" />
                     )}
                   </button>
                 ))}

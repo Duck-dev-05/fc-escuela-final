@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 export const dynamic = "force-dynamic";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +9,8 @@ import { useState, Suspense, useEffect, useCallback } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Turnstile from "@/components/cloudflare/turnstile";
 import { motion } from "framer-motion";
+
+/* ─── DARK THEME to match site design system ─────────────────────────── */
 
 function SignInPageInner() {
   const router = useRouter();
@@ -69,45 +71,60 @@ function SignInPageInner() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex" style={{ background: "rgb(8,8,8)" }}>
       {/* Left: Branded Panel */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="hidden lg:flex lg:w-[55%] relative flex-col justify-between overflow-hidden bg-slate-950"
+        className="hidden lg:flex lg:w-[55%] relative flex-col justify-between overflow-hidden"
+        style={{ background: "rgb(14,14,14)" }}
       >
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
-        <div className="absolute inset-0 opacity-20"
+        {/* Red mesh */}
+        <div className="absolute inset-0"
           style={{
-            backgroundImage: 'radial-gradient(circle at 30% 50%, #f59e0b40 0%, transparent 60%), radial-gradient(circle at 80% 20%, #f59e0b20 0%, transparent 50%)'
+            backgroundImage:
+              "radial-gradient(circle at 20% 30%, rgba(239,68,68,0.12) 0%, transparent 55%), radial-gradient(circle at 80% 70%, rgba(220,38,38,0.06) 0%, transparent 50%)",
           }}
         />
 
-        {/* Grid pattern */}
+        {/* Kit diagonal stripes */}
         <div className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-            backgroundSize: '60px 60px'
+            backgroundImage:
+              "repeating-linear-gradient(-45deg, rgba(239,68,68,0.8) 0px, rgba(239,68,68,0.8) 2px, transparent 2px, transparent 28px)",
           }}
+        />
+
+        {/* Top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-[3px]"
+          style={{ background: "linear-gradient(to right, rgb(220,38,38), rgb(239,68,68), rgba(255,255,255,0.6), rgb(239,68,68), rgb(220,38,38))" }}
         />
 
         <div className="relative z-10 p-12 flex items-center gap-3">
-          <Image src="/images/logo.jpg" alt="FC Escuela" width={44} height={44} className="rounded-xl border border-white/10 shadow-lg" />
-          <span className="text-white font-black text-xl tracking-tight">FC <span className="text-amber-400">Escuela</span></span>
+          <Image src="/images/logo.jpg" alt="FC Escuela" width={44} height={44}
+            className="rounded-xl shadow-lg"
+            style={{ border: "1px solid rgba(239,68,68,0.3)" }}
+          />
+          <span className="font-black text-xl tracking-tight" style={{ color: "#f8f8f8" }}>
+            FC <span style={{ color: "rgb(239,68,68)" }}>Escuela</span>
+          </span>
         </div>
 
         <div className="relative z-10 px-12 pb-16">
-          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-amber-400 text-[10px] font-black uppercase tracking-widest">Member Portal</span>
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.20)" }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgb(239,68,68)" }} />
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "rgb(239,68,68)" }}>Member Portal</span>
           </div>
-          <h1 className="text-5xl font-black text-white leading-tight tracking-tight mb-4">
+          <h1 className="text-5xl font-black leading-tight tracking-tight mb-4"
+            style={{ color: "#f8f8f8", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.04em" }}
+          >
             Welcome<br />
-            <span className="text-amber-400">Back</span>
+            <span style={{ color: "rgb(239,68,68)" }}>Back</span>
           </h1>
-          <p className="text-slate-400 text-base leading-relaxed max-w-sm">
+          <p className="text-base leading-relaxed max-w-sm" style={{ color: "rgb(100,116,139)" }}>
             Sign in to access match tickets, member content, and your personal dashboard.
           </p>
 
@@ -118,15 +135,17 @@ function SignInPageInner() {
               { label: 'Members', value: '500+' },
             ].map(stat => (
               <div key={stat.label}>
-                <p className="text-3xl font-black text-white">{stat.value}</p>
-                <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">{stat.label}</p>
+                <p className="text-3xl font-black" style={{ color: "#f8f8f8" }}>{stat.value}</p>
+                <p className="text-xs uppercase tracking-widest mt-1" style={{ color: "rgb(71,85,105)" }}>{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Bottom gradient line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px"
+          style={{ background: "linear-gradient(to right, transparent, rgba(239,68,68,0.4), transparent)" }}
+        />
       </motion.div>
 
       {/* Right: Form Panel */}
@@ -135,29 +154,44 @@ function SignInPageInner() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className="flex-1 flex items-center justify-center p-6 sm:p-12"
+        style={{ background: "rgb(8,8,8)" }}
       >
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-10">
-            <Image src="/images/logo.jpg" alt="FC Escuela" width={40} height={40} className="rounded-xl border border-slate-200 shadow" />
-            <span className="text-slate-900 font-black text-lg tracking-tight">FC <span className="text-amber-500">Escuela</span></span>
+            <Image src="/images/logo.jpg" alt="FC Escuela" width={40} height={40}
+              className="rounded-xl shadow"
+              style={{ border: "1px solid rgba(239,68,68,0.3)" }}
+            />
+            <span className="font-black text-lg tracking-tight" style={{ color: "#f8f8f8" }}>
+              FC <span style={{ color: "rgb(239,68,68)" }}>Escuela</span>
+            </span>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-white tracking-tight">Sign in</h2>
-            <p className="text-slate-500 text-sm mt-1">Enter your credentials to continue</p>
+            <h2 className="text-3xl font-black tracking-tight"
+              style={{ color: "#f8f8f8", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.04em" }}
+            >
+              Sign in
+            </h2>
+            <p className="text-sm mt-1" style={{ color: "rgb(100,116,139)" }}>Enter your credentials to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Email Address</label>
+              <label className="block text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: "rgb(100,116,139)" }}>
+                Email Address
+              </label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400"
+                className="w-full rounded-xl px-4 py-3 text-sm font-medium focus:outline-none transition-all"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#f8f8f8" }}
+                onFocus={e => { e.target.style.border = "1px solid rgba(239,68,68,0.5)"; e.target.style.background = "rgba(255,255,255,0.06)"; }}
+                onBlur={e => { e.target.style.border = "1px solid rgba(255,255,255,0.08)"; e.target.style.background = "rgba(255,255,255,0.04)"; }}
                 placeholder="you@example.com"
                 autoComplete="email"
               />
@@ -165,8 +199,11 @@ function SignInPageInner() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Password</label>
-                <a href="/auth/forgot-password" className="text-[10px] text-amber-600 font-bold uppercase tracking-widest hover:text-amber-700 transition-colors">
+                <label className="block text-xs font-bold uppercase tracking-wider" style={{ color: "rgb(100,116,139)" }}>Password</label>
+                <a href="/auth/forgot-password"
+                  className="text-[10px] font-bold uppercase tracking-widest transition-colors"
+                  style={{ color: "rgb(239,68,68)" }}
+                >
                   Forgot?
                 </a>
               </div>
@@ -177,13 +214,19 @@ function SignInPageInner() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400 pr-12"
+                  className="w-full rounded-xl px-4 py-3 text-sm font-medium focus:outline-none transition-all pr-12"
+                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#f8f8f8" }}
+                  onFocus={e => { e.target.style.border = "1px solid rgba(239,68,68,0.5)"; e.target.style.background = "rgba(255,255,255,0.06)"; }}
+                  onBlur={e => { e.target.style.border = "1px solid rgba(255,255,255,0.08)"; e.target.style.background = "rgba(255,255,255,0.04)"; }}
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors"
+                  className="absolute inset-y-0 right-4 flex items-center transition-colors"
+                  style={{ color: "rgb(71,85,105)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "rgb(239,68,68)")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgb(71,85,105)")}
                   onClick={() => setShowPassword((v) => !v)}
                 >
                   {showPassword ? <AiOutlineEyeInvisible className="h-5 w-5" /> : <AiOutlineEye className="h-5 w-5" />}
@@ -196,13 +239,15 @@ function SignInPageInner() {
                 <Turnstile
                   siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY as string}
                   onVerify={handleTurnstileVerify}
-                  theme="light"
+                  theme="dark"
                 />
               </div>
             )}
 
             {errorMessage && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium rounded-xl">
+              <div className="p-3 text-xs font-medium rounded-xl"
+                style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgb(248,113,113)" }}
+              >
                 {errorMessage}
               </div>
             )}
@@ -210,11 +255,14 @@ function SignInPageInner() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-white rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
+              className="w-full h-12 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2"
+              style={{ background: loading ? "rgba(239,68,68,0.5)" : "rgb(220,38,38)", color: "#fff", boxShadow: "0 0 24px rgba(220,38,38,0.30)" }}
             >
               {loading ? (
                 <>
-                  <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  <div className="h-4 w-4 rounded-full border-2 animate-spin"
+                    style={{ borderColor: "rgba(255,255,255,0.3)", borderTopColor: "#fff" }}
+                  />
                   <span>Signing in...</span>
                 </>
               ) : (
@@ -224,22 +272,25 @@ function SignInPageInner() {
           </form>
 
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-slate-400 text-xs font-medium">or</span>
-            <div className="flex-1 h-px bg-slate-200" />
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+            <span className="text-xs font-medium" style={{ color: "rgb(71,85,105)" }}>or</span>
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
           </div>
 
           <button
-            className="w-full h-12 flex items-center justify-center gap-3 bg-white hover:bg-slate-50 rounded-xl border border-slate-200 transition-all text-slate-700 font-semibold text-sm shadow-sm hover:shadow"
-            onClick={() => signIn("google", { prompt: "select_account", callbackUrl })}
+            className="w-full h-12 flex items-center justify-center gap-3 rounded-xl font-semibold text-sm transition-all"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)", color: "#f8f8f8" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.borderColor = "rgba(239,68,68,0.30)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)"; }}
+            onClick={() => signIn("google", { callbackUrl })}
           >
             <FcGoogle className="h-5 w-5" />
             Continue with Google
           </button>
 
-          <p className="mt-8 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm" style={{ color: "rgb(100,116,139)" }}>
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-amber-600 font-bold hover:text-amber-700 transition-colors">
+            <Link href="/register" className="font-bold transition-colors" style={{ color: "rgb(239,68,68)" }}>
               Create one free
             </Link>
           </p>
@@ -253,10 +304,13 @@ export default function SignInPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="min-h-screen flex items-center justify-center" style={{ background: "rgb(8,8,8)" }}>
           <div className="flex flex-col items-center gap-4">
-            <div className="h-10 w-10 rounded-full border-2 border-slate-200 border-t-amber-500 animate-spin" />
-            <p className="text-slate-400 text-sm font-medium">Loading...</p>
+            <div
+              className="h-10 w-10 rounded-full border-2 animate-spin"
+              style={{ borderColor: "rgba(239,68,68,0.2)", borderTopColor: "rgb(239,68,68)" }}
+            />
+            <p className="text-sm font-medium" style={{ color: "rgb(71,85,105)" }}>Loading...</p>
           </div>
         </div>
       }
