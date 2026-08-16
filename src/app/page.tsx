@@ -68,9 +68,9 @@ export default function Home() {
       desc: 'Track roster data, player availability, and individual development records.',
       href: '/team',
       cta: 'Explore Team',
-      accentBg: 'bg-slate-500/10',
-      accentText: 'text-slate-400',
-      glow: 'hover:shadow-[0_0_16px_rgba(100,100,100,0.1)]',
+      accentBg: 'bg-red-500/10',
+      accentText: 'text-red-400',
+      glow: 'hover:shadow-[0_0_20px_rgba(239,68,68,0.12)] hover:border-red-500/25',
     },
     {
       icon: FaBroadcastTower,
@@ -80,7 +80,7 @@ export default function Home() {
       cta: 'Read News',
       accentBg: 'bg-red-500/10',
       accentText: 'text-red-400',
-      glow: 'hover:shadow-[0_0_16px_rgba(239,68,68,0.1)]',
+      glow: 'hover:shadow-[0_0_20px_rgba(239,68,68,0.12)] hover:border-red-500/25',
     },
     {
       icon: FaTrophy,
@@ -88,9 +88,9 @@ export default function Home() {
       desc: 'View upcoming team fixtures, scores, line-ups, and match reports.',
       href: '/matches',
       cta: 'View Matches',
-      accentBg: 'bg-slate-500/10',
-      accentText: 'text-slate-400',
-      glow: 'hover:shadow-[0_0_16px_rgba(100,100,100,0.1)]',
+      accentBg: 'bg-red-500/10',
+      accentText: 'text-red-400',
+      glow: 'hover:shadow-[0_0_20px_rgba(239,68,68,0.12)] hover:border-red-500/25',
     },
     {
       icon: FaStar,
@@ -98,9 +98,9 @@ export default function Home() {
       desc: 'Relive training and match highlights in our media collection.',
       href: '/gallery',
       cta: 'View Gallery',
-      accentBg: 'bg-slate-500/10',
-      accentText: 'text-slate-400',
-      glow: 'hover:shadow-[0_0_16px_rgba(100,100,100,0.1)]',
+      accentBg: 'bg-red-500/10',
+      accentText: 'text-red-400',
+      glow: 'hover:shadow-[0_0_20px_rgba(239,68,68,0.12)] hover:border-red-500/25',
     },
   ]
 
@@ -159,7 +159,7 @@ export default function Home() {
               className="text-6xl font-black uppercase tracking-tight text-white sm:text-7xl md:text-8xl lg:text-[100px] leading-none"
             >
               FC{' '}
-              <span className="text-gradient-red">Escuela</span>
+              <span className="bg-gradient-to-br from-rose-300 via-red-500 to-red-700 bg-clip-text text-transparent">Escuela</span>
             </motion.h1>
 
             {/* Subtitle */}
@@ -346,7 +346,7 @@ export default function Home() {
       {/* ── MODULES ──────────────────────────────────────────────────────────── */}
       <section className="py-16 md:py-24 relative">
         {/* Section bg accent */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/[0.025] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/[0.02] to-transparent pointer-events-none" />
 
         <div className="container-custom relative z-10">
           <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

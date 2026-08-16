@@ -4,6 +4,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { FaExclamationTriangle, FaSignInAlt, FaHome } from "react-icons/fa";
+import { signIn } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
 
 function AuthErrorPageInner() {
   const searchParams = useSearchParams();
@@ -59,6 +61,14 @@ function AuthErrorPageInner() {
           )}
 
           <div className="grid grid-cols-1 gap-4 pt-6">
+            <button
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="flex items-center justify-center gap-3 h-14 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-all text-white font-semibold text-sm shadow-sm hover:shadow cursor-pointer"
+            >
+              <FcGoogle className="h-5 w-5" />
+              <span className="uppercase tracking-widest text-xs font-black">Sign back in with Google</span>
+            </button>
+
             <Link href="/login" className="btn-primary flex items-center justify-center gap-3 h-14">
               <FaSignInAlt className="text-sm" />
               <span className="uppercase tracking-widest text-xs font-black">Return to Gate</span>

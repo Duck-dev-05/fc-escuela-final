@@ -11,6 +11,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   PlayIcon,
+  FilmIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { appService, GalleryImage } from "@/services/local-api";
 
@@ -168,6 +170,9 @@ const galleryVideos = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const isVideo = (path: string) => path.endsWith(".mp4");
 
+// Tab config
+const TAB_ICONS = [Squares2X2Icon, PhotoIcon, PhotoIcon, FilmIcon];
+
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function GalleryPage() {
   const { data: session, status } = useSession();
@@ -181,6 +186,7 @@ export default function GalleryPage() {
   const [selectedCategory, setSelectedCategory] = useState("general");
   const [galleryAssets, setGalleryAssets] = useState<GalleryImage[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const filmstripRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     appService
@@ -216,6 +222,11 @@ export default function GalleryPage() {
 
   const assets = tabs[activeTab]?.assets ?? [];
 
+  // Featured = first 3 non-video assets of current tab
+  const featuredAssets = assets.filter((a) => !isVideo(a)).slice(0, 3);
+  // Grid = rest
+  const gridAssets = assets.slice(0);
+
   const openModal = (src: string, idx: number) => {
     setModalAsset(src);
     setModalIdx(idx);
@@ -250,6 +261,13 @@ export default function GalleryPage() {
     return () => window.removeEventListener("keydown", handler);
   }, [modalOpen, modalIdx]);
 
+  // Auto-scroll filmstrip to active thumb
+  useEffect(() => {
+    if (!filmstripRef.current) return;
+    const active = filmstripRef.current.querySelector(`[data-idx="${modalIdx}"]`) as HTMLElement;
+    if (active) active.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [modalIdx]);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -278,8 +296,11 @@ export default function GalleryPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#080808]">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-red-500/20 border-t-red-500" />
-          <p className="text-sm font-medium text-slate-400">Loading gallery…</p>
+          <div className="relative h-12 w-12">
+            <div className="absolute inset-0 animate-spin rounded-full border-4 border-red-500/20 border-t-red-500" />
+            <div className="absolute inset-2 rounded-full bg-red-500/5" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Loading gallery…</p>
         </div>
       </div>
     );
@@ -289,250 +310,371 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-[#080808] text-slate-200">
 
-      {/* ── Hero ── */}
-      <section className="relative isolate overflow-hidden border-b border-white/8 pt-28 pb-12 md:pt-32 md:pb-16">
+      {/* ── CINEMATIC HERO ── */}
+      <section className="relative isolate overflow-hidden border-b border-white/8 pt-28 pb-14 md:pt-36 md:pb-20">
+        {/* Background image */}
         <div className="absolute inset-0 -z-20">
           <Image
             src="/images/hero_final.jpg"
             alt=""
             fill
             priority
-            className="object-cover opacity-10"
+            className="object-cover opacity-[0.12]"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#080808]/90 via-[#080808]/95 to-[#080808]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#080808]/70 via-[#080808]/85 to-[#080808]" />
         </div>
-        <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-red-400/10 blur-3xl -z-10" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-slate-400/8 blur-3xl -z-10" />
+
+        {/* Ambient glows */}
+        <div className="absolute -left-32 top-16 h-80 w-80 rounded-full bg-red-500/10 blur-[100px] -z-10 animate-float" />
+        <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-slate-400/5 blur-[80px] -z-10 animate-float-delayed" />
+
+        {/* Scan line */}
+        <div className="absolute inset-0 -z-10 animate-scan" />
+
+        {/* Ghost text */}
+        <div className="absolute bottom-0 right-0 text-[clamp(60px,12vw,160px)] font-black uppercase tracking-tighter leading-none text-transparent select-none pointer-events-none"
+          style={{ WebkitTextStroke: "1px rgba(239,68,68,0.05)" }}>
+          GALLERY
+        </div>
 
         <div className="container-custom">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="mx-auto max-w-3xl text-center"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-400">
-              <span className="h-2 w-2 rounded-full bg-red-500" />
+            {/* Eyebrow badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-red-400 backdrop-blur-sm"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
               FC Escuela Visual Archive
-            </p>
-            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl">
+            </motion.div>
+
+            {/* Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.18 }}
+              className="text-5xl font-black tracking-tight text-white sm:text-6xl md:text-7xl"
+            >
               Media{" "}
-              <span className="bg-gradient-to-br from-red-400 via-red-500 to-red-700 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-br from-rose-300 via-red-500 to-red-700 bg-clip-text text-transparent">
                 Gallery
               </span>
-            </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-400 md:text-base">
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.28 }}
+              className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-slate-400 md:text-base"
+            >
               Match day highlights, training sessions, and academy events — all in one place.
-            </p>
+            </motion.p>
 
             {/* Stats row */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.38 }}
+              className="mt-10 flex flex-wrap items-center justify-center gap-8 md:gap-14"
+            >
               {[
                 { label: "Photos", value: galleryImages.length + afterMatchImages.length + eventsImages.length },
                 { label: "Videos", value: galleryVideos.length },
                 { label: "Total Assets", value: tabs[0].assets.length },
               ].map((s) => (
                 <div key={s.label} className="text-center">
-                  <p className="text-2xl font-black text-white md:text-3xl">{s.value}</p>
-                  <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  <p className="text-3xl font-black text-white md:text-4xl tracking-tight">{s.value}</p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
                     {s.label}
                   </p>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── Toolbar ── */}
-      <div className="container-custom py-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* ── STICKY TOOLBAR (pills + upload) ── */}
+      <div className="sticky top-[58px] z-40 border-b border-white/8 bg-[#080808]/95 backdrop-blur-xl">
+        <div className="container-custom py-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-          {/* Tab filters */}
-          <div className="flex flex-wrap gap-2">
-            {tabs.map((tab, idx) => (
-              <button
-                key={tab.label}
-                type="button"
-                onClick={() => setActiveTab(idx)}
-                className={`rounded-lg px-5 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
-                  activeTab === idx
-                    ? "bg-red-500 text-white shadow-sm"
-                    : "border border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                {tab.label}
-                <span className="ml-2 opacity-60">{tab.assets.length}</span>
-              </button>
-            ))}
+            {/* Pill tabs */}
+            <div className="flex flex-wrap gap-2">
+              {tabs.map((tab, idx) => {
+                const Icon = TAB_ICONS[idx];
+                const active = activeTab === idx;
+                return (
+                  <button
+                    key={tab.label}
+                    type="button"
+                    onClick={() => setActiveTab(idx)}
+                    className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${
+                      active ? "pill-active" : "pill-inactive"
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {tab.label}
+                    <span
+                      className={`ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-black transition-colors ${
+                        active ? "bg-white/20 text-white" : "bg-white/5 text-slate-600"
+                      }`}
+                    >
+                      {tab.assets.length}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Upload (logged-in only) */}
+            {session ? (
+              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-sm backdrop-blur-sm">
+                <div className="hidden border-r border-white/10 pr-3 sm:block">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                    Your uploads
+                  </p>
+                  <p className="mt-0.5 text-sm font-black text-white">{uploadCount}</p>
+                </div>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="rounded-lg bg-white/5 px-2 py-1 text-[11px] font-semibold text-slate-400 outline-none focus:ring-0 border border-white/10 cursor-pointer"
+                >
+                  <option value="general">General</option>
+                  <option value="after-match">Matches</option>
+                  <option value="events">Events</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-red-600 active:scale-95 disabled:opacity-50"
+                  style={{ boxShadow: "0 0 14px rgba(239,68,68,0.3)" }}
+                >
+                  {uploading ? (
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  ) : (
+                    <ArrowUpTrayIcon className="h-3.5 w-3.5" />
+                  )}
+                  {uploading ? "Uploading…" : "Upload"}
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*,video/*"
+                  className="hidden"
+                />
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-2.5 text-[11px] font-semibold text-red-400">
+                <PhotoIcon className="h-4 w-4" />
+                Sign in to upload photos
+              </div>
+            )}
           </div>
 
-          {/* Upload (logged-in only) */}
-          {session ? (
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2 shadow-sm">
-              <div className="hidden border-r border-white/10 px-3 sm:block">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                  Your uploads
-                </p>
-                <p className="mt-0.5 text-sm font-black text-white">{uploadCount}</p>
-              </div>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-transparent text-[11px] font-semibold text-slate-400 outline-none focus:ring-0 border-none cursor-pointer"
-              >
-                <option value="general">General</option>
-                <option value="after-match">Matches</option>
-                <option value="events">Events</option>
-              </select>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="inline-flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-red-600 disabled:opacity-50"
-              >
-                <ArrowUpTrayIcon className="h-4 w-4" />
-                {uploading ? "Uploading…" : "Upload"}
-              </button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept="image/*,video/*"
-                className="hidden"
-              />
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-2 text-[11px] font-semibold text-red-400">
-              <PhotoIcon className="h-4 w-4" />
-              Sign in to upload photos
-            </div>
+          {/* Upload error */}
+          {uploadError && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400"
+            >
+              {uploadError}
+            </motion.p>
           )}
         </div>
-
-        {/* Upload error */}
-        {uploadError && (
-          <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
-            {uploadError}
-          </p>
-        )}
       </div>
 
-      {/* ── Masonry Grid ── */}
-      <div className="container-custom pb-20">
+      {/* ── GALLERY BODY ── */}
+      <div className="container-custom pt-10 pb-24">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="columns-1 gap-4 space-y-4 sm:columns-2 lg:columns-3 xl:columns-4"
+            transition={{ duration: 0.28 }}
           >
-            {assets.map((src, idx) => (
-              <motion.div
-                key={src}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(idx * 0.02, 0.5), duration: 0.4 }}
-                className="break-inside-avoid"
-              >
-                <div
-                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                  onClick={() => openModal(src, idx)}
-                >
-                  {isVideo(src) ? (
-                    <div className="relative aspect-video bg-slate-900">
-                      <video className="h-full w-full object-cover opacity-90">
-                        <source src={src} type="video/mp4" />
-                      </video>
-                      {/* Play overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-slate-950/30 transition group-hover:bg-slate-950/50">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition group-hover:scale-110">
-                          <PlayIcon className="h-5 w-5 translate-x-0.5 text-slate-900" />
-                        </div>
-                      </div>
-                      <span className="absolute bottom-2 left-2 rounded-full bg-slate-900/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
-                        Video
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="relative overflow-hidden">
+            {/* ── FEATURED SPOTLIGHT (first 3 non-video) ── */}
+            {featuredAssets.length >= 3 && (
+              <div className="mb-8">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-white/5" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-600">Spotlight</p>
+                  <span className="h-px flex-1 bg-white/5" />
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {featuredAssets.map((src, idx) => (
+                    <motion.div
+                      key={src + "-featured"}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.07, duration: 0.45 }}
+                      className="gallery-card group"
+                      style={{ aspectRatio: idx === 0 ? "16/10" : "4/3" }}
+                      onClick={() => openModal(src, assets.indexOf(src))}
+                    >
                       <img
                         src={src}
-                        alt={`Gallery ${idx + 1}`}
-                        className="w-full h-auto object-cover transition duration-500 group-hover:scale-[1.04]"
+                        alt={`Spotlight ${idx + 1}`}
+                        className="h-full w-full object-cover transition-transform duration-500"
                         loading="lazy"
                       />
                       {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-slate-950/0 transition duration-300 group-hover:bg-slate-950/20 flex items-center justify-center">
-                        <div className="scale-75 opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm">
-                          <PhotoIcon className="h-4 w-4 text-slate-900" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-slate-950/0 transition-all duration-300 group-hover:bg-slate-950/25">
+                        <div className="scale-75 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-xl backdrop-blur-sm">
+                          <PhotoIcon className="h-5 w-5 text-slate-900" />
                         </div>
                       </div>
-                    </div>
-                  )}
+                      {/* Index badge */}
+                      <div className="absolute top-3 left-3 flex h-6 w-6 items-center justify-center rounded-full bg-slate-950/70 backdrop-blur-sm text-[10px] font-black text-white">
+                        {idx + 1}
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            )}
+
+            {/* ── MASONRY GRID ── */}
+            {assets.length > 0 && (
+              <>
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-white/5" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-600">All Media</p>
+                  <span className="h-px flex-1 bg-white/5" />
+                </div>
+
+                <div className="columns-1 gap-3 space-y-3 sm:columns-2 lg:columns-3 xl:columns-4">
+                  {gridAssets.map((src, idx) => (
+                    <div
+                      key={src + idx}
+                      className="break-inside-avoid animate-masonry-in"
+                      style={{ animationDelay: `${Math.min(idx * 0.018, 0.6)}s` }}
+                    >
+                      <div
+                        className="gallery-card group"
+                        onClick={() => openModal(src, idx)}
+                      >
+                        {isVideo(src) ? (
+                          /* ── VIDEO CARD ── */
+                          <div className="relative aspect-video bg-slate-900/80">
+                            <video className="h-full w-full object-cover opacity-70">
+                              <source src={src} type="video/mp4" />
+                            </video>
+                            {/* Cinematic play overlay */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-t from-slate-950/60 via-slate-950/20 to-transparent transition-all duration-300 group-hover:from-slate-950/80">
+                              <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:border-red-500/60 group-hover:bg-red-500/20">
+                                <PlayIcon className="h-6 w-6 translate-x-0.5 text-white" />
+                              </div>
+                            </div>
+                            {/* Video badge */}
+                            <div className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-slate-950/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                              <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                              Video
+                            </div>
+                          </div>
+                        ) : (
+                          /* ── PHOTO CARD ── */
+                          <div className="relative overflow-hidden">
+                            <img
+                              src={src}
+                              alt={`Gallery ${idx + 1}`}
+                              className="w-full h-auto object-cover transition-transform duration-500"
+                              loading="lazy"
+                            />
+                            {/* Hover overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/0 transition-all duration-300 group-hover:bg-slate-950/20">
+                              <div className="scale-75 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm">
+                                <PhotoIcon className="h-4 w-4 text-slate-900" />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* ── Empty State ── */}
+            {assets.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-8 py-20 text-center">
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-600">
+                  <PhotoIcon className="h-7 w-7" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Nothing here yet</h3>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
+                  Nothing has been added to this collection yet.
+                </p>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
-
-        {assets.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 px-8 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-slate-500">
-              <PhotoIcon className="h-6 w-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">No media here</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
-              Nothing has been added to this collection yet.
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* ── Lightbox ── */}
+      {/* ── CINEMATIC LIGHTBOX ── */}
       <AnimatePresence>
         {modalOpen && modalAsset && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] flex flex-col bg-slate-950/95 backdrop-blur-xl"
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-[9999] flex flex-col lightbox-bg"
             onClick={() => setModalOpen(false)}
           >
-            {/* Header */}
+            {/* ── Lightbox Header ── */}
             <div
-              className="flex items-center justify-between px-6 py-4"
+              className="flex items-center justify-between px-6 py-4 border-b border-white/8"
               onClick={(e) => e.stopPropagation()}
             >
-              <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  {isVideo(modalAsset) ? "Video" : "Photo"} · {modalIdx + 1} / {assets.length}
-                </p>
+              <div className="flex items-center gap-4">
+                {/* Counter badge */}
+                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                  <span className="text-[11px] font-black text-white">{modalIdx + 1}</span>
+                  <span className="text-[11px] text-slate-500">/</span>
+                  <span className="text-[11px] font-bold text-slate-400">{assets.length}</span>
+                </div>
+                {/* Type badge */}
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                  {isVideo(modalAsset) ? "Video" : "Photo"}
+                </span>
               </div>
+
+              {/* Close */}
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/10 hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white hover:border-red-500/30 active:scale-95"
               >
-                <XMarkIcon className="h-5 w-5" />
+                <XMarkIcon className="h-4.5 w-4.5" />
               </button>
             </div>
 
-            {/* Main viewer */}
+            {/* ── Main Viewer ── */}
             <div
-              className="relative flex flex-1 items-center justify-center px-4 md:px-16"
+              className="relative flex flex-1 items-center justify-center px-4 md:px-20"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Prev */}
+              {/* Prev arrow */}
               <button
                 type="button"
                 onClick={showPrev}
                 disabled={modalIdx === 0}
-                className="absolute left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/15 hover:text-white disabled:opacity-20 md:left-6"
+                className="absolute left-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 transition hover:bg-white/12 hover:text-white hover:border-red-500/30 disabled:opacity-20 md:left-8 active:scale-95"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button>
@@ -540,29 +682,29 @@ export default function GalleryPage() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={modalAsset}
-                  initial={{ opacity: 0, scale: 0.97 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.25 }}
-                  className="relative flex max-h-[75vh] w-full max-w-5xl items-center justify-center"
+                  initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative flex max-h-[72vh] w-full max-w-5xl items-center justify-center"
                 >
                   {isVideo(modalAsset) ? (
                     <video
                       key={modalAsset}
                       controls
                       autoPlay
-                      className="max-h-[75vh] w-full rounded-xl object-contain shadow-2xl"
+                      className="max-h-[72vh] w-full rounded-2xl object-contain shadow-2xl border border-white/8"
                     >
                       <source src={modalAsset} type="video/mp4" />
                     </video>
                   ) : (
-                    <div className="relative max-h-[75vh] w-full">
+                    <div className="relative max-h-[72vh] w-full flex justify-center">
                       <Image
                         src={modalAsset}
                         alt={`Gallery item ${modalIdx + 1}`}
                         width={1400}
                         height={900}
-                        className="max-h-[75vh] w-auto mx-auto rounded-xl object-contain shadow-2xl"
+                        className="max-h-[72vh] w-auto rounded-2xl object-contain shadow-2xl border border-white/8"
                         priority
                       />
                     </div>
@@ -570,45 +712,47 @@ export default function GalleryPage() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Next */}
+              {/* Next arrow */}
               <button
                 type="button"
                 onClick={showNext}
                 disabled={modalIdx === assets.length - 1}
-                className="absolute right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:bg-white/15 hover:text-white disabled:opacity-20 md:right-6"
+                className="absolute right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 transition hover:bg-white/12 hover:text-white hover:border-red-500/30 disabled:opacity-20 md:right-8 active:scale-95"
               >
                 <ChevronRightIcon className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Filmstrip */}
+            {/* ── Filmstrip ── */}
             <div
-              className="mx-auto mt-4 w-full max-w-4xl overflow-x-auto px-4 pb-6 custom-scrollbar"
+              className="border-t border-white/8 bg-slate-950/50 px-4 py-3"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex gap-2 py-2">
+              <div
+                ref={filmstripRef}
+                className="mx-auto flex max-w-4xl gap-2 overflow-x-auto py-1 custom-scrollbar"
+              >
                 {assets.map((asset, i) => (
                   <button
                     key={i}
+                    data-idx={i}
                     type="button"
                     onClick={() => {
                       setModalAsset(asset);
                       setModalIdx(i);
                     }}
-                    className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-300 ${
-                      i === modalIdx
-                        ? "border-red-500 opacity-100 scale-105"
-                        : "border-white/10 opacity-40 hover:opacity-80"
+                    className={`filmstrip-thumb ${
+                      i === modalIdx ? "filmstrip-thumb-active" : "filmstrip-thumb-inactive"
                     }`}
                   >
                     {isVideo(asset) ? (
-                      <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                        <PlayIcon className="h-4 w-4 text-white/60" />
+                      <div className="flex h-full w-full items-center justify-center bg-slate-800/80">
+                        <PlayIcon className="h-4 w-4 text-white/50" />
                       </div>
                     ) : (
                       <Image
                         src={asset}
-                        alt={`Thumbnail ${i + 1}`}
+                        alt={`Thumb ${i + 1}`}
                         fill
                         className="object-cover"
                         sizes="80px"
