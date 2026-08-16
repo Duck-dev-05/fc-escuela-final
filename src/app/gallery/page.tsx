@@ -276,10 +276,10 @@ export default function GalleryPage() {
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-[#080808]">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500" />
-          <p className="text-sm font-medium text-slate-600">Loading gallery…</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-red-500/20 border-t-red-500" />
+          <p className="text-sm font-medium text-slate-400">Loading gallery…</p>
         </div>
       </div>
     );
@@ -287,10 +287,10 @@ export default function GalleryPage() {
 
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-[#080808] text-slate-200">
 
       {/* ── Hero ── */}
-      <section className="relative isolate overflow-hidden border-b border-slate-200/80 pt-28 pb-12 md:pt-32 md:pb-16">
+      <section className="relative isolate overflow-hidden border-b border-white/8 pt-28 pb-12 md:pt-32 md:pb-16">
         <div className="absolute inset-0 -z-20">
           <Image
             src="/images/hero_final.jpg"
@@ -299,10 +299,10 @@ export default function GalleryPage() {
             priority
             className="object-cover opacity-10"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-slate-50/95 to-slate-50" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#080808]/90 via-[#080808]/95 to-[#080808]" />
         </div>
-        <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-amber-400/15 blur-3xl -z-10" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl -z-10" />
+        <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-red-400/10 blur-3xl -z-10" />
+        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-slate-400/8 blur-3xl -z-10" />
 
         <div className="container-custom">
           <motion.div
@@ -311,17 +311,17 @@ export default function GalleryPage() {
             transition={{ duration: 0.45 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-white/90 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-800">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-400">
+              <span className="h-2 w-2 rounded-full bg-red-500" />
               FC Escuela Visual Archive
             </p>
-            <h1 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
+            <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl md:text-6xl">
               Media{" "}
-              <span className="bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-br from-red-400 via-red-500 to-red-700 bg-clip-text text-transparent">
                 Gallery
               </span>
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-600 md:text-base">
+            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-400 md:text-base">
               Match day highlights, training sessions, and academy events — all in one place.
             </p>
 
@@ -333,7 +333,7 @@ export default function GalleryPage() {
                 { label: "Total Assets", value: tabs[0].assets.length },
               ].map((s) => (
                 <div key={s.label} className="text-center">
-                  <p className="text-2xl font-black text-slate-900 md:text-3xl">{s.value}</p>
+                  <p className="text-2xl font-black text-white md:text-3xl">{s.value}</p>
                   <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                     {s.label}
                   </p>
@@ -355,10 +355,10 @@ export default function GalleryPage() {
                 key={tab.label}
                 type="button"
                 onClick={() => setActiveTab(idx)}
-                className={`rounded-xl px-5 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
+                className={`rounded-lg px-5 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
                   activeTab === idx
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-red-500 text-white shadow-sm"
+                    : "border border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {tab.label}
@@ -369,17 +369,17 @@ export default function GalleryPage() {
 
           {/* Upload (logged-in only) */}
           {session ? (
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-              <div className="hidden border-r border-slate-100 px-3 sm:block">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2 shadow-sm">
+              <div className="hidden border-r border-white/10 px-3 sm:block">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                   Your uploads
                 </p>
-                <p className="mt-0.5 text-sm font-black text-slate-900">{uploadCount}</p>
+                <p className="mt-0.5 text-sm font-black text-white">{uploadCount}</p>
               </div>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-transparent text-[11px] font-semibold text-slate-600 outline-none focus:ring-0 border-none cursor-pointer"
+                className="bg-transparent text-[11px] font-semibold text-slate-400 outline-none focus:ring-0 border-none cursor-pointer"
               >
                 <option value="general">General</option>
                 <option value="after-match">Matches</option>
@@ -389,7 +389,7 @@ export default function GalleryPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-amber-500 hover:text-slate-950 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-red-600 disabled:opacity-50"
               >
                 <ArrowUpTrayIcon className="h-4 w-4" />
                 {uploading ? "Uploading…" : "Upload"}
@@ -403,7 +403,7 @@ export default function GalleryPage() {
               />
             </div>
           ) : (
-            <div className="inline-flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-2 text-[11px] font-semibold text-amber-700">
+            <div className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-2 text-[11px] font-semibold text-red-400">
               <PhotoIcon className="h-4 w-4" />
               Sign in to upload photos
             </div>
@@ -412,7 +412,7 @@ export default function GalleryPage() {
 
         {/* Upload error */}
         {uploadError && (
-          <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
+          <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
             {uploadError}
           </p>
         )}
@@ -439,7 +439,7 @@ export default function GalleryPage() {
                 className="break-inside-avoid"
               >
                 <div
-                  className="group relative cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                   onClick={() => openModal(src, idx)}
                 >
                   {isVideo(src) ? (
@@ -480,12 +480,12 @@ export default function GalleryPage() {
         </AnimatePresence>
 
         {assets.length === 0 && (
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-8 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+          <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 px-8 py-16 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-slate-500">
               <PhotoIcon className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">No media here</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-600">
+            <h3 className="text-lg font-bold text-white">No media here</h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
               Nothing has been added to this collection yet.
             </p>
           </div>
@@ -597,7 +597,7 @@ export default function GalleryPage() {
                     }}
                     className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-300 ${
                       i === modalIdx
-                        ? "border-amber-500 opacity-100 scale-105"
+                        ? "border-red-500 opacity-100 scale-105"
                         : "border-white/10 opacity-40 hover:opacity-80"
                     }`}
                   >

@@ -69,16 +69,16 @@ function SignInPageInner() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-[#080808]">
       {/* Left: Branded Panel */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="hidden lg:flex lg:w-[55%] relative flex-col justify-between overflow-hidden bg-slate-950"
+        className="hidden lg:flex lg:w-[55%] relative flex-col justify-between overflow-hidden bg-[#080808]"
       >
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#080808] via-[#080808] to-[#141414]" />
         <div className="absolute inset-0 opacity-15"
           style={{
             backgroundImage: 'radial-gradient(circle at 30% 50%, #ef444440 0%, transparent 60%), radial-gradient(circle at 80% 20%, #ef444420 0%, transparent 50%)'
@@ -134,30 +134,30 @@ function SignInPageInner() {
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="flex-1 flex items-center justify-center p-6 sm:p-12"
+        className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-[#080808]"
       >
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-10">
-            <Image src="/images/logo.jpg" alt="FC Escuela" width={40} height={40} className="rounded-xl border border-slate-200 shadow" />
-            <span className="text-slate-900 font-black text-lg tracking-tight">FC <span className="text-red-500">Escuela</span></span>
+            <Image src="/images/logo.jpg" alt="FC Escuela" width={40} height={40} className="rounded-xl border border-white/10 shadow" />
+            <span className="text-white font-black text-lg tracking-tight">FC <span className="text-red-500">Escuela</span></span>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-slate-950 tracking-tight">Sign in</h2>
-            <p className="text-slate-500 text-sm mt-1">Enter your credentials to continue</p>
+            <h2 className="text-3xl font-black text-white tracking-tight">Sign in</h2>
+            <p className="text-slate-400 text-sm mt-1">Enter your credentials to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Email Address</label>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-600"
                 placeholder="you@example.com"
                 autoComplete="email"
               />
@@ -165,8 +165,8 @@ function SignInPageInner() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Password</label>
-                <a href="/auth/forgot-password" className="text-[10px] text-red-600 font-bold uppercase tracking-widest hover:text-red-700 transition-colors">
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Password</label>
+                <a href="/auth/forgot-password" className="text-[10px] text-red-400 font-bold uppercase tracking-widest hover:text-red-500 transition-colors">
                   Forgot?
                 </a>
               </div>
@@ -177,7 +177,7 @@ function SignInPageInner() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400 pr-12"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-600 pr-12"
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />
@@ -202,7 +202,7 @@ function SignInPageInner() {
             )}
 
             {errorMessage && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium rounded-lg">
+              <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium rounded-lg">
                 {errorMessage}
               </div>
             )}
@@ -210,7 +210,7 @@ function SignInPageInner() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-slate-950 hover:bg-red-500 text-white hover:text-white rounded-lg font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
+              className="w-full h-12 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-red-500/10"
             >
               {loading ? (
                 <>
@@ -224,13 +224,13 @@ function SignInPageInner() {
           </form>
 
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-slate-200" />
+            <div className="flex-1 h-px bg-white/10" />
             <span className="text-slate-400 text-xs font-medium">or</span>
-            <div className="flex-1 h-px bg-slate-200" />
+            <div className="flex-1 h-px bg-white/10" />
           </div>
 
           <button
-            className="w-full h-12 flex items-center justify-center gap-3 bg-white hover:bg-slate-50 rounded-xl border border-slate-200 transition-all text-slate-700 font-semibold text-sm shadow-sm hover:shadow"
+            className="w-full h-12 flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-all text-white font-semibold text-sm shadow-sm hover:shadow"
             onClick={() => signIn("google", { prompt: "select_account", callbackUrl })}
           >
             <FcGoogle className="h-5 w-5" />
@@ -239,7 +239,7 @@ function SignInPageInner() {
 
           <p className="mt-8 text-center text-sm text-slate-500">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-red-600 font-bold hover:text-red-700 transition-colors">
+            <Link href="/register" className="text-red-400 font-bold hover:text-red-500 transition-colors">
               Create one free
             </Link>
           </p>
@@ -253,9 +253,9 @@ export default function SignInPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="min-h-screen flex items-center justify-center bg-[#080808]">
           <div className="flex flex-col items-center gap-4">
-            <div className="h-10 w-10 rounded-full border-2 border-slate-200 border-t-red-500 animate-spin" />
+            <div className="h-10 w-10 rounded-full border-2 border-white/10 border-t-red-500 animate-spin" />
             <p className="text-slate-400 text-sm font-medium">Loading…</p>
           </div>
         </div>
