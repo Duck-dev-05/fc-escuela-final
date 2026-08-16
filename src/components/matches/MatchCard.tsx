@@ -21,9 +21,9 @@ const statusStyles: Record<string, { bg: string; text: string; border: string }>
     border: 'border-white/10',
   },
   Scheduled: {
-    bg: 'bg-amber-500/10',
-    text: 'text-amber-400',
-    border: 'border-amber-500/20',
+    bg: 'bg-red-500/10',
+    text: 'text-red-400',
+    border: 'border-red-500/20',
   },
 }
 
@@ -42,13 +42,13 @@ export default function MatchCard({ match }: MatchCardProps) {
     <motion.article
       whileHover={{ y: -3, scale: 1.005 }}
       transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-      className="flex h-full flex-col rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-sm p-5 transition hover:border-amber-500/20 hover:bg-white/[0.05] md:p-6"
+      className="flex h-full flex-col rounded-xl border border-white/8 bg-white/[0.03] backdrop-blur-sm p-5 transition hover:border-red-500/20 hover:bg-white/[0.05] md:p-6"
       style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.3)' }}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3 border-b border-white/5 pb-4">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500/70">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-500/70">
             <FaTrophy className="text-xs" />
           </div>
           <span className="truncate text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -101,17 +101,17 @@ export default function MatchCard({ match }: MatchCardProps) {
       <div className="mt-auto flex flex-col gap-4 border-t border-white/5 pt-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-4 text-slate-500">
           <div className="flex items-center gap-1.5 text-xs font-medium">
-            <FaCalendarAlt className="shrink-0 text-amber-500/60 text-[11px]" />
+            <FaCalendarAlt className="shrink-0 text-red-500/60 text-[11px]" />
             {formattedDate}
           </div>
           <div className="flex min-w-0 max-w-[160px] items-center gap-1.5 text-xs font-medium">
-            <FaMapMarkerAlt className="shrink-0 text-amber-500/60 text-[11px]" />
+            <FaMapMarkerAlt className="shrink-0 text-red-500/60 text-[11px]" />
             <span className="truncate">{match.venue}</span>
           </div>
         </div>
         <Link
           href={`/matches/${match.id}`}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400 transition hover:bg-amber-500 hover:border-amber-500 hover:text-slate-950 sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 self-start rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400 transition hover:bg-red-500 hover:border-red-500 hover:text-white sm:self-auto"
         >
           Details
           <FaArrowRight className="text-[9px]" />

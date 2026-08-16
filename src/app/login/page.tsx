@@ -79,9 +79,9 @@ function SignInPageInner() {
       >
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
-        <div className="absolute inset-0 opacity-20"
+        <div className="absolute inset-0 opacity-15"
           style={{
-            backgroundImage: 'radial-gradient(circle at 30% 50%, #f59e0b40 0%, transparent 60%), radial-gradient(circle at 80% 20%, #f59e0b20 0%, transparent 50%)'
+            backgroundImage: 'radial-gradient(circle at 30% 50%, #ef444440 0%, transparent 60%), radial-gradient(circle at 80% 20%, #ef444420 0%, transparent 50%)'
           }}
         />
 
@@ -95,17 +95,17 @@ function SignInPageInner() {
 
         <div className="relative z-10 p-12 flex items-center gap-3">
           <Image src="/images/logo.jpg" alt="FC Escuela" width={44} height={44} className="rounded-xl border border-white/10 shadow-lg" />
-          <span className="text-white font-black text-xl tracking-tight">FC <span className="text-amber-400">Escuela</span></span>
+          <span className="text-white font-black text-xl tracking-tight">FC <span className="text-red-400">Escuela</span></span>
         </div>
 
         <div className="relative z-10 px-12 pb-16">
-          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-amber-400 text-[10px] font-black uppercase tracking-widest">Member Portal</span>
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+            <span className="text-red-400 text-[10px] font-black uppercase tracking-widest">Member Portal</span>
           </div>
           <h1 className="text-5xl font-black text-white leading-tight tracking-tight mb-4">
             Welcome<br />
-            <span className="text-amber-400">Back</span>
+            <span className="text-red-400">Back</span>
           </h1>
           <p className="text-slate-400 text-base leading-relaxed max-w-sm">
             Sign in to access match tickets, member content, and your personal dashboard.
@@ -126,7 +126,7 @@ function SignInPageInner() {
         </div>
 
         {/* Bottom gradient line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
       </motion.div>
 
       {/* Right: Form Panel */}
@@ -140,7 +140,7 @@ function SignInPageInner() {
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-10">
             <Image src="/images/logo.jpg" alt="FC Escuela" width={40} height={40} className="rounded-xl border border-slate-200 shadow" />
-            <span className="text-slate-900 font-black text-lg tracking-tight">FC <span className="text-amber-500">Escuela</span></span>
+            <span className="text-slate-900 font-black text-lg tracking-tight">FC <span className="text-red-500">Escuela</span></span>
           </div>
 
           <div className="mb-8">
@@ -157,7 +157,7 @@ function SignInPageInner() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400"
                 placeholder="you@example.com"
                 autoComplete="email"
               />
@@ -166,7 +166,7 @@ function SignInPageInner() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Password</label>
-                <a href="/auth/forgot-password" className="text-[10px] text-amber-600 font-bold uppercase tracking-widest hover:text-amber-700 transition-colors">
+                <a href="/auth/forgot-password" className="text-[10px] text-red-600 font-bold uppercase tracking-widest hover:text-red-700 transition-colors">
                   Forgot?
                 </a>
               </div>
@@ -177,13 +177,13 @@ function SignInPageInner() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400 pr-12"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400 pr-12"
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors"
+                  className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-red-500 transition-colors"
                   onClick={() => setShowPassword((v) => !v)}
                 >
                   {showPassword ? <AiOutlineEyeInvisible className="h-5 w-5" /> : <AiOutlineEye className="h-5 w-5" />}
@@ -202,7 +202,7 @@ function SignInPageInner() {
             )}
 
             {errorMessage && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium rounded-xl">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium rounded-lg">
                 {errorMessage}
               </div>
             )}
@@ -210,7 +210,7 @@ function SignInPageInner() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-slate-950 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
+              className="w-full h-12 bg-slate-950 hover:bg-red-500 text-white hover:text-white rounded-lg font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
             >
               {loading ? (
                 <>
@@ -239,7 +239,7 @@ function SignInPageInner() {
 
           <p className="mt-8 text-center text-sm text-slate-500">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-amber-600 font-bold hover:text-amber-700 transition-colors">
+            <Link href="/register" className="text-red-600 font-bold hover:text-red-700 transition-colors">
               Create one free
             </Link>
           </p>
@@ -255,7 +255,7 @@ export default function SignInPage() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-white">
           <div className="flex flex-col items-center gap-4">
-            <div className="h-10 w-10 rounded-full border-2 border-slate-200 border-t-amber-500 animate-spin" />
+            <div className="h-10 w-10 rounded-full border-2 border-slate-200 border-t-red-500 animate-spin" />
             <p className="text-slate-400 text-sm font-medium">Loading…</p>
           </div>
         </div>

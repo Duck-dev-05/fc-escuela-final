@@ -60,8 +60,8 @@ function statusStyles(status: string) {
       bar: 'from-red-500 to-red-400',
     }
   return {
-    pill: 'border-amber-200 bg-amber-50 text-amber-900',
-    bar: 'from-amber-500 to-amber-400',
+    pill: 'border-red-200 bg-red-50 text-red-900',
+    bar: 'from-red-500 to-red-400',
   }
 }
 
@@ -140,7 +140,7 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
         <div className="border-b border-slate-100 px-5 py-5 sm:px-8 sm:py-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-amber-400 shadow-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-red-400 shadow-sm">
                 <FaTrophy className="text-lg" />
               </div>
               <div>
@@ -159,7 +159,7 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
         </div>
 
         <div className="relative px-5 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(245,158,11,0.06),transparent)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(239,68,68,0.04),transparent)]" />
 
           <div className="relative grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-6">
             {/* Home */}
@@ -188,8 +188,8 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
                   </span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center rounded-2xl border border-amber-200/80 bg-gradient-to-b from-amber-50/90 to-white px-8 py-6 text-center shadow-sm sm:px-10 sm:py-8">
-                  <div className="flex items-center gap-2 text-amber-700">
+                <div className="flex flex-col items-center rounded-xl border border-red-200/80 bg-gradient-to-b from-red-50/90 to-white px-8 py-6 text-center shadow-sm sm:px-10 sm:py-8">
+                  <div className="flex items-center gap-2 text-red-700">
                     <FaClock className="text-sm" />
                     <span className="text-[11px] font-semibold uppercase tracking-wider">Kickoff</span>
                   </div>
@@ -227,9 +227,9 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
                 whileInView="visible"
                 viewport={{ once: true, margin: '-30px' }}
                 variants={fadeUp}
-                className="flex gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
+                className="flex gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-700">
                   <row.icon className="text-sm" />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -279,8 +279,8 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
             ) : null}
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-slate-200 border-l-4 border-l-amber-500 bg-slate-50/50 p-5">
-                <div className="flex items-center gap-2 text-amber-800">
+              <div className="rounded-xl border border-slate-200 border-l-4 border-l-red-500 bg-slate-50/50 p-5">
+                <div className="flex items-center gap-2 text-red-800">
                   <FaFutbol />
                   <span className="text-[11px] font-semibold uppercase tracking-wider">Goal scorers</span>
                 </div>
@@ -315,9 +315,9 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
             variants={fadeUp}
             className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/80 p-6 text-center shadow-sm md:p-7"
           >
-            <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-amber-400/15 blur-2xl" />
+            <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-red-400/15 blur-2xl" />
             <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Player of the match</p>
-            <div className="mx-auto mt-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-md shadow-amber-500/25">
+            <div className="mx-auto mt-5 flex h-14 w-14 items-center justify-center rounded-xl bg-red-500 text-white shadow-md shadow-red-500/25">
               <FaTrophy className="text-xl" />
             </div>
             <p className="mt-5 text-xl font-black uppercase tracking-tight text-slate-900 md:text-2xl">
@@ -336,7 +336,7 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-amber-400">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-900 text-red-400">
                   <FaUsers className="text-base" />
                 </div>
                 <div>
@@ -352,7 +352,7 @@ export default function MatchDetails({ match }: MatchDetailsProps) {
               <>
                 <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-400 transition-all"
                     style={{ width: `${capacityPct}%` }}
                   />
                 </div>

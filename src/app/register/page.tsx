@@ -39,9 +39,9 @@ export default function RegisterPage() {
     if (/[^A-Za-z0-9]/.test(password)) score++;
     const map = [
       { label: "Weak", color: "bg-red-500", width: "25%", score: 1 },
-      { label: "Fair", color: "bg-amber-500", width: "50%", score: 2 },
-      { label: "Strong", color: "bg-blue-500", width: "75%", score: 3 },
-      { label: "Excellent", color: "bg-emerald-500", width: "100%", score: 4 },
+      { label: "Fair", color: "bg-red-400", width: "50%", score: 2 },
+      { label: "Strong", color: "bg-slate-500", width: "75%", score: 3 },
+      { label: "Excellent", color: "bg-slate-400", width: "100%", score: 4 },
     ];
     return map[Math.max(0, score - 1)] || map[0];
   };
@@ -95,7 +95,7 @@ export default function RegisterPage() {
           className="absolute inset-0 opacity-20"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 70% 50%, #f59e0b40 0%, transparent 60%), radial-gradient(circle at 20% 80%, #f59e0b20 0%, transparent 50%)",
+              "radial-gradient(circle at 70% 50%, #ef444440 0%, transparent 60%), radial-gradient(circle at 20% 80%, #ef444420 0%, transparent 50%)",
           }}
         />
         <div
@@ -116,21 +116,21 @@ export default function RegisterPage() {
             className="rounded-xl border border-white/10 shadow-lg"
           />
           <span className="text-white font-black text-xl tracking-tight">
-            FC <span className="text-amber-400">Escuela</span>
+            FC <span className="text-red-400">Escuela</span>
           </span>
         </div>
 
         <div className="relative z-10 px-12 pb-16">
-          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-amber-400 text-[10px] font-black uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+            <span className="text-red-400 text-[10px] font-black uppercase tracking-widest">
               Join the Club
             </span>
           </div>
           <h1 className="text-5xl font-black text-white leading-tight tracking-tight mb-4">
             Create your
             <br />
-            <span className="text-amber-400">Account</span>
+            <span className="text-red-400">Account</span>
           </h1>
           <p className="text-slate-400 text-base leading-relaxed max-w-sm">
             Become a member and unlock exclusive access to match tickets, academy news, and the full club experience.
@@ -143,8 +143,8 @@ export default function RegisterPage() {
               "Exclusive member content",
             ].map((benefit) => (
               <div key={benefit} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                  <FaCheckCircle className="text-amber-400 text-[9px]" />
+                <div className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                  <FaCheckCircle className="text-red-400 text-[9px]" />
                 </div>
                 <span className="text-slate-400 text-sm">{benefit}</span>
               </div>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
       </motion.div>
 
       {/* Right: Form Panel */}
@@ -173,7 +173,7 @@ export default function RegisterPage() {
               className="rounded-xl border border-slate-200 shadow"
             />
             <span className="text-slate-900 font-black text-lg tracking-tight">
-              FC <span className="text-amber-500">Escuela</span>
+              FC <span className="text-red-500">Escuela</span>
             </span>
           </div>
 
@@ -208,7 +208,7 @@ export default function RegisterPage() {
                     value={form.name}
                     onChange={handleChange}
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400"
                     placeholder="Your name"
                   />
                 </div>
@@ -223,7 +223,7 @@ export default function RegisterPage() {
                     value={form.email}
                     onChange={handleChange}
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -239,12 +239,12 @@ export default function RegisterPage() {
                       value={form.password}
                       onChange={handleChange}
                       required
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400 pr-12"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400 pr-12"
                       placeholder="Min. 8 characters"
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors"
+                      className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-red-500 transition-colors"
                       onClick={() => setShowPassword((v) => !v)}
                     >
                       {showPassword ? (
@@ -267,10 +267,10 @@ export default function RegisterPage() {
                         strength.score <= 1
                           ? "text-red-500"
                           : strength.score === 2
-                          ? "text-amber-500"
+                          ? "text-red-400"
                           : strength.score === 3
-                          ? "text-blue-500"
-                          : "text-emerald-500"
+                          ? "text-slate-500"
+                          : "text-slate-400"
                       }`}>
                         {strength.label}
                       </p>
@@ -289,12 +289,12 @@ export default function RegisterPage() {
                       value={form.confirmPassword}
                       onChange={handleChange}
                       required
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all placeholder:text-slate-400 pr-12"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-slate-400 pr-12"
                       placeholder="Repeat your password"
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-amber-500 transition-colors"
+                      className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-red-500 transition-colors"
                       onClick={() => setShowConfirmPassword((v) => !v)}
                     >
                       {showConfirmPassword ? (
@@ -317,7 +317,7 @@ export default function RegisterPage() {
                 )}
 
                 {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium rounded-xl">
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium rounded-lg">
                     {error}
                   </div>
                 )}
@@ -325,7 +325,7 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 bg-slate-950 hover:bg-amber-500 text-white hover:text-slate-950 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
+                  className="w-full h-12 bg-slate-950 hover:bg-red-500 text-white hover:text-white rounded-lg font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-slate-950/10"
                 >
                   {loading ? (
                     <>
@@ -342,7 +342,7 @@ export default function RegisterPage() {
                 Already have an account?{" "}
                 <Link
                   href="/login"
-                  className="text-amber-600 font-bold hover:text-amber-700 transition-colors"
+                  className="text-red-600 font-bold hover:text-red-700 transition-colors"
                 >
                   Sign in
                 </Link>
