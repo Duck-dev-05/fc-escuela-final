@@ -33,8 +33,8 @@ export default function MatchAnalytics() {
 
    const analysisStats = [
       { label: 'Possession', val: '58%', icon: FaChartPie, color: 'yellow-500' },
-      { label: 'Pass Accuracy', val: '86%', icon: FaBullseye, color: 'blue-500' },
-      { label: 'Expected Goals (xG)', val: '2.4', icon: FaChartBar, color: 'green-500' },
+      { label: 'Pass Accuracy', val: '86%', icon: FaBullseye, color: 'clubRed-500' },
+      { label: 'Expected Goals (xG)', val: '2.4', icon: FaChartBar, color: 'clubRed-500' },
       { label: 'Tactical Rating', val: '92%', icon: FaShieldAlt, color: 'yellow-500' },
    ]
 
@@ -99,7 +99,7 @@ export default function MatchAnalytics() {
                      <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] block skew-x-[20deg]">Status: Analytics Engine</span>
                   </div>
                   <div className="flex items-center gap-3">
-                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse" />
+                     <div className="w-1.5 h-1.5 rounded-full bg-clubRed-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse" />
                      <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">Secure Link // Active</span>
                   </div>
                </div>
@@ -199,7 +199,7 @@ export default function MatchAnalytics() {
                                       <h3 className="text-[12px] font-black text-white uppercase tracking-[0.4em] italic">AI Match Insights</h3>
                                       <div className="flex items-center gap-4">
                                          <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-clubRed-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse" />
                                             <span className="text-[8px] text-slate-500 font-mono tracking-widest uppercase">Data Ready</span>
                                          </div>
                                          <div className="w-[1px] h-3 bg-white/10" />
@@ -233,13 +233,13 @@ export default function MatchAnalytics() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mt-16 pb-16 border-b border-white/5">
                                            <div className="space-y-8">
                                               <div className="flex items-center gap-4">
-                                                 <div className="w-3 h-3 glass-card border-blue-500 bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
-                                                  <p className="text-[11px] text-blue-400 font-black uppercase tracking-[0.4em]">Efficiency</p>
+                                                 <div className="w-3 h-3 glass-card border-clubRed-500 bg-clubRed-500/20 shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+                                                  <p className="text-[11px] text-clubRed-400 font-black uppercase tracking-[0.4em]">Efficiency</p>
                                               </div>
                                               <ul className="space-y-6 opacity-80 border-l border-white/5 pl-8">
                                                  {aiReport.efficiency?.map((point: string, i: number) => (
                                                     <li key={i} className="flex gap-4 group/point relative">
-                                                       <div className="absolute -left-[33px] top-1.5 w-2 h-2 rounded-full bg-blue-500 scale-0 group-hover/point:scale-100 transition-transform" />
+                                                       <div className="absolute -left-[33px] top-1.5 w-2 h-2 rounded-full bg-clubRed-500 scale-0 group-hover/point:scale-100 transition-transform" />
                                                        <span className="text-yellow-500/40 text-[10px] pt-0.5">{'>'}</span>
                                                        <span className="text-[12px] leading-relaxed italic group-hover:text-white transition-colors">{point}</span>
                                                     </li>
@@ -289,8 +289,8 @@ export default function MatchAnalytics() {
                                     <div className="grid grid-cols-3 gap-8">
                                        {[
                                            { label: 'Intensity', val: aiReport.metrics?.intensity, color: 'text-white' },
-                                           { label: 'Win Probability', val: aiReport.metrics?.success_rate, color: 'text-green-500' },
-                                           { label: 'Team Cohesion', val: aiReport.metrics?.sync_link, color: 'text-blue-500 italic' },
+                                           { label: 'Win Probability', val: aiReport.metrics?.success_rate, color: 'text-clubRed-500' },
+                                           { label: 'Team Cohesion', val: aiReport.metrics?.sync_link, color: 'text-clubRed-500 italic' },
                                        ].map((m, idx) => (
                                           <div key={idx} className="p-6 glass-card border-white/5 bg-slate-950/60 text-center hover:border-white/20 transition-all">
                                              <p className="text-[8px] text-slate-500 font-black uppercase tracking-widest mb-3">{m.label}</p>
@@ -313,7 +313,7 @@ export default function MatchAnalytics() {
                         
                         <div className="relative z-10">
                            <div className="flex items-center gap-6 mb-12">
-                               <div className="px-5 py-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm skew-x-[-15deg]">
+                               <div className="px-5 py-1.5 bg-clubRed-500/10 border border-clubRed-500/20 text-clubRed-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm skew-x-[-15deg]">
                                   <span className="block skew-x-[15deg]">Data Verified</span>
                                </div>
                                <span className="text-[8px] text-slate-700 font-mono tracking-widest pt-1 px-4 border-l border-white/5 uppercase">Report ID: ANALYTICS-9</span>
@@ -401,7 +401,7 @@ export default function MatchAnalytics() {
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                          {[
                             { icon: FaBolt, label: 'Intensity', val: '8.4', color: 'yellow-500', bg: 'bg-yellow-500/[0.03]' },
-                            { icon: FaShieldAlt, label: 'Clean Sheet Probability', val: '62%', color: 'blue-500', bg: 'bg-blue-500/[0.03]' },
+                            { icon: FaShieldAlt, label: 'Clean Sheet Probability', val: '62%', color: 'clubRed-500', bg: 'bg-clubRed-500/[0.03]' },
                             { icon: FaCrosshairs, label: 'Precision', val: '0.92', color: 'red-500', bg: 'bg-red-500/[0.03]' },
                          ].map((t, idx) => (
                            <div key={idx} className={`glass-card hud-border p-10 ${t.bg} border-white/5 flex flex-col items-center justify-center text-center group hover:border-${t.color}/30 transition-all duration-500`}>

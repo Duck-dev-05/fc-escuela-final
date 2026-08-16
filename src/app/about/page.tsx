@@ -29,17 +29,17 @@ const pillars = [
     title: 'Mission',
     icon: FaRocket,
     desc: 'Create an environment where technical excellence and leadership grow together, so every player can push beyond their limits with purpose.',
-    accentBg: 'bg-red-500/10',
-    accentText: 'text-red-400',
-    borderTop: 'border-t-emerald-500/60',
+    accentBg: 'bg-clubRed-500/10',
+    accentText: 'text-clubRed-400',
+    borderTop: 'border-t-clubRed-500/60',
   },
   {
     title: 'Vision',
     icon: FaEye,
     desc: 'Set a high standard for academy football—uniting diverse talent into squads that play with intelligence, discipline, and identity.',
-    accentBg: 'bg-sky-500/10',
-    accentText: 'text-sky-400',
-    borderTop: 'border-t-sky-500/60',
+    accentBg: 'bg-clubRed-500/10',
+    accentText: 'text-clubRed-400',
+    borderTop: 'border-t-clubRed-500/60',
   },
   {
     title: 'Values',
@@ -86,18 +86,18 @@ const contacts = [
     value: 'khunhatruongcoma7@gmail.com',
     icon: FaEnvelope,
     href: 'mailto:khunhatruongcoma7@gmail.com',
-    accentBg: 'bg-red-500/10',
-    accentText: 'text-red-400',
-    borderTop: 'border-t-emerald-500/60',
+    accentBg: 'bg-clubRed-500/10',
+    accentText: 'text-clubRed-400',
+    borderTop: 'border-t-clubRed-500/60',
   },
   {
     label: 'Phone',
     value: '+84 086-581-7605',
     icon: FaPhone,
     href: 'tel:+840865817605',
-    accentBg: 'bg-sky-500/10',
-    accentText: 'text-sky-400',
-    borderTop: 'border-t-sky-500/60',
+    accentBg: 'bg-clubRed-500/10',
+    accentText: 'text-clubRed-400',
+    borderTop: 'border-t-clubRed-500/60',
   },
   {
     label: 'Location',
@@ -129,7 +129,7 @@ export default function AboutPage() {
         {/* Club stripe */}
         <div className="club-top-stripe" />
         {/* Glows */}
-        <div className="absolute -left-32 top-24 h-80 w-80 rounded-full bg-red-500/10 blur-[100px] -z-10" />
+        <div className="absolute -left-32 top-24 h-80 w-80 rounded-full bg-clubRed-500/10 blur-[100px] -z-10" />
         <div className="absolute -right-24 bottom-10 h-72 w-72 rounded-full bg-amber-500/6 blur-[80px] -z-10" />
 
         <div className="container-custom">
@@ -156,9 +156,9 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-red-400"
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-clubRed-500/30 bg-clubRed-500/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-clubRed-400"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-clubRed-500 animate-pulse" />
               About the academy
               <FaFutbol className="text-[9px] text-emerald-600" />
             </motion.p>
@@ -191,7 +191,7 @@ export default function AboutPage() {
             >
               <Link
                 href="/register"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-7 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-red-500 sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-clubRed-500 px-7 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-clubRed-600 sm:w-auto"
                 style={{ boxShadow: '0 0 20px rgba(16,185,129,0.3)' }}
               >
                 Join trials <FaArrowRight className="text-[10px]" />
@@ -241,7 +241,7 @@ export default function AboutPage() {
                   <ul className="mt-4 flex flex-1 flex-col gap-2.5">
                     {item.items.map((val) => (
                       <li key={val} className="flex items-center gap-2 text-sm text-slate-400">
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-clubRed-500" />
                         {val}
                       </li>
                     ))}
@@ -285,13 +285,13 @@ export default function AboutPage() {
                   className="relative pl-12"
                 >
                   <div
-                    className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#0a0f1e] bg-emerald-500 shadow-[0_0_16px_rgba(16,185,129,0.5)]"
+                    className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#0a0f1e] bg-clubRed-500 shadow-[0_0_16px_rgba(239,68,68,0.5)]"
                     aria-hidden
                   >
                     <span className="h-2 w-2 rounded-full bg-white" />
                   </div>
                   <div className="glass-card-hover p-5 md:p-6">
-                    <span className="text-xs font-bold uppercase tracking-wider text-red-400">{m.year}</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-clubRed-400">{m.year}</span>
                     <h3 className="mt-1 text-lg font-black uppercase tracking-tight text-white">{m.label}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-slate-500">{m.detail}</p>
                   </div>
@@ -358,7 +358,7 @@ export default function AboutPage() {
             className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0a1a12] via-[#0a0f1e] to-[#0a0f1e] px-6 py-14 text-center shadow-2xl md:px-12 md:py-16"
           >
             {/* Green glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-40 bg-red-500/10 blur-3xl rounded-full" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-40 bg-clubRed-500/10 blur-3xl rounded-full" />
             {/* Football icon */}
             <div className="absolute right-8 bottom-8 text-red-500/5">
               <FaFutbol className="text-[120px]" />
@@ -374,7 +374,7 @@ export default function AboutPage() {
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Link
                   href="/register"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-8 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-red-500 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-clubRed-500 px-8 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-clubRed-600 sm:w-auto"
                   style={{ boxShadow: '0 0 24px rgba(16,185,129,0.3)' }}
                 >
                   Register <FaArrowRight className="text-[10px]" />

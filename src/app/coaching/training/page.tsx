@@ -47,7 +47,7 @@ export default function TrainingProtocols() {
                                  <FaClock className="text-yellow-500/50" /> {session.time} / {session.duration}
                               </span>
                               <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
-                                 session.load === 'HIGH' ? 'bg-red-500/10 text-red-500' : 'bg-blue-500/10 text-blue-500'
+                                 session.load === 'HIGH' ? 'bg-clubRed-500/10 text-clubRed-500' : 'bg-clubRed-500/10 text-clubRed-500'
                               }`}>LOAD_{session.load}</span>
                            </div>
                         </div>

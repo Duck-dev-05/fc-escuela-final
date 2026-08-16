@@ -19,7 +19,7 @@ export default function NotFound() {
 
       {/* Soft glow blobs */}
       <div className="pointer-events-none absolute -left-32 top-1/4 h-72 w-72 rounded-full bg-amber-400/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-32 bottom-1/4 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-1/4 h-72 w-72 rounded-full bg-clubRed-400/10 blur-3xl" />
 
       {/* Card */}
       <div className="relative z-10 flex w-full max-w-md flex-col items-center rounded-3xl border border-slate-200 bg-white/90 px-8 py-12 shadow-xl backdrop-blur-sm text-center">

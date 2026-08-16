@@ -40,7 +40,7 @@ export default function RegisterPage() {
     const map = [
       { label: "Weak", color: "bg-red-500", width: "25%", score: 1 },
       { label: "Fair", color: "bg-amber-500", width: "50%", score: 2 },
-      { label: "Strong", color: "bg-blue-500", width: "75%", score: 3 },
+      { label: "Strong", color: "bg-clubRed-500", width: "75%", score: 3 },
       { label: "Excellent", color: "bg-emerald-500", width: "100%", score: 4 },
     ];
     return map[Math.max(0, score - 1)] || map[0];
@@ -269,8 +269,8 @@ export default function RegisterPage() {
                           : strength.score === 2
                           ? "text-amber-500"
                           : strength.score === 3
-                          ? "text-blue-500"
-                          : "text-red-500"
+                          ? "text-clubRed-500"
+                          : "text-emerald-500"
                       }`}>
                         {strength.label}
                       </p>

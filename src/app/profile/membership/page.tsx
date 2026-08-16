@@ -301,7 +301,7 @@ export default function MembershipPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-slate-50/95 to-slate-50" />
         </div>
         <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-amber-400/15 blur-3xl -z-10" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl -z-10" />
+        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-clubRed-400/10 blur-3xl -z-10" />
 
         <div className="container-custom text-center">
           <motion.div

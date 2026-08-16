@@ -325,7 +325,7 @@ export default function CoachingDashboard() {
                               </div>
                               <div className="flex-1 overflow-hidden text-left">
                                  <div className="flex items-center gap-5 mb-3">
-                                    <span className={`text-[9px] font-black uppercase tracking-widest ${match.status === 'Finished' ? 'text-blue-500' : 'text-yellow-500'}`}>{match.status}</span>
+                                    <span className={`text-[9px] font-black uppercase tracking-widest ${match.status === 'Finished' ? 'text-clubRed-500' : 'text-yellow-500'}`}>{match.status}</span>
                                     <span className="text-[9px] text-slate-700 font-black uppercase tracking-[0.4em]">{match.competition}</span>
                                  </div>
                                  <h4 className="text-2xl font-black text-white uppercase tracking-tighter truncate italic">{match.homeTeam} vs {match.awayTeam}</h4>
