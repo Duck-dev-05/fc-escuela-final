@@ -42,7 +42,6 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown]   = useState(false)
   const [scrolled, setScrolled]           = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
-  const [hoveredIndex, setHoveredIndex]   = useState<number | null>(null)
 
   const pathname  = usePathname()
   const router    = useRouter()
@@ -117,84 +116,54 @@ export default function Navbar() {
     <>
       {/* ── Bar ─────────────────────────────────────────────────────────────── */}
       <nav
-        className={`fixed left-0 right-0 top-0 z-[100] transition-all duration-700 ease-out ${
+        className={`fixed left-0 right-0 top-0 z-[100] transition-all duration-300 ${
           scrolled
-            ? 'mx-4 mt-4 md:mx-8 rounded-3xl border border-white/10 bg-slate-950/85 shadow-[0_25px_60px_rgba(0,0,0,0.7)] backdrop-blur-3xl'
-            : 'border-b border-white/5 bg-slate-950/60 backdrop-blur-2xl'
+            ? 'border-b border-white/10 bg-slate-950/90 backdrop-blur-md'
+            : 'border-b border-white/5 bg-slate-950/70 backdrop-blur-sm'
         }`}
       >
-        {scrolled && (
-          <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none z-10" />
-        )}
-        <div className="mx-auto max-w-[1600px] px-6 md:px-10">
-          <div className={`flex items-center justify-between gap-4 transition-all duration-700 ease-out ${scrolled ? 'h-[64px]' : 'h-[80px]'}`}>
+        <div className="mx-auto max-w-[1400px] px-6 md:px-8">
+          <div className={`flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? 'h-16' : 'h-20'}`}>
 
             {/* ── Logo ── */}
             <Link
               href="/"
-              className="flex shrink-0 items-center gap-3.5 group select-none font-['Outfit']"
+              className="flex shrink-0 items-center gap-3 select-none font-['Outfit']"
             >
-              <div className={`relative flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all duration-700 ease-out group-hover:border-red-500/60 group-hover:shadow-[0_0_25px_rgba(239,68,68,0.3)] ${scrolled ? 'h-10 w-10' : 'h-12 w-12'}`}>
+              <div className={`relative flex items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-all duration-300 ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}>
                 <Image
                   src="/images/logo.jpg"
                   alt="FC Escuela"
                   width={40}
                   height={40}
-                  className="rounded-xl object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  className="rounded object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-red-500/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
               </div>
               <div className="flex flex-col">
-                <span className={`font-black tracking-wider text-white transition-all duration-700 ease-out leading-none flex items-center gap-2 ${scrolled ? 'text-lg' : 'text-xl'}`}>
-                  FC <span className="text-red-500 group-hover:text-red-400 transition-colors duration-500">ESCUELA</span>
-                  <span className="relative flex h-1.5 w-1.5 mt-0.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
-                  </span>
+                <span className={`font-bold tracking-wide text-white transition-all duration-300 leading-none ${scrolled ? 'text-base' : 'text-lg'}`}>
+                  FC <span className="text-red-500">ESCUELA</span>
                 </span>
-                <span className={`text-[8px] font-bold tracking-[0.3em] text-slate-500 transition-all duration-700 ease-out leading-none mt-1 group-hover:text-red-500/70 ${scrolled ? 'opacity-0 h-0 overflow-hidden mt-0' : 'opacity-100'}`}>
+                <span className={`text-[7px] font-semibold tracking-[0.2em] text-slate-500 transition-all duration-300 leading-none mt-0.5 ${scrolled ? 'opacity-0 h-0' : 'opacity-100'}`}>
                   FOOTBALL ACADEMY
                 </span>
               </div>
             </Link>
 
             {/* ── Desktop Nav ── */}
-            <div 
-              className="hidden xl:flex items-center gap-1.5 bg-slate-900/50 border border-white/8 rounded-full px-2 py-1.5 backdrop-blur-xl relative shadow-[inset_0_1px_2px_rgba(255,255,255,0.08)]"
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {navigation.map((item, idx) => {
+            <div className="hidden xl:flex items-center gap-1">
+              {navigation.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    onMouseEnter={() => setHoveredIndex(idx)}
-                    className={`relative rounded-full px-5 py-2.5 text-[11px] font-semibold tracking-widest uppercase font-['Outfit'] transition-all duration-500 ease-out ${
+                    className={`px-4 py-2 text-xs font-medium tracking-wide uppercase font-['Outfit'] transition-colors ${
                       active
                         ? 'text-red-400'
-                        : 'text-slate-400 hover:text-slate-200'
+                        : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    <span className="relative z-10">{item.name}</span>
-                    
-                    {/* Hover indicator (sliding pill) */}
-                    {hoveredIndex === idx && (
-                      <motion.div
-                        layoutId="nav-hover-pill"
-                        className="absolute inset-0 rounded-full bg-white/[0.08] border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
-                        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                      />
-                    )}
-
-                    {/* Active page indicator */}
-                    {active && (
-                      <motion.div
-                        layoutId="nav-active-indicator"
-                        className="absolute bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-red-500 shadow-[0_0_12px_#ef4444]"
-                        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                      />
-                    )}
+                    {item.name}
                   </Link>
                 )
               })}
@@ -206,30 +175,25 @@ export default function Navbar() {
               {/* Search */}
               <div ref={searchRef} className="relative hidden lg:block">
                 <form onSubmit={handleSearch}>
-                  <div className={`flex items-center gap-2.5 rounded-full border bg-white/[0.04] px-4 transition-all duration-700 ease-out ${
+                  <div className={`flex items-center gap-2 rounded-lg border bg-white/[0.03] px-3 transition-all duration-300 ${
                     searchFocused
-                      ? 'w-72 border-red-500/50 bg-white/[0.08] shadow-[0_0_25px_rgba(239,68,68,0.15)]'
-                      : 'w-48 border-white/10 hover:border-white/20 hover:bg-white/[0.06]'
-                  } ${scrolled ? 'h-[40px]' : 'h-[46px]'}`}>
-                    <MagnifyingGlassIcon className={`h-4 w-4 shrink-0 transition-all duration-500 ease-out ${searchFocused ? 'text-red-500 scale-110' : 'text-slate-500'}`} />
+                      ? 'w-64 border-white/20 bg-white/[0.05]'
+                      : 'w-40 border-white/10 hover:border-white/15'
+                  } ${scrolled ? 'h-9' : 'h-10'}`}>
+                    <MagnifyingGlassIcon className={`h-4 w-4 shrink-0 transition-colors duration-200 ${searchFocused ? 'text-slate-300' : 'text-slate-500'}`} />
                     <input
                       ref={inputRef}
                       type="text"
-                      placeholder="Search club updates..."
+                      placeholder="Search..."
                       value={search}
                       onChange={e => setSearch(e.target.value)}
                       onFocus={() => setSearchFocused(true)}
                       onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
-                      className="w-full bg-transparent text-xs font-semibold text-slate-200 placeholder:text-slate-600 focus:outline-none"
+                      className="w-full bg-transparent text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none"
                     />
-                    {!searchFocused && !search && (
-                      <div className="hidden sm:flex items-center gap-0.5 rounded-lg px-2 py-1 bg-white/5 border border-white/10 text-[9px] font-bold text-slate-500 font-mono select-none pointer-events-none">
-                        <span>⌘</span><span>K</span>
-                      </div>
-                    )}
                     {search && (
-                      <button type="button" onClick={() => { setSearch(''); setShowDropdown(false) }} className="hover:scale-110 transition-transform duration-300">
-                        <XMarkIcon className="h-4 w-4 text-slate-500 hover:text-slate-300" />
+                      <button type="button" onClick={() => { setSearch(''); setShowDropdown(false) }} className="hover:text-slate-300 transition-colors">
+                        <XMarkIcon className="h-4 w-4 text-slate-500" />
                       </button>
                     )}
                   </div>
@@ -239,33 +203,25 @@ export default function Navbar() {
                 <AnimatePresence>
                   {showDropdown && searchResults && (
                     <motion.div
-                      initial={{ opacity: 0, y: 14, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.96 }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 24 }}
-                      className="absolute right-0 top-full mt-4 w-80 rounded-3xl border border-white/10 bg-slate-950/96 p-4 shadow-[0_25px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl z-50 overflow-hidden"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-full mt-2 w-72 rounded-lg border border-white/10 bg-slate-950/95 p-3 shadow-lg backdrop-blur-md z-50"
                     >
-                      <div className="absolute inset-0 bg-mesh-dark opacity-50 pointer-events-none" />
-                      
-                      <div className="relative z-10 space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                      <div className="space-y-3 max-h-[350px] overflow-y-auto">
                         {searchResults.news?.length > 0 && (
                           <div>
-                            <div className="flex items-center justify-between px-2 mb-2">
-                              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-red-500 font-['Outfit']">Club News</span>
-                              <span className="h-px flex-1 bg-gradient-to-r from-red-500/25 to-transparent ml-3" />
-                            </div>
-                            <div className="space-y-1.5">
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-2">News</p>
+                            <div className="space-y-1">
                               {searchResults.news.slice(0, 3).map((item: any) => (
                                 <Link
                                   key={item.id}
                                   href={`/news/${item.id}`}
                                   onClick={() => setShowDropdown(false)}
-                                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-300 group"
+                                  className="block px-2 py-2 text-xs text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                                 >
-                                  <span className="line-clamp-1 group-hover:translate-x-1 transition-transform duration-300">{item.title}</span>
-                                  <span className="text-[9px] text-slate-600 shrink-0 font-mono ml-2 group-hover:text-red-400 transition-colors">
-                                    {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                  </span>
+                                  {item.title}
                                 </Link>
                               ))}
                             </div>
@@ -274,32 +230,16 @@ export default function Navbar() {
 
                         {searchResults.team?.length > 0 && (
                           <div>
-                            <div className="flex items-center justify-between px-2 mb-2">
-                              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-red-500 font-['Outfit']">Squad & Staff</span>
-                              <span className="h-px flex-1 bg-gradient-to-r from-red-500/25 to-transparent ml-3" />
-                            </div>
-                            <div className="space-y-1.5">
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Team</p>
+                            <div className="space-y-1">
                               {searchResults.team.slice(0, 3).map((item: any) => (
                                 <Link
                                   key={item.id}
                                   href={`/team#${item.id}`}
                                   onClick={() => setShowDropdown(false)}
-                                  className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-300 group"
+                                  className="flex items-center gap-2 px-2 py-2 text-xs text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                                 >
-                                  <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/10 shrink-0 bg-white/5">
-                                    {item.image ? (
-                                      <Image src={item.image} alt={item.name} fill className="object-cover" />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-500">
-                                        {item.name.substring(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="line-clamp-1 text-xs font-semibold group-hover:translate-x-0.5 transition-transform">{item.name}</p>
-                                    <p className="text-[9px] text-slate-500 line-clamp-1">{item.role}</p>
-                                  </div>
-                                  <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all" />
+                                  <span>{item.name}</span>
                                 </Link>
                               ))}
                             </div>
@@ -308,27 +248,16 @@ export default function Navbar() {
                         
                         {searchResults.matches?.length > 0 && (
                           <div>
-                            <div className="flex items-center justify-between px-2 mb-2">
-                              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-red-500 font-['Outfit']">Fixtures</span>
-                              <span className="h-px flex-1 bg-gradient-to-r from-red-500/25 to-transparent ml-3" />
-                            </div>
-                            <div className="space-y-1.5">
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Matches</p>
+                            <div className="space-y-1">
                               {searchResults.matches.slice(0, 3).map((item: any) => (
                                 <Link
                                   key={item.id}
                                   href={`/matches/${item.id}`}
                                   onClick={() => setShowDropdown(false)}
-                                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-300 group"
+                                  className="block px-2 py-2 text-xs text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
                                 >
-                                  <div className="min-w-0 flex-1">
-                                    <p className="line-clamp-1 group-hover:translate-x-1 transition-transform duration-300">
-                                      {item.homeTeam} vs {item.awayTeam}
-                                    </p>
-                                    <p className="text-[9px] text-slate-500 line-clamp-1">{item.competition}</p>
-                                  </div>
-                                  <span className="text-[9px] text-slate-600 shrink-0 font-mono ml-2 group-hover:text-red-400 transition-colors">
-                                    {new Date(item.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                  </span>
+                                  {item.homeTeam} vs {item.awayTeam}
                                 </Link>
                               ))}
                             </div>
@@ -336,8 +265,8 @@ export default function Navbar() {
                         )}
 
                         {(!searchResults.news?.length && !searchResults.team?.length && !searchResults.matches?.length) && (
-                          <div className="py-8 text-center">
-                            <p className="text-xs text-slate-500">No updates found for "{search}"</p>
+                          <div className="py-4 text-center">
+                            <p className="text-xs text-slate-500">No results found</p>
                           </div>
                         )}
                       </div>
@@ -358,12 +287,12 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMenuOpen(v => !v)}
-                className={`xl:hidden flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition-all duration-500 ease-out hover:bg-white/10 hover:text-white ${scrolled ? 'h-10 w-10' : 'h-11 w-11'}`}
+                className={`xl:hidden flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 transition-colors hover:bg-white/10 hover:text-white ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}
                 aria-label="Toggle menu"
               >
                 {menuOpen
-                  ? <XMarkIcon className="h-4.5 w-4.5 text-red-500" />
-                  : <Bars3Icon className="h-4.5 w-4.5" />
+                  ? <XMarkIcon className="h-4 w-4" />
+                  : <Bars3Icon className="h-4 w-4" />
                 }
               </button>
             </div>
@@ -381,8 +310,8 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[90] bg-slate-950/70 backdrop-blur-xl xl:hidden"
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[90] bg-slate-950/80 backdrop-blur-sm xl:hidden"
               onClick={() => setMenuOpen(false)}
             />
 
@@ -392,81 +321,71 @@ export default function Navbar() {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-              className="fixed right-0 top-0 bottom-0 z-[95] flex w-80 flex-col bg-slate-950/96 border-l border-white/10 shadow-2xl backdrop-blur-3xl xl:hidden"
+              transition={{ duration: 0.3 }}
+              className="fixed right-0 top-0 bottom-0 z-[95] flex w-72 flex-col bg-slate-950 border-l border-white/10 shadow-xl xl:hidden"
             >
-              <div className="absolute inset-0 bg-mesh-dark opacity-60 pointer-events-none" />
-
               <div className="relative z-10 flex flex-col h-full">
                 {/* Drawer header */}
-                <div className="flex items-center justify-between border-b border-white/10 px-6 py-6">
-                  <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-3.5 font-['Outfit']">
-                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                      <Image src="/images/logo.jpg" alt="FC Escuela" width={36} height={36} className="rounded-2xl" />
+                <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                  <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 font-['Outfit']">
+                    <div className="overflow-hidden rounded-lg border border-white/10 bg-white/5">
+                      <Image src="/images/logo.jpg" alt="FC Escuela" width={32} height={32} className="rounded-lg" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="font-black text-white leading-none tracking-wider text-lg">FC <span className="text-red-500">ESCUELA</span></span>
-                      <span className="text-[7px] font-bold tracking-[0.25em] text-slate-500 leading-none mt-1">FOOTBALL ACADEMY</span>
+                      <span className="font-bold text-white leading-none tracking-wide text-sm">FC <span className="text-red-500">ESCUELA</span></span>
                     </div>
                   </Link>
                   <button
                     type="button"
                     onClick={() => setMenuOpen(false)}
-                    className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-all duration-300"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
                   >
-                    <XMarkIcon className="h-5 w-5 text-red-500" />
+                    <XMarkIcon className="h-4 w-4" />
                   </button>
                 </div>
 
                 {/* Nav links */}
-                <div className="flex-1 overflow-y-auto px-5 py-7 space-y-7">
-                  <nav className="space-y-2">
-                    {navigation.map((item, idx) => {
+                <div className="flex-1 overflow-y-auto px-4 py-5">
+                  <nav className="space-y-1">
+                    {navigation.map((item) => {
                       const active = pathname === item.href || pathname.startsWith(item.href + '/')
                       return (
-                        <motion.div
+                        <Link
                           key={item.name}
-                          initial={{ opacity: 0, x: 24 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.06 }}
+                          href={item.href}
+                          onClick={() => setMenuOpen(false)}
+                          className={`block px-3 py-2.5 text-xs font-medium tracking-wide font-['Outfit'] uppercase transition-colors rounded ${
+                            active
+                              ? 'text-red-400 bg-white/5'
+                              : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                          }`}
                         >
-                          <Link
-                            href={item.href}
-                            onClick={() => setMenuOpen(false)}
-                            className={`flex items-center justify-between rounded-2xl px-4 py-4 text-xs font-semibold tracking-wider font-['Outfit'] uppercase transition-all duration-300 border ${
-                              active
-                                ? 'bg-red-500/12 text-red-400 border-red-500/25 shadow-[0_0_20px_rgba(239,68,68,0.1)]'
-                                : 'text-slate-400 hover:bg-white/5 hover:text-white border-transparent'
-                            }`}
-                          >
-                            <span>{item.name}</span>
-                            <ChevronRightIcon className={`h-4 w-4 transition-transform duration-300 ${active ? 'text-red-500 translate-x-0.5' : 'text-slate-600'}`} />
-                          </Link>
-                        </motion.div>
+                          {item.name}
+                        </Link>
                       )
                     })}
                   </nav>
 
                   {/* Divider */}
-                  <div className="divider-red opacity-50" />
+                  <div className="my-4 border-t border-white/10" />
 
                   {/* Mobile search */}
                   <form onSubmit={handleSearch}>
-                    <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 h-12 transition-all duration-300 focus-within:border-red-500/50 focus-within:bg-white/[0.08] focus-within:shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                    <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 h-9 transition-colors focus-within:border-white/20">
                       <MagnifyingGlassIcon className="h-4 w-4 shrink-0 text-slate-500" />
                       <input
                         type="text"
-                        placeholder="Search updates..."
+                        placeholder="Search..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full bg-transparent text-xs font-semibold text-slate-300 placeholder:text-slate-600 focus:outline-none"
+                        className="w-full bg-transparent text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none"
                       />
                     </div>
                   </form>
                 </div>
 
                 {/* Drawer footer */}
-                <div className="border-t border-white/10 px-6 py-6 bg-black/30">
+                <div className="border-t border-white/10 px-4 py-4">
                   <MobileAuthSection onClose={() => setMenuOpen(false)} />
                 </div>
               </div>
@@ -490,19 +409,19 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
 
   if (!session) {
     return (
-      <div className="hidden items-center gap-3.5 sm:flex">
+      <div className="hidden items-center gap-3 sm:flex">
         <Link
           href="/login"
-          className={`flex items-center justify-center rounded-full bg-white/5 border border-white/10 font-semibold text-[11px] tracking-widest uppercase font-['Outfit'] text-slate-300 transition-all duration-500 ease-out hover:bg-white/10 hover:border-white/20 hover:text-white ${
-            scrolled ? 'h-[40px] px-5' : 'h-[46px] px-6'
+          className={`px-4 py-2 text-xs font-medium tracking-wide uppercase font-['Outfit'] text-slate-300 hover:text-white transition-colors rounded ${
+            scrolled ? 'h-9' : 'h-10'
           }`}
         >
           Log in
         </Link>
         <Link
           href="/register"
-          className={`hidden items-center justify-center rounded-full bg-red-500 font-semibold text-[11px] tracking-widest uppercase font-['Outfit'] text-white transition-all duration-500 ease-out hover:bg-red-600 hover:shadow-[0_0_25px_rgba(239,68,68,0.45)] hover:scale-[1.03] md:flex ${
-            scrolled ? 'h-[40px] px-5' : 'h-[46px] px-6'
+          className={`px-4 py-2 text-xs font-medium tracking-wide uppercase font-['Outfit'] bg-red-500 text-white hover:bg-red-600 transition-colors rounded md:flex ${
+            scrolled ? 'h-9' : 'h-10'
           }`}
         >
           Register
@@ -516,18 +435,18 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
       <button
         type="button"
         onClick={() => setAccountOpen(!accountOpen)}
-        className={`flex items-center gap-3 rounded-full border border-white/10 bg-white/5 pl-2 pr-4 transition-all duration-500 ease-out hover:bg-white/10 hover:border-white/20 ${scrolled ? 'h-[40px]' : 'h-[46px]'}`}
+        className={`flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 pl-2 pr-3 transition-colors hover:bg-white/10 ${scrolled ? 'h-9' : 'h-10'}`}
       >
         <div className="relative">
           <ProfileImage
             src={session.user?.image}
             name={session.user?.name}
-            size={scrolled ? 30 : 34}
-            className="rounded-full border border-white/10"
+            size={scrolled ? 28 : 32}
+            className="rounded border border-white/10"
           />
-          <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-slate-950 bg-emerald-500" />
+          <span className="absolute -bottom-0.5 -right-0.5 h-1.5 w-1.5 rounded-full border-2 border-slate-950 bg-emerald-500" />
         </div>
-        <span className="hidden text-xs font-semibold tracking-wider font-['Outfit'] text-slate-200 md:block uppercase">
+        <span className="hidden text-xs font-medium tracking-wide font-['Outfit'] text-slate-200 md:block uppercase">
           {session.user?.name?.split(' ')[0]}
         </span>
       </button>
@@ -535,50 +454,41 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
       <AnimatePresence>
         {accountOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 14, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 24 }}
-            className="absolute right-0 top-full mt-4 w-72 rounded-3xl border border-white/10 bg-slate-950/96 p-3 shadow-[0_25px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl z-50 overflow-hidden"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.2 }}
+            className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-white/10 bg-slate-950/95 p-2 shadow-lg backdrop-blur-md z-50"
           >
-            <div className="absolute inset-0 bg-mesh-dark opacity-50 pointer-events-none" />
+            <div className="mb-2 pb-2 border-b border-white/10">
+              <p className="px-2 py-1 text-xs font-medium text-slate-200 truncate">{session.user?.name}</p>
+              <p className="px-2 py-1 text-[10px] text-slate-500 truncate">{session.user?.email}</p>
+            </div>
 
-            <div className="relative z-10">
-              {/* User header */}
-              <div className="flex items-center gap-3 rounded-2xl bg-white/[0.05] p-4 mb-3 border border-white/8">
-                <ProfileImage src={session.user?.image} name={session.user?.name} size={40} className="rounded-2xl border border-white/10" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-bold font-['Outfit'] text-slate-100 tracking-wide">{session.user?.name}</p>
-                  <p className="truncate text-[10px] text-slate-500 font-medium">{session.user?.email}</p>
-                </div>
-              </div>
-
-              {/* Menu items */}
-              <div className="space-y-1">
-                {[
-                  { name: 'Profile',      href: '/profile',            icon: UserCircleIcon },
-                  { name: 'Support',      href: '/support',            icon: LifebuoyIcon },
-                ].map(item => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="group flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-semibold font-['Outfit'] text-slate-400 transition duration-300 hover:bg-white/5 hover:text-white"
-                  >
-                    <item.icon className="h-4 w-4 shrink-0 text-slate-600 transition duration-300 group-hover:text-red-500 group-hover:scale-110" />
-                    <span className="tracking-wider uppercase">{item.name}</span>
-                  </Link>
-                ))}
-              </div>
-
-              <div className="mt-3 border-t border-white/10 pt-3">
-                <button
-                  onClick={() => signOut()}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-semibold font-['Outfit'] text-rose-400 transition duration-300 hover:bg-rose-500/10"
+            <div className="space-y-0.5">
+              {[
+                { name: 'Profile',      href: '/profile',            icon: UserCircleIcon },
+                { name: 'Support',      href: '/support',            icon: LifebuoyIcon },
+              ].map(item => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="flex items-center gap-2 px-2 py-2 text-xs font-medium text-slate-400 hover:bg-white/5 hover:text-white rounded transition-colors"
                 >
-                  <ArrowRightOnRectangleIcon className="h-4 w-4" />
-                  <span className="tracking-wider uppercase">Sign out</span>
-                </button>
-              </div>
+                  <item.icon className="h-4 w-4 text-slate-500" />
+                  <span className="tracking-wide uppercase">{item.name}</span>
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-2 pt-2 border-t border-white/10">
+              <button
+                onClick={() => signOut()}
+                className="flex w-full items-center gap-2 px-2 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
+              >
+                <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                <span className="tracking-wide uppercase">Sign out</span>
+              </button>
             </div>
           </motion.div>
         )}
@@ -592,27 +502,27 @@ function MobileAuthSection({ onClose }: { onClose: () => void }) {
 
   if (session) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-3 rounded-2xl bg-white/[0.05] border border-white/10 p-4">
-          <ProfileImage src={session.user?.image} name={session.user?.name} size={40} className="rounded-2xl border border-white/10" />
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 rounded-lg bg-white/5 border border-white/10 p-3">
+          <ProfileImage src={session.user?.image} name={session.user?.name} size={36} className="rounded border border-white/10" />
           <div className="min-w-0">
-            <p className="truncate text-xs font-bold font-['Outfit'] text-slate-100 tracking-wide">{session.user?.name}</p>
-            <p className="truncate text-[10px] text-slate-500 font-medium">{session.user?.email}</p>
+            <p className="truncate text-xs font-medium text-slate-200">{session.user?.name}</p>
+            <p className="truncate text-[10px] text-slate-500">{session.user?.email}</p>
           </div>
         </div>
         <Link 
           href="/profile" 
           onClick={onClose} 
-          className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-xs font-semibold font-['Outfit'] text-slate-400 hover:bg-white/5 hover:text-white transition-all duration-300 uppercase tracking-wider"
+          className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 hover:bg-white/5 hover:text-white rounded transition-colors"
         >
-          <UserCircleIcon className="h-5 w-5 text-slate-600" />
+          <UserCircleIcon className="h-4 w-4 text-slate-500" />
           <span>Profile</span>
         </Link>
         <button
           onClick={() => signOut()}
-          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-xs font-semibold font-['Outfit'] text-rose-400 hover:bg-rose-500/10 transition-all duration-300 uppercase tracking-wider"
+          className="flex w-full items-center gap-2 px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
         >
-          <ArrowRightOnRectangleIcon className="h-5 w-5" />
+          <ArrowRightOnRectangleIcon className="h-4 w-4" />
           <span>Sign out</span>
         </button>
       </div>
@@ -620,18 +530,18 @@ function MobileAuthSection({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <Link
         href="/login"
         onClick={onClose}
-        className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/5 py-3.5 text-xs font-semibold font-['Outfit'] text-slate-200 transition-all duration-300 hover:bg-white/10 hover:text-white uppercase tracking-wider"
+        className="block w-full text-center px-3 py-2 text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white rounded transition-colors"
       >
         Log in
       </Link>
       <Link
         href="/register"
         onClick={onClose}
-        className="flex w-full items-center justify-center rounded-full bg-red-500 py-3.5 text-xs font-semibold font-['Outfit'] text-white transition-all duration-300 hover:bg-red-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.45)] uppercase tracking-wider"
+        className="block w-full text-center px-3 py-2 text-xs font-medium bg-red-500 text-white hover:bg-red-600 rounded transition-colors"
       >
         Register
       </Link>
