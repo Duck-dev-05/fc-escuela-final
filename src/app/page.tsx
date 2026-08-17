@@ -28,6 +28,7 @@ export default function Home() {
   const { scrollYProgress } = useScroll()
   const yHero = useTransform(scrollYProgress, [0, 1], [0, 180])
   const opacityHero = useTransform(scrollYProgress, [0, 0.35], [1, 0])
+  const scaleHero = useTransform(scrollYProgress, [0, 0.5], [1.05, 1.15])
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -109,21 +110,22 @@ export default function Home() {
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section className="relative isolate overflow-hidden min-h-screen flex items-center">
-        {/* Background image with parallax */}
-        <motion.div style={{ y: yHero }} className="absolute inset-0 -z-20">
+        {/* Background image with parallax and zoom */}
+        <motion.div style={{ y: yHero, scale: scaleHero }} className="absolute inset-0 -z-20">
           <Image
             src="/images/hero_final.jpg"
             alt="FC Escuela hero"
             fill
             priority
-            className="object-cover opacity-30"
+            className="object-cover opacity-30 transition-all duration-1000"
           />
           <div className="absolute inset-0 hero-overlay" />
         </motion.div>
 
         {/* Ambient glows */}
         <div className="absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-red-500/8 blur-[120px] -z-10 animate-float" />
-        <div className="absolute -right-40 bottom-1/4 h-80 w-80 rounded-full bg-slate-500/6 blur-[100px] -z-10 animate-float-delayed" />
+        <div className="absolute -right-40 bottom-1/4 h-80 w-80 rounded-full bg-indigo-950/20 blur-[100px] -z-10 animate-float-delayed" />
+        <div className="absolute left-1/4 top-1/4 h-60 w-60 rounded-full bg-red-500/5 blur-[80px] -z-10" />
 
         {/* Scan line */}
         <div className="absolute inset-0 -z-10 animate-scan" />
@@ -142,24 +144,30 @@ export default function Home() {
           >
             {/* Eyebrow badge */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-red-400 backdrop-blur-sm"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="mx-auto mb-8 inline-flex items-center gap-2.5 rounded-full border border-red-500/20 bg-red-500/5 px-4.5 py-2 text-[10px] font-bold uppercase tracking-[0.25em] text-red-400 backdrop-blur-md shadow-[0_0_15px_rgba(239,68,68,0.06)] hover:border-red-500/40 transition-colors duration-300"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-signal-pulse"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+              </span>
               Elite Football Academy
             </motion.div>
 
             {/* Title */}
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-6xl font-black uppercase tracking-tight text-white sm:text-7xl md:text-8xl lg:text-[100px] leading-none"
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="text-6xl font-black uppercase tracking-tight text-white sm:text-7xl md:text-8xl lg:text-[105px] leading-[0.9] font-['Outfit']"
             >
               FC{' '}
-              <span className="bg-gradient-to-br from-rose-300 via-red-500 to-red-700 bg-clip-text text-transparent">Escuela</span>
+              <span className="bg-gradient-to-r from-red-400 via-red-500 to-rose-600 bg-clip-text text-transparent relative select-none">
+                ESCUELA
+                <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent blur-[2px]" />
+              </span>
             </motion.h1>
 
             {/* Subtitle */}
@@ -167,7 +175,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.35 }}
-              className="mx-auto mt-7 max-w-2xl text-sm leading-relaxed text-slate-400 md:text-base"
+              className="mx-auto mt-9 max-w-2xl text-sm leading-relaxed text-slate-400 md:text-base"
             >
               Building the next generation of football talent through structured coaching,
               modern analysis, and competitive match exposure.
@@ -175,51 +183,62 @@ export default function Home() {
 
             {/* CTAs */}
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+              transition={{ duration: 0.7, delay: 0.45 }}
+              className="mt-12 flex flex-col items-center justify-center gap-4.5 sm:flex-row font-['Outfit']"
             >
               <Link
                 href="/register"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-red-500 px-8 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-red-600 sm:w-auto"
-                style={{ boxShadow: '0 0 20px rgba(239,68,68,0.3)' }}
+                className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-red-500 px-9 py-4.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-600 hover:shadow-[0_0_30px_rgba(239,68,68,0.45)] hover:scale-[1.03] sm:w-auto"
               >
-                Join Trials <FaArrowRight className="text-[10px]" />
+                <span>Join Trials</span> <FaArrowRight className="text-[9px] mt-0.5" />
               </Link>
               <Link
                 href="/about"
-                className="inline-flex w-full items-center justify-center rounded-lg border border-white/15 bg-white/5 px-8 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-slate-200 backdrop-blur transition-all hover:bg-white/10 hover:border-white/25 sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-full border border-white/10 bg-white/5 px-9 py-4.5 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-200 backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] sm:w-auto"
               >
-                Learn About Us
+                <span>Learn About Us</span>
               </Link>
             </motion.div>
 
             {/* Stats strip */}
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.65 }}
-              className="mt-16 flex flex-wrap items-center justify-center gap-8 md:gap-16"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="mt-20 grid grid-cols-3 gap-4 max-w-2xl mx-auto"
             >
               {[
                 { value: '2023', label: 'Founded' },
                 { value: '50+', label: 'Academy Players' },
                 { value: '100%', label: 'Dedicated' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <p className="text-3xl font-black text-white tracking-tight">{stat.value}</p>
-                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{stat.label}</p>
-                </div>
+              ].map((stat, idx) => (
+                <motion.div 
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 + (idx * 0.1) }}
+                  className="bg-white/[0.02] border border-white/5 rounded-2xl py-5 px-4 backdrop-blur-md hover:border-red-500/20 hover:bg-white/[0.04] transition-all duration-500 group"
+                >
+                  <p className="text-3xl font-black text-white tracking-tight font-['Outfit'] group-hover:text-red-400 transition-colors">{stat.value}</p>
+                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 group-hover:text-slate-400 transition-colors">{stat.label}</p>
+                </motion.div>
               ))}
             </motion.div>
           </motion.div>
         </div>
 
         {/* Scroll indicator */}
-        <motion.div style={{ opacity: opacityHero }} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-600">Scroll</span>
-          <div className="h-8 w-px bg-gradient-to-b from-slate-600 to-transparent" />
+        <motion.div style={{ opacity: opacityHero }} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer select-none">
+          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-500 font-['Outfit']">Scroll to explore</span>
+          <div className="w-[18px] h-[30px] rounded-full border border-slate-700 flex justify-center p-1">
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              className="w-1 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"
+            />
+          </div>
         </motion.div>
       </section>
 
