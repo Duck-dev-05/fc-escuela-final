@@ -117,97 +117,88 @@ export default function Home() {
             alt="FC Escuela hero"
             fill
             priority
-            className="object-cover opacity-30 transition-all duration-1000"
+            className="object-cover opacity-40 transition-all duration-1000"
           />
-          <div className="absolute inset-0 hero-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/50 to-slate-950/70" />
         </motion.div>
 
-        {/* Ambient glows */}
-        <div className="absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-red-500/8 blur-[120px] -z-10 animate-float" />
-        <div className="absolute -right-40 bottom-1/4 h-80 w-80 rounded-full bg-indigo-950/20 blur-[100px] -z-10 animate-float-delayed" />
-        <div className="absolute left-1/4 top-1/4 h-60 w-60 rounded-full bg-red-500/5 blur-[80px] -z-10" />
+        {/* Modern ambient glows */}
+        <div className="absolute -left-20 top-1/4 h-72 w-72 rounded-full bg-red-500/6 blur-[100px] -z-10" />
+        <div className="absolute -right-20 bottom-1/3 h-64 w-64 rounded-full bg-rose-500/4 blur-[90px] -z-10" />
+        <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-48 w-48 rounded-full bg-red-600/3 blur-[80px] -z-10" />
 
-        {/* Scan line */}
-        <div className="absolute inset-0 -z-10 animate-scan" />
-
-        {/* Ghost text decoration */}
-        <div className="absolute bottom-0 left-0 right-0 text-[clamp(80px,18vw,220px)] font-black uppercase tracking-tighter leading-none ghost-text select-none overflow-hidden opacity-30 -z-5 pointer-events-none">
-          ESCUELA
-        </div>
-
-        <div className="container-custom w-full relative z-10 pt-32 pb-24">
+        <div className="container-custom w-full relative z-10 pt-28 pb-20">
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto max-w-4xl text-center"
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="mx-auto max-w-5xl text-center"
           >
-            {/* Eyebrow badge */}
+            {/* Modern eyebrow badge */}
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="mx-auto mb-8 inline-flex items-center gap-2.5 rounded-full border border-red-500/20 bg-red-500/5 px-4.5 py-2 text-[10px] font-bold uppercase tracking-[0.25em] text-red-400 backdrop-blur-md shadow-[0_0_15px_rgba(239,68,68,0.06)] hover:border-red-500/40 transition-colors duration-300"
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="mx-auto mb-10 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-300 backdrop-blur-xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
             >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-signal-pulse"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-60"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
               </span>
               Elite Football Academy
             </motion.div>
 
-            {/* Title */}
+            {/* Modern title */}
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-              className="text-6xl font-black uppercase tracking-tight text-white sm:text-7xl md:text-8xl lg:text-[105px] leading-[0.9] font-['Outfit']"
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
+              className="text-7xl font-black uppercase tracking-tight text-white sm:text-8xl md:text-9xl lg:text-[120px] leading-[0.92] font-['Outfit']"
             >
               FC{' '}
               <span className="bg-gradient-to-r from-red-400 via-red-500 to-rose-600 bg-clip-text text-transparent relative select-none">
                 ESCUELA
-                <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent blur-[2px]" />
               </span>
             </motion.h1>
 
-            {/* Subtitle */}
+            {/* Modern subtitle */}
             <motion.p
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.35 }}
-              className="mx-auto mt-9 max-w-2xl text-sm leading-relaxed text-slate-400 md:text-base"
+              transition={{ duration: 0.8, delay: 0.38 }}
+              className="mx-auto mt-10 max-w-2xl text-base leading-relaxed text-slate-300 md:text-lg font-light"
             >
               Building the next generation of football talent through structured coaching,
               modern analysis, and competitive match exposure.
             </motion.p>
 
-            {/* CTAs */}
+            {/* Modern CTAs */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.45 }}
-              className="mt-12 flex flex-col items-center justify-center gap-4.5 sm:flex-row font-['Outfit']"
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row font-['Outfit']"
             >
               <Link
                 href="/register"
-                className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-red-500 px-9 py-4.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-600 hover:shadow-[0_0_30px_rgba(239,68,68,0.45)] hover:scale-[1.03] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 px-10 py-5 text-[12px] font-bold uppercase tracking-[0.18em] text-white transition-all duration-300 hover:from-red-600 hover:to-red-700 hover:shadow-[0_8px_30px_rgba(239,68,68,0.4)] hover:-translate-y-1 sm:w-auto"
               >
-                <span>Join Trials</span> <FaArrowRight className="text-[9px] mt-0.5" />
+                <span>Join Trials</span> <FaArrowRight className="text-[10px]" />
               </Link>
               <Link
                 href="/about"
-                className="inline-flex w-full items-center justify-center rounded-full border border-white/10 bg-white/5 px-9 py-4.5 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-200 backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/8 px-10 py-5 text-[12px] font-bold uppercase tracking-[0.18em] text-slate-200 backdrop-blur-xl transition-all duration-300 hover:bg-white/12 hover:border-white/25 hover:-translate-y-1 sm:w-auto"
               >
                 <span>Learn About Us</span>
               </Link>
             </motion.div>
 
-            {/* Stats strip */}
+            {/* Modern stats strip */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="mt-20 grid grid-cols-3 gap-4 max-w-2xl mx-auto"
+              transition={{ duration: 1.1, delay: 0.65 }}
+              className="mt-24 grid grid-cols-3 gap-6 max-w-3xl mx-auto"
             >
               {[
                 { value: '2023', label: 'Founded' },
@@ -216,27 +207,27 @@ export default function Home() {
               ].map((stat, idx) => (
                 <motion.div 
                   key={stat.label}
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 + (idx * 0.1) }}
-                  className="bg-white/[0.02] border border-white/5 rounded-2xl py-5 px-4 backdrop-blur-md hover:border-red-500/20 hover:bg-white/[0.04] transition-all duration-500 group"
+                  transition={{ duration: 0.7, delay: 0.65 + (idx * 0.12) }}
+                  className="bg-white/[0.03] border border-white/8 rounded-3xl py-6 px-5 backdrop-blur-xl hover:border-red-500/30 hover:bg-white/[0.06] transition-all duration-500 group"
                 >
-                  <p className="text-3xl font-black text-white tracking-tight font-['Outfit'] group-hover:text-red-400 transition-colors">{stat.value}</p>
-                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 group-hover:text-slate-400 transition-colors">{stat.label}</p>
+                  <p className="text-4xl font-black text-white tracking-tight font-['Outfit'] group-hover:text-red-400 transition-colors">{stat.value}</p>
+                  <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400 group-hover:text-slate-300 transition-colors">{stat.label}</p>
                 </motion.div>
               ))}
             </motion.div>
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div style={{ opacity: opacityHero }} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer select-none">
-          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-500 font-['Outfit']">Scroll to explore</span>
-          <div className="w-[18px] h-[30px] rounded-full border border-slate-700 flex justify-center p-1">
+        {/* Modern scroll indicator */}
+        <motion.div style={{ opacity: opacityHero }} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 cursor-pointer select-none">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-400 font-['Outfit']">Scroll to explore</span>
+          <div className="w-[20px] h-[34px] rounded-full border border-slate-600/50 flex justify-center p-1.5">
             <motion.div 
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              className="w-1 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"
+              animate={{ y: [0, 12, 0] }}
+              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+              className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
             />
           </div>
         </motion.div>
