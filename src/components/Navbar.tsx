@@ -42,6 +42,7 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown]   = useState(false)
   const [scrolled, setScrolled]           = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
+  const [hoveredIndex, setHoveredIndex]   = useState<number | null>(null)
 
   const pathname  = usePathname()
   const router    = useRouter()
@@ -106,52 +107,73 @@ export default function Navbar() {
       <nav
         className={`fixed left-0 right-0 top-0 z-[100] transition-all duration-500 ${
           scrolled
-            ? 'mx-3 mt-3 md:mx-6 rounded-2xl border border-white/10 bg-slate-950/90 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-2xl'
-            : 'border-b border-white/5 bg-slate-950/70 backdrop-blur-xl'
+            ? 'mx-4 mt-4 md:mx-8 rounded-2xl border border-white/10 bg-slate-950/80 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-2xl'
+            : 'border-b border-white/5 bg-slate-950/50 backdrop-blur-xl'
         }`}
       >
-        <div className="mx-auto max-w-[1600px] px-4 md:px-8">
-          <div className={`flex items-center justify-between gap-4 transition-all duration-500 ${scrolled ? 'h-[58px]' : 'h-[70px]'}`}>
+        <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+          <div className={`flex items-center justify-between gap-4 transition-all duration-500 ${scrolled ? 'h-[60px]' : 'h-[76px]'}`}>
 
             {/* ── Logo ── */}
             <Link
               href="/"
-              className="flex shrink-0 items-center gap-2.5 group select-none"
+              className="flex shrink-0 items-center gap-3 group select-none font-['Outfit']"
             >
-              <div className={`relative flex items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-all duration-300 group-hover:border-red-500/50 group-hover:bg-red-500/5 ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}>
+              <div className={`relative flex items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all duration-500 group-hover:border-red-500/50 group-hover:shadow-[0_0_20px_rgba(239,68,68,0.25)] ${scrolled ? 'h-9 w-9' : 'h-11 w-11'}`}>
                 <Image
                   src="/images/logo.jpg"
                   alt="FC Escuela"
-                  width={36}
-                  height={36}
-                  className="rounded-lg object-cover"
+                  width={40}
+                  height={40}
+                  className="rounded-lg object-cover transition-transform duration-500 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
-              <span className={`hidden font-black tracking-tight text-white transition-all duration-300 sm:block ${scrolled ? 'text-lg' : 'text-xl'}`}>
-                FC <span className="text-red-500">Escuela</span>
-              </span>
+              <div className="flex flex-col">
+                <span className={`font-black tracking-wider text-white transition-all duration-500 leading-none ${scrolled ? 'text-lg' : 'text-xl'}`}>
+                  FC <span className="text-red-500 group-hover:text-red-400 transition-colors duration-300">ESCUELA</span>
+                </span>
+                <span className={`text-[8px] font-bold tracking-[0.3em] text-slate-500 transition-all duration-500 leading-none mt-1 group-hover:text-red-500/60 ${scrolled ? 'opacity-0 h-0 overflow-hidden mt-0' : 'opacity-100'}`}>
+                  FOOTBALL ACADEMY
+                </span>
+              </div>
             </Link>
 
             {/* ── Desktop Nav ── */}
-            <div className="hidden xl:flex items-center gap-1">
-              {navigation.map((item) => {
+            <div 
+              className="hidden xl:flex items-center gap-1 bg-white/[0.02] border border-white/5 rounded-full px-2 py-1 backdrop-blur-md relative"
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              {navigation.map((item, idx) => {
                 const active = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`relative rounded-lg px-4 py-2 text-xs font-bold tracking-wide transition-all duration-200 ${
+                    onMouseEnter={() => setHoveredIndex(idx)}
+                    className={`relative rounded-full px-4 py-2 text-[11px] font-semibold tracking-widest uppercase font-['Outfit'] transition-colors duration-300 ${
                       active
-                        ? 'text-red-400 bg-red-500/10'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                        ? 'text-red-400'
+                        : 'text-slate-400 hover:text-slate-100'
                     }`}
                   >
-                    {item.name}
+                    <span className="relative z-10">{item.name}</span>
+                    
+                    {/* Hover indicator (sliding pill) */}
+                    {hoveredIndex === idx && (
+                      <motion.div
+                        layoutId="nav-hover-pill"
+                        className="absolute inset-0 rounded-full bg-white/[0.06] border border-white/10"
+                        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                      />
+                    )}
+
+                    {/* Active page indicator */}
                     {active && (
                       <motion.div
-                        layoutId="nav-indicator"
-                        className="absolute bottom-1 left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-red-500"
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        layoutId="nav-active-indicator"
+                        className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"
+                        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
                       />
                     )}
                   </Link>
@@ -160,29 +182,29 @@ export default function Navbar() {
             </div>
 
             {/* ── Right cluster ── */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
 
               {/* Search */}
               <div ref={searchRef} className="relative hidden lg:block">
                 <form onSubmit={handleSearch}>
-                  <div className={`flex items-center gap-2 rounded-lg border bg-white/5 px-3 transition-all duration-300 ${
+                  <div className={`flex items-center gap-2 rounded-full border bg-white/[0.03] px-3.5 transition-all duration-500 ${
                     searchFocused
-                      ? 'w-56 border-red-500/50 bg-white/8 shadow-[0_0_0_1px_rgba(239,68,68,0.2)]'
-                      : 'w-36 border-white/10 hover:border-white/20'
-                  } ${scrolled ? 'h-9' : 'h-10'}`}>
-                    <MagnifyingGlassIcon className={`h-4 w-4 shrink-0 transition-colors ${searchFocused ? 'text-red-500' : 'text-slate-500'}`} />
+                      ? 'w-64 border-red-500/40 bg-white/[0.07] shadow-[0_0_20px_rgba(239,68,68,0.12)]'
+                      : 'w-44 border-white/10 hover:border-white/20 hover:bg-white/[0.05]'
+                  } ${scrolled ? 'h-[38px]' : 'h-[44px]'}`}>
+                    <MagnifyingGlassIcon className={`h-4 w-4 shrink-0 transition-all duration-300 ${searchFocused ? 'text-red-500 scale-110' : 'text-slate-500'}`} />
                     <input
                       type="text"
-                      placeholder="Search…"
+                      placeholder="Search club updates..."
                       value={search}
                       onChange={e => setSearch(e.target.value)}
                       onFocus={() => setSearchFocused(true)}
                       onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
-                      className="w-full bg-transparent text-xs font-medium text-slate-200 placeholder:text-slate-600 focus:outline-none"
+                      className="w-full bg-transparent text-xs font-semibold text-slate-200 placeholder:text-slate-600 focus:outline-none"
                     />
                     {search && (
-                      <button type="button" onClick={() => { setSearch(''); setShowDropdown(false) }}>
-                        <XMarkIcon className="h-3.5 w-3.5 text-slate-500 hover:text-slate-300" />
+                      <button type="button" onClick={() => { setSearch(''); setShowDropdown(false) }} className="hover:scale-110 transition-transform">
+                        <XMarkIcon className="h-4 w-4 text-slate-500 hover:text-slate-300" />
                       </button>
                     )}
                   </div>
@@ -192,44 +214,65 @@ export default function Navbar() {
                 <AnimatePresence>
                   {showDropdown && searchResults && (
                     <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 4 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-white/10 bg-slate-900/95 p-2 shadow-[0_16px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+                      initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+                      className="absolute right-0 top-full mt-3 w-80 rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-2xl z-50 overflow-hidden"
                     >
-                      {searchResults.news?.length > 0 && (
-                        <div className="mb-1">
-                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">News</p>
-                          {searchResults.news.slice(0, 3).map((item: any) => (
-                            <Link
-                              key={item.id}
-                              href={`/news/${item.id}`}
-                              onClick={() => setShowDropdown(false)}
-                              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors"
-                            >
-                              <span className="line-clamp-1">{item.title}</span>
-                              <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600" />
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                      {searchResults.matches?.length > 0 && (
-                        <div>
-                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">Matches</p>
-                          {searchResults.matches.slice(0, 3).map((item: any) => (
-                            <Link
-                              key={item.id}
-                              href={`/matches/${item.id}`}
-                              onClick={() => setShowDropdown(false)}
-                              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors"
-                            >
-                              <span className="line-clamp-1">{item.homeTeam} vs {item.awayTeam}</span>
-                              <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600" />
-                            </Link>
-                          ))}
-                        </div>
-                      )}
+                      <div className="absolute inset-0 bg-mesh-dark opacity-40 pointer-events-none" />
+                      
+                      <div className="relative z-10 space-y-3">
+                        {searchResults.news?.length > 0 && (
+                          <div>
+                            <div className="flex items-center justify-between px-2 mb-1.5">
+                              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-red-500 font-['Outfit']">Club News</span>
+                              <span className="h-px flex-1 bg-gradient-to-r from-red-500/20 to-transparent ml-3" />
+                            </div>
+                            <div className="space-y-1">
+                              {searchResults.news.slice(0, 3).map((item: any) => (
+                                <Link
+                                  key={item.id}
+                                  href={`/news/${item.id}`}
+                                  onClick={() => setShowDropdown(false)}
+                                  className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition-all group"
+                                >
+                                  <span className="line-clamp-1 group-hover:translate-x-1 transition-transform duration-300">{item.title}</span>
+                                  <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all duration-300" />
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {searchResults.matches?.length > 0 && (
+                          <div>
+                            <div className="flex items-center justify-between px-2 mb-1.5">
+                              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-red-500 font-['Outfit']">Matches</span>
+                              <span className="h-px flex-1 bg-gradient-to-r from-red-500/20 to-transparent ml-3" />
+                            </div>
+                            <div className="space-y-1">
+                              {searchResults.matches.slice(0, 3).map((item: any) => (
+                                <Link
+                                  key={item.id}
+                                  href={`/matches/${item.id}`}
+                                  onClick={() => setShowDropdown(false)}
+                                  className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-slate-300 hover:bg-white/5 hover:text-white transition-all group"
+                                >
+                                  <span className="line-clamp-1 group-hover:translate-x-1 transition-transform duration-300">{item.homeTeam} vs {item.awayTeam}</span>
+                                  <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-slate-600 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all duration-300" />
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {(!searchResults.news?.length && !searchResults.matches?.length) && (
+                          <div className="py-6 text-center">
+                            <p className="text-xs text-slate-500">No updates found for "{search}"</p>
+                          </div>
+                        )}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -247,7 +290,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMenuOpen(v => !v)}
-                className={`xl:hidden flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}
+                className={`xl:hidden flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white ${scrolled ? 'h-9 w-9' : 'h-10 w-10'}`}
                 aria-label="Toggle menu"
               >
                 {menuOpen
@@ -282,75 +325,82 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 bottom-0 z-[95] flex w-72 flex-col bg-slate-950 border-l border-white/8 shadow-2xl xl:hidden"
+              className="fixed right-0 top-0 bottom-0 z-[95] flex w-80 flex-col bg-slate-950/95 border-l border-white/10 shadow-2xl backdrop-blur-2xl xl:hidden"
             >
-              {/* Drawer header */}
-              <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
-                <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2">
-                  <div className="overflow-hidden rounded-lg border border-white/10">
-                    <Image src="/images/logo.jpg" alt="FC Escuela" width={32} height={32} className="rounded-lg" />
-                  </div>
-                  <span className="font-black text-white">FC <span className="text-red-500">Escuela</span></span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
-              </div>
+              <div className="absolute inset-0 bg-mesh-dark opacity-50 pointer-events-none" />
 
-              {/* Nav links */}
-              <div className="flex-1 overflow-y-auto px-4 py-5">
-                <nav className="space-y-1">
-                  {navigation.map((item, idx) => {
-                    const active = pathname === item.href || pathname.startsWith(item.href + '/')
-                    return (
-                      <motion.div
-                        key={item.name}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={() => setMenuOpen(false)}
-                          className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-bold transition ${
-                            active
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
-                          }`}
+              <div className="relative z-10 flex flex-col h-full">
+                {/* Drawer header */}
+                <div className="flex items-center justify-between border-b border-white/8 px-6 py-5">
+                  <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 font-['Outfit']">
+                    <div className="overflow-hidden rounded-xl border border-white/10">
+                      <Image src="/images/logo.jpg" alt="FC Escuela" width={34} height={34} className="rounded-xl" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-black text-white leading-none tracking-wider text-base">FC <span className="text-red-500">ESCUELA</span></span>
+                      <span className="text-[7px] font-bold tracking-[0.25em] text-slate-500 leading-none mt-1">FOOTBALL ACADEMY</span>
+                    </div>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+                  >
+                    <XMarkIcon className="h-4.5 w-4.5 text-red-500" />
+                  </button>
+                </div>
+
+                {/* Nav links */}
+                <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
+                  <nav className="space-y-2">
+                    {navigation.map((item, idx) => {
+                      const active = pathname === item.href || pathname.startsWith(item.href + '/')
+                      return (
+                        <motion.div
+                          key={item.name}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.05 }}
                         >
-                          {item.name}
-                          <ChevronRightIcon className={`h-4 w-4 ${active ? 'text-red-500' : 'text-slate-600'}`} />
-                        </Link>
-                      </motion.div>
-                    )
-                  })}
-                </nav>
+                          <Link
+                            href={item.href}
+                            onClick={() => setMenuOpen(false)}
+                            className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-semibold tracking-wider font-['Outfit'] uppercase transition-all duration-300 border ${
+                              active
+                                ? 'bg-red-500/10 text-red-400 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.08)]'
+                                : 'text-slate-400 hover:bg-white/5 hover:text-white border-transparent'
+                            }`}
+                          >
+                            <span>{item.name}</span>
+                            <ChevronRightIcon className={`h-4 w-4 transition-transform duration-300 ${active ? 'text-red-500 translate-x-0.5' : 'text-slate-600'}`} />
+                          </Link>
+                        </motion.div>
+                      )
+                    })}
+                  </nav>
 
-                {/* Divider */}
-                <div className="my-4 h-px bg-white/5" />
+                  {/* Divider */}
+                  <div className="divider-red opacity-50" />
 
-                {/* Mobile search */}
-                <form onSubmit={handleSearch}>
-                  <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 h-10">
-                    <MagnifyingGlassIcon className="h-4 w-4 shrink-0 text-slate-500" />
-                    <input
-                      type="text"
-                      placeholder="Search…"
-                      value={search}
-                      onChange={e => setSearch(e.target.value)}
-                      className="w-full bg-transparent text-sm font-medium text-slate-300 placeholder:text-slate-600 focus:outline-none"
-                    />
-                  </div>
-                </form>
-              </div>
+                  {/* Mobile search */}
+                  <form onSubmit={handleSearch}>
+                    <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 h-11 transition-all focus-within:border-red-500/40 focus-within:bg-white/[0.08] focus-within:shadow-[0_0_15px_rgba(239,68,68,0.12)]">
+                      <MagnifyingGlassIcon className="h-4 w-4 shrink-0 text-slate-500" />
+                      <input
+                        type="text"
+                        placeholder="Search updates..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="w-full bg-transparent text-xs font-semibold text-slate-300 placeholder:text-slate-600 focus:outline-none"
+                      />
+                    </div>
+                  </form>
+                </div>
 
-              {/* Drawer footer */}
-              <div className="border-t border-white/8 px-4 py-4">
-                <MobileAuthSection onClose={() => setMenuOpen(false)} />
+                {/* Drawer footer */}
+                <div className="border-t border-white/8 px-6 py-5 bg-black/20">
+                  <MobileAuthSection onClose={() => setMenuOpen(false)} />
+                </div>
               </div>
             </motion.div>
           </>
@@ -372,17 +422,20 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
 
   if (!session) {
     return (
-      <div className="hidden items-center gap-2 sm:flex">
+      <div className="hidden items-center gap-3 sm:flex">
         <Link
           href="/login"
-          className={`flex items-center justify-center rounded-lg bg-white/5 border border-white/10 font-bold text-xs tracking-wide text-slate-300 transition hover:bg-white/10 hover:text-white ${scrolled ? 'h-9 px-4' : 'h-10 px-5'}`}
+          className={`flex items-center justify-center rounded-full bg-white/5 border border-white/10 font-semibold text-[11px] tracking-widest uppercase font-['Outfit'] text-slate-300 transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:text-white ${
+            scrolled ? 'h-[38px] px-5' : 'h-[44px] px-6'
+          }`}
         >
           Log in
         </Link>
         <Link
           href="/register"
-          className={`hidden items-center justify-center rounded-lg bg-red-500 font-bold text-xs tracking-wide text-white transition hover:bg-red-600 md:flex ${scrolled ? 'h-9 px-4' : 'h-10 px-5'}`}
-          style={{ boxShadow: '0 0 16px rgba(239,68,68,0.3)' }}
+          className={`hidden items-center justify-center rounded-full bg-red-500 font-semibold text-[11px] tracking-widest uppercase font-['Outfit'] text-white transition-all duration-300 hover:bg-red-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:scale-[1.02] md:flex ${
+            scrolled ? 'h-[38px] px-5' : 'h-[44px] px-6'
+          }`}
         >
           Register
         </Link>
@@ -395,18 +448,18 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
       <button
         type="button"
         onClick={() => setAccountOpen(!accountOpen)}
-        className={`flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/5 pl-1.5 pr-3 transition hover:bg-white/10 hover:border-white/20 ${scrolled ? 'h-9' : 'h-10'}`}
+        className={`flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 pl-1.5 pr-3.5 transition-all duration-300 hover:bg-white/10 hover:border-white/20 ${scrolled ? 'h-[38px]' : 'h-[44px]'}`}
       >
         <div className="relative">
           <ProfileImage
             src={session.user?.image}
             name={session.user?.name}
             size={scrolled ? 28 : 32}
-            className="rounded-lg"
+            className="rounded-full border border-white/10"
           />
           <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-slate-950 bg-emerald-500" />
         </div>
-        <span className="hidden text-xs font-bold text-slate-200 md:block">
+        <span className="hidden text-xs font-semibold tracking-wider font-['Outfit'] text-slate-200 md:block uppercase">
           {session.user?.name?.split(' ')[0]}
         </span>
       </button>
@@ -414,46 +467,50 @@ function SessionControls({ scrolled, accountOpen, setAccountOpen, menuRef }: {
       <AnimatePresence>
         {accountOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-white/10 bg-slate-900/95 p-2 shadow-[0_16px_48px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+            className="absolute right-0 top-full mt-3 w-64 rounded-2xl border border-white/10 bg-slate-950/95 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-2xl z-50 overflow-hidden"
           >
-            {/* User header */}
-            <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3 mb-2">
-              <ProfileImage src={session.user?.image} name={session.user?.name} size={36} className="rounded-xl" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-slate-100">{session.user?.name}</p>
-                <p className="truncate text-[11px] text-slate-500">{session.user?.email}</p>
+            <div className="absolute inset-0 bg-mesh-dark opacity-40 pointer-events-none" />
+
+            <div className="relative z-10">
+              {/* User header */}
+              <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] p-3 mb-2 border border-white/5">
+                <ProfileImage src={session.user?.image} name={session.user?.name} size={36} className="rounded-xl border border-white/10" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-bold font-['Outfit'] text-slate-100 tracking-wide">{session.user?.name}</p>
+                  <p className="truncate text-[10px] text-slate-500 font-medium">{session.user?.email}</p>
+                </div>
               </div>
-            </div>
 
-            {/* Menu items */}
-            <div className="space-y-0.5">
-              {[
-                { name: 'Profile',      href: '/profile',            icon: UserCircleIcon },
-                { name: 'Support',      href: '/support',            icon: LifebuoyIcon },
-              ].map(item => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:bg-white/5 hover:text-slate-100"
+              {/* Menu items */}
+              <div className="space-y-0.5">
+                {[
+                  { name: 'Profile',      href: '/profile',            icon: UserCircleIcon },
+                  { name: 'Support',      href: '/support',            icon: LifebuoyIcon },
+                ].map(item => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold font-['Outfit'] text-slate-400 transition hover:bg-white/5 hover:text-white"
+                  >
+                    <item.icon className="h-4 w-4 shrink-0 text-slate-600 transition duration-300 group-hover:text-red-500 group-hover:scale-110" />
+                    <span className="tracking-wider uppercase">{item.name}</span>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="mt-2 border-t border-white/8 pt-2">
+                <button
+                  onClick={() => signOut()}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold font-['Outfit'] text-rose-400 transition hover:bg-rose-500/10"
                 >
-                  <item.icon className="h-4 w-4 shrink-0 text-slate-600 transition group-hover:text-red-500" />
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-2 border-t border-white/8 pt-2">
-              <button
-                onClick={() => signOut()}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-rose-400 transition hover:bg-rose-500/10"
-              >
-                <ArrowRightOnRectangleIcon className="h-4 w-4" />
-                Sign out
-              </button>
+                  <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                  <span className="tracking-wider uppercase">Sign out</span>
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
@@ -467,40 +524,46 @@ function MobileAuthSection({ onClose }: { onClose: () => void }) {
 
   if (session) {
     return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-3 rounded-lg bg-white/5 border border-white/8 p-3">
-          <ProfileImage src={session.user?.image} name={session.user?.name} size={32} className="rounded-lg" />
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/8 p-3">
+          <ProfileImage src={session.user?.image} name={session.user?.name} size={36} className="rounded-xl border border-white/10" />
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-slate-100">{session.user?.name}</p>
-            <p className="truncate text-[11px] text-slate-500">{session.user?.email}</p>
+            <p className="truncate text-xs font-bold font-['Outfit'] text-slate-100 tracking-wide">{session.user?.name}</p>
+            <p className="truncate text-[10px] text-slate-500 font-medium">{session.user?.email}</p>
           </div>
         </div>
-        <Link href="/profile" onClick={onClose} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-colors">
-          <UserCircleIcon className="h-4 w-4 text-slate-600" /> Profile
+        <Link 
+          href="/profile" 
+          onClick={onClose} 
+          className="flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-semibold font-['Outfit'] text-slate-400 hover:bg-white/5 hover:text-white transition-all uppercase tracking-wider"
+        >
+          <UserCircleIcon className="h-4.5 w-4.5 text-slate-600" />
+          <span>Profile</span>
         </Link>
         <button
           onClick={() => signOut()}
-          className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-xs font-semibold font-['Outfit'] text-rose-400 hover:bg-rose-500/10 transition-all uppercase tracking-wider"
         >
-          <ArrowRightOnRectangleIcon className="h-4 w-4" /> Sign out
+          <ArrowRightOnRectangleIcon className="h-4.5 w-4.5" />
+          <span>Sign out</span>
         </button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <Link
         href="/login"
         onClick={onClose}
-        className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 py-3 text-sm font-bold text-slate-200 transition hover:bg-white/10 hover:text-white"
+        className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/5 py-3 text-xs font-semibold font-['Outfit'] text-slate-200 transition hover:bg-white/10 hover:text-white uppercase tracking-wider"
       >
         Log in
       </Link>
       <Link
         href="/register"
         onClick={onClose}
-        className="flex w-full items-center justify-center rounded-lg bg-red-500 py-3 text-sm font-bold text-white transition hover:bg-red-600"
+        className="flex w-full items-center justify-center rounded-full bg-red-500 py-3 text-xs font-semibold font-['Outfit'] text-white transition hover:bg-red-600 hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] uppercase tracking-wider"
       >
         Register
       </Link>
